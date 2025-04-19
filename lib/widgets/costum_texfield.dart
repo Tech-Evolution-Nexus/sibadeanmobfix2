@@ -7,7 +7,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final IconData? prefixIcon;
-   final bool readOnly;
+  final bool readOnly;
   final IconData? suffixIcon;
   final VoidCallback? onSuffixPressed;
   final String? Function(String?)? validator;
@@ -22,8 +22,8 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.onSuffixPressed,
-     this.readOnly = false,
-    this.validator, 
+    this.readOnly = false,
+    this.validator,
   });
 
   @override
@@ -70,13 +70,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
       child: TextFormField(
         controller: widget.controller,
         keyboardType: widget.keyboardType,
-         readOnly: widget.readOnly,
+        readOnly: widget.readOnly,
         obscureText: widget.obscureText,
         obscuringCharacter: '*',
         validator: widget.validator,
         focusNode: _focusNode, // Tambahkan FocusNode
         style: TextStyle(fontSize: deviceWidth * 0.04),
-     
+
         decoration: InputDecoration(
           prefixIcon: widget.prefixIcon != null
               ? Icon(widget.prefixIcon,
@@ -90,9 +90,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               : null,
           labelText: widget.labelText,
           hintText: widget.hintText,
-          labelStyle: TextStyle(fontSize: deviceWidth * 0.04),
-          hintStyle:
-              TextStyle(fontSize: deviceWidth * 0.04, color: Colors.grey),
+          labelStyle: TextStyle(fontSize: 16),
+          hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
           contentPadding: EdgeInsets.symmetric(
               horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
           border: OutlineInputBorder(
