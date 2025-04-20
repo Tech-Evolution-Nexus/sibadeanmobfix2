@@ -84,15 +84,18 @@ class API {
   }
 
   // === Aktivasi Akun ===
-  Future<dynamic> aktivasiAkun({required String nik}) async {
-    Map<String, dynamic> data = {
-      "nik": nik,
-    };
-
+  Future<dynamic> aktivasiAkun(
+      {required String nik,
+      required String email,
+      required String pass}) async {
     try {
       return await _dio.post(
-        "activateAccount",
-        data: data,
+        "aktivasi",
+        data: {
+          "nik": nik,
+          "email": email,
+          "password": pass,
+        },
       );
     } on DioException catch (e) {
       return e.response;

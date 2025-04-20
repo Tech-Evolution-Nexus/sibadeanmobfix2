@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import '../../methods/api.dart';
-import 'login.dart';
 import '../../widgets/costum_scaffold1.dart';
 import '../../widgets/costum_texfield.dart';
 
@@ -15,7 +14,10 @@ class Aktivasi extends StatefulWidget {
 }
 
 class _AktivasiState extends State<Aktivasi> {
-  final TextEditingController codeController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+// final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   bool _isLoading = false; // Indikator loading
 
   void _showSnackBar(String message, {bool isError = false}) {
@@ -29,7 +31,7 @@ class _AktivasiState extends State<Aktivasi> {
   }
 
   void aktivasiAkun() async {
-    if (codeController.text.isEmpty) {
+    if (emailController.text.isEmpty) {
       _showSnackBar("Masukkan kode aktivasi!", isError: true);
       return;
     }
@@ -37,34 +39,40 @@ class _AktivasiState extends State<Aktivasi> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await API().aktivasiAkun(nik: widget.nik);
+      final response = await API().aktivasiAkun(
+          nik: widget.nik,
+          email: emailController.text.trim(),
+          pass: passwordController.text.trim());
       // final responseData = jsonDecode(response.body);
 
       // print("Respon Aktivasi: $responseData"); // Debugging
 
-      // if (response.statusCode == 200 && responseData['status'] == 'success') {
-      //   _showAlertDialog(
-      //     "Aktivasi Berhasil",
-      //     "Akun Anda berhasil diaktivasi. Silakan login.",
-      //     onConfirm: () {
-      //       Navigator.pushAndRemoveUntil(
-      //         context,
-      //         MaterialPageRoute(builder: (context) => const Login()),
-      //         (route) => false,
-      //       );
-      //     },
-      //   );
-      // } else {
-      //   _showSnackBar(responseData['message'] ?? "Terjadi kesalahan.", isError: true);
-      // }
+      if (response.statusCode == 200) {
+        _showAlertDialog(
+          "Aktivasi Berhasil",
+          "Akun Anda berhasil diaktivasi. Silakan login.",
+          onConfirm: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+              (route) => false,
+            );
+          },
+        );
+      } else {
+        _showSnackBar(response.data['data']['message'] ?? "Terjadi kesalahan.",
+            isError: true);
+      }
     } catch (e) {
-      _showSnackBar("Gagal menghubungi server. Cek koneksi internet Anda.", isError: true);
+      _showSnackBar("Gagal menghubungi server. Cek koneksi internet Anda.",
+          isError: true);
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  void _showAlertDialog(String title, String message, {VoidCallback? onConfirm}) {
+  void _showAlertDialog(String title, String message,
+      {VoidCallback? onConfirm}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -93,24 +101,42 @@ class _AktivasiState extends State<Aktivasi> {
           children: [
             const Text(
               "Aktivasi Akun",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             const Text(
-              "Masukkan kode aktivasi yang telah dikirim ke email atau nomor telepon Anda.",
+              "Masukkan email, nomor telepon, dan password untuk aktivasi akun Anda.",
               style: TextStyle(fontSize: 16, color: Colors.white70),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
+
+            // Email
             CustomTextField(
-              labelText: "Kode Aktivasi",
-              hintText: "Masukkan kode aktivasi",
-              controller: codeController,
-              keyboardType: TextInputType.number,
-              prefixIcon: Icons.vpn_key,
-              validator: (value) => value!.isEmpty ? 'Masukkan kode aktivasi Anda' : null,
+              labelText: "Email",
+              hintText: "Masukkan email",
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              prefixIcon: Icons.email,
+              validator: (value) =>
+                  value!.isEmpty ? 'Masukkan email Anda' : null,
             ),
+            const SizedBox(height: 15),
+            CustomTextField(
+              labelText: "Password",
+              hintText: "Masukkan password",
+              controller: passwordController,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
+              prefixIcon: Icons.lock,
+              validator: (value) =>
+                  value!.isEmpty ? 'Masukkan password Anda' : null,
+            ),
+
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
