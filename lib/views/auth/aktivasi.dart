@@ -40,24 +40,32 @@ class _AktivasiState extends State<Aktivasi> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await API().aktivasiAkun(nik: widget.nik);
-      final responseData = jsonDecode(response.body);
+      final response = await API().aktivasiAkun(
+        nik: widget.nik,
+        email: emailController.text,
+        pass: passwordController.text,
+      );
 
-      if (response.statusCode == 200 && responseData['status'] == 'success') {
-        _showAlertDialog(
-          "Aktivasi Berhasil",
-          "Akun Anda berhasil diaktivasi. Silakan login.",
-          onConfirm: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-              (route) => false,
-            );
-          },
-        );
+      if (response != null && response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData['status'] == 'success') {
+          _showAlertDialog(
+            "Aktivasi Berhasil",
+            "Akun Anda berhasil diaktivasi. Silakan login.",
+            onConfirm: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const Login()),
+                (route) => false,
+              );
+            },
+          );
+        } else {
+          _showSnackBar(responseData['message'] ?? "Terjadi kesalahan.",
+              isError: true);
+        }
       } else {
-        _showSnackBar(responseData['message'] ?? "Terjadi kesalahan.",
-            isError: true);
+        _showSnackBar("Terjadi kesalahan pada server.", isError: true);
       }
     } catch (e) {
       _showSnackBar("Gagal menghubungi server. Cek koneksi internet Anda.",

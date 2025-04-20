@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/aktivasi.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
 import 'providers/auth_provider.dart';
-import 'views/auth/aktivasi.dart';
-
 void main() {
   runApp(
     MultiProvider(

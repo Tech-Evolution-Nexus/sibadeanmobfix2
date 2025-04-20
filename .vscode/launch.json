@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Flutter Web",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": ["--web-renderer", "auto"],
+            "deviceId": "chrome"
+        },
+        {
+            "name": "Test Flutter (Debug)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "Test Flutter (Profile Mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "program": "lib/main.dart"
+        },
+        {
+            "name": "Test Flutter (Release Mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/main.dart"
+        }
+    ]
+}
