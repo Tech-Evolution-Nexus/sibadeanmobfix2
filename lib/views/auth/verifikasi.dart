@@ -140,8 +140,14 @@ class _VerifikasiState extends State<Verifikasi> {
                   controller: nikController,
                   keyboardType: TextInputType.number,
                   prefixIcon: Icons.card_membership,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Masukkan NIK Anda' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Masukkan NIK Anda';
+                    } else if (value.length != 16) {
+                      return 'NIK harus 16 digit';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
 

@@ -32,38 +32,44 @@ class _LoginState extends State<Login> {
   void loginUser() async {
     final nik = nikController.text.trim();
     final pass = passwordController.text.trim();
-
+    if (nik.isEmpty || pass.isEmpty) {
+      SnackBar(content: Text('NIK dan Password tidak boleh kosong'));
+      return;
+    }
     try {
       final response = await API().loginUser(nik: nik, password: pass);
-      final respondata = response.data["data"];
-      print(respondata);
       if (response.statusCode == 200 &&
-          respondata.containsKey('access_token')) {
-        final userData = respondata['user'];
+          response.data["data"].containsKey('access_token')) {
+        final responData = response.data["data"];
+        final userData = responData['user'];
 
+        // Simpan data ke SharedPreferences
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setInt('user_id', userData['id']);
         await preferences.setString('nik', userData['masyarakat']['nik']);
-        await preferences.setString('token', respondata['access_token']);
+        await preferences.setString('token', responData['access_token']);
 
+        // Tampilkan pesan berhasil
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(respondata['message'] ?? 'Login berhasil')),
+          SnackBar(content: Text(response.data['message'] ?? 'Login berhasil')),
         );
 
         print("Navigasi ke Dashboard...");
+        // Navigasi ke halaman Dashboard
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => DashboardPage()),
         );
       } else {
-        final errorMessage = respondata['message'] ?? 'Login gagal';
+        // Jika login gagal
+        final errorMessage = response.data['message'] ?? 'Login gagal';
         print("Login gagal: $errorMessage");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login gagal: $errorMessage')),
         );
       }
     } catch (e) {
+      // Tangani error lainnya
       print("Terjadi kesalahan: $e");
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );
@@ -115,7 +121,7 @@ class _LoginState extends State<Login> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Masukkan NIK Anda';
-                            } else if (value.length < 16) {
+                            } else if (value.length != 16) {
                               return 'NIK harus 16 digit';
                             }
                             return null;
@@ -183,6 +189,7 @@ class _LoginState extends State<Login> {
                                     12), // sudut tombol agak bulat
                               ),
                             ),
+                            
                             onPressed: () {
                               print("Tombol login ditekan!");
                               if (_formSignInKey.currentState!.validate()) {

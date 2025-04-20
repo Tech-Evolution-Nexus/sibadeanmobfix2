@@ -1,10 +1,17 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   // === Login User ===
   final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000/api/'));
+  Future<String?> _getToken() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('token');
+  }
+
+  // === Login User ===
   Future<dynamic> loginUser(
       {required String nik, required String password}) async {
     try {
@@ -57,7 +64,7 @@ class API {
       "password": password,
     });
 
-    // Tambah file gambar KK
+    // Add KK image file
     if (!kIsWeb) {
       if (kkGambar is File && kkGambar.existsSync()) {
         formData.files.add(MapEntry(
@@ -112,6 +119,30 @@ class API {
       );
     } on DioException catch (e) {
       return e.response;
+    }
+  }
+
+  Future<dynamic> logout() async {
+    try {
+      // Ambil token yang ada di SharedPreferences
+      String? token = await _getToken();
+
+      if (token != null) {
+        final response = await _dio.post(
+          'logout',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        return response;
+      } else {
+        print('Tidak ada token yang tersimpan');
+      }
+    } catch (e) {
+      print('Error saat logout: $e');
     }
   }
 }

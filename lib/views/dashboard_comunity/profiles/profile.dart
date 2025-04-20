@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,6 +13,21 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController(text: "User");
   final TextEditingController _emailController =
       TextEditingController(text: "user@email.com");
+  void logout() async {
+    final response = await API().logout();
+    if (response.statusCode == 200) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.remove('user_id');
+      await preferences.remove('nik');
+      await preferences.remove('token');
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +41,10 @@ class _ProfilePageState extends State<ProfilePage> {
             Center(
               child: Column(
                 children: [
-                  CircleAvatar(
+                 CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/profile.png'),
-                  ),
+                  ), 
                   SizedBox(height: 10),
                   Text(
                     _nameController.text,
@@ -124,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
             // Tombol Logout
             ElevatedButton(
               onPressed: () {
-                // TODO: Tambahkan fungsi logout
+                logout();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
