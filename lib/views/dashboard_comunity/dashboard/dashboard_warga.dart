@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import '../../../theme/theme.dart';
 import '../../../services/berita_service.dart';
 import '../pengajuan/list_surat.dart';
 import '../pengajuan/pengajuan_surat.dart';
 import '../pengajuan/riwayat_pengajuan.dart';
-import '../profiles/profile.dart'
-    show ProfilePage;
+import '../profiles/profile.dart' show ProfilePage;
+import '/models/BeritaSuratModel.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -60,13 +62,15 @@ class _DashboardContentState extends State<DashboardContent> {
   String nama = "User";
   String foto = "";
   List<String> berita = [];
+  List<String> suratList = [];
   bool isLoading = true;
-
+  BeritaSuratModel? dataModel;
   @override
   void initState() {
     super.initState();
+    getdata();
+
     getUserData();
-    fetchBerita();
   }
 
   Future<void> getUserData() async {
@@ -77,18 +81,21 @@ class _DashboardContentState extends State<DashboardContent> {
     });
   }
 
-  Future<void> fetchBerita() async {
+  void getdata() async {
     try {
-      print("Fetching berita..."); // Debug
-      List<String> beritaData = await BeritaService().fetchBerita();
-      print("Berita Diterima: $beritaData"); // Debug
+      var response = await API().getdatadashboard();
 
-      setState(() {
-        berita = beritaData;
-        isLoading = false;
-      });
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+
+        setState(() {
+          dataModel = BeritaSuratModel.fromJson(data);
+          isLoading = false;
+        });
+        // print(dataModel?.surat.toString());
+      }
     } catch (e) {
-      print("Error mengambil berita: $e"); // Debug
+      print("Error: $e");
       setState(() {
         isLoading = false;
       });
@@ -127,8 +134,7 @@ class _DashboardContentState extends State<DashboardContent> {
                 radius: 25,
                 backgroundImage: foto.isNotEmpty
                     ? NetworkImage(foto)
-                    : AssetImage('assets/images/default_user.png')
-                        as ImageProvider,
+                    : AssetImage('assets/images/logo.png') as ImageProvider,
               ),
             ],
           ),
@@ -140,7 +146,7 @@ class _DashboardContentState extends State<DashboardContent> {
           margin: EdgeInsets.symmetric(vertical: 10),
           child: isLoading
               ? Center(child: CircularProgressIndicator())
-              : berita.isEmpty
+              : dataModel!.berita.isEmpty
                   ? Center(
                       child: Text(
                         "Tidak ada berita tersedia",
@@ -148,7 +154,7 @@ class _DashboardContentState extends State<DashboardContent> {
                       ),
                     )
                   : PageView.builder(
-                      itemCount: berita.length,
+                      itemCount: dataModel!.berita.length,
                       itemBuilder: (context, index) {
                         return Container(
                           margin: EdgeInsets.symmetric(horizontal: 10),
@@ -164,7 +170,7 @@ class _DashboardContentState extends State<DashboardContent> {
                               child: Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Text(
-                                  berita[index],
+                                  dataModel!.berita[index].judul,
                                   style: TextStyle(
                                       color: lightColorScheme.primary,
                                       fontSize: 16),
@@ -184,14 +190,9 @@ class _DashboardContentState extends State<DashboardContent> {
             padding: EdgeInsets.all(10),
             crossAxisCount: 2,
             childAspectRatio: 1.2,
-            children: [
-              suratCard("Surat KTP", context),
-              suratCard("Surat Domisili", context),
-              suratCard("Surat Nikah", context),
-              suratCard("Surat Kelahiran", context),
-              suratCard("Surat Kematian", context),
-              suratCard("Surat Usaha", context),
-            ],
+            children: dataModel!.surat.map((item) {
+              return suratCard(item, context);
+            }).toList(),
           ),
         ),
 
@@ -221,15 +222,14 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget suratCard(String title, BuildContext context) {
+  Widget suratCard(Surat surat, BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PengajuanSuratPage(
-              namaSurat: title,
-              jenisSurat: '',
+              namaSurat: surat.nama_surat, // atau isi sesuai kebutuhan
             ),
           ),
         );
@@ -245,9 +245,11 @@ class _DashboardContentState extends State<DashboardContent> {
               Icon(Icons.article_rounded,
                   size: 40, color: lightColorScheme.primary),
               SizedBox(height: 8),
-              Text(title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              Text(
+                surat.nama_surat,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
