@@ -38,14 +38,11 @@ class _VerifikasiState extends State<Verifikasi> {
     });
 
     try {
-      final response =
-          await API().postRequest(route: "/verifikasi", data: {"nik": nik});
+      final response = await API().verifikasiNIK(nik: nik);
 
       print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+        final responseData = response.data['data'];
         _showAlertDialog(
           "Verifikasi Berhasil",
           "NIK ditemukan: ${responseData['masyarakat']['nik']}",

@@ -114,16 +114,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         kkGambar: kIsWeb ? kkGambarBytes : kkGambar,
       );
 
-      debugPrint("Response dari API: ${response.body}");
+      // debugPrint("Response dari API: ${response.body}");
 
-      var jsonResponse = jsonDecode(response.body);
-      String message = jsonResponse['message'] ??
-          jsonResponse['error'] ??
-          "Pendaftaran berhasil";
+      // var jsonResponse = jsonDecode(response.body);
+      // String message = jsonResponse['message'] ??
+      //     jsonResponse['error'] ??
+      //     "Pendaftaran berhasil";
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.green),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text(message), backgroundColor: Colors.green),
+      // );
     } catch (e) {
       debugPrint("Error saat mendaftar: $e");
       ScaffoldMessenger.of(context).showSnackBar(

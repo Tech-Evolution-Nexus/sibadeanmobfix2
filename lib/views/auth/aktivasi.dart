@@ -38,25 +38,25 @@ class _AktivasiState extends State<Aktivasi> {
 
     try {
       final response = await API().aktivasiAkun(nik: widget.nik);
-      final responseData = jsonDecode(response.body);
+      // final responseData = jsonDecode(response.body);
 
-      print("Respon Aktivasi: $responseData"); // Debugging
+      // print("Respon Aktivasi: $responseData"); // Debugging
 
-      if (response.statusCode == 200 && responseData['status'] == 'success') {
-        _showAlertDialog(
-          "Aktivasi Berhasil",
-          "Akun Anda berhasil diaktivasi. Silakan login.",
-          onConfirm: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-              (route) => false,
-            );
-          },
-        );
-      } else {
-        _showSnackBar(responseData['message'] ?? "Terjadi kesalahan.", isError: true);
-      }
+      // if (response.statusCode == 200 && responseData['status'] == 'success') {
+      //   _showAlertDialog(
+      //     "Aktivasi Berhasil",
+      //     "Akun Anda berhasil diaktivasi. Silakan login.",
+      //     onConfirm: () {
+      //       Navigator.pushAndRemoveUntil(
+      //         context,
+      //         MaterialPageRoute(builder: (context) => const Login()),
+      //         (route) => false,
+      //       );
+      //     },
+      //   );
+      // } else {
+      //   _showSnackBar(responseData['message'] ?? "Terjadi kesalahan.", isError: true);
+      // }
     } catch (e) {
       _showSnackBar("Gagal menghubungi server. Cek koneksi internet Anda.", isError: true);
     } finally {

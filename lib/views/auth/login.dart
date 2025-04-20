@@ -30,28 +30,24 @@ class _LoginState extends State<Login> {
   }
 
   void loginUser() async {
-    final data = {
-      'nik': nikController.text.trim(),
-      'password': passwordController.text.trim(),
-    };
-
-    print("Mengirim request login dengan data: $data");
+    final nik = nikController.text.trim();
+    final pass = passwordController.text.trim();
 
     try {
-      final response = await API().postRequest(route: '/login', data: data);
-      final responseData = jsonDecode(response.body);
+      final response = await API().loginUser(nik: nik, password: pass);
+      final respondata = response.data['data'];
+      print(respondata);
+      if (response.statusCode == 200 &&
+          respondata.containsKey('access_token')) {
+        final userData = respondata['user'];
 
-      print("Response dari API: $responseData"); // Debugging
-
-      if (response.statusCode == 200 && responseData.containsKey('token')) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
-        await preferences.setInt('user_id', responseData['user']['id']);
-        await preferences.setString(
-            'nik', responseData['user']['masyarakat']['nik']);
-        await preferences.setString('token', responseData['token']);
+        await preferences.setInt('user_id', userData['id']);
+        await preferences.setString('nik', userData['masyarakat']['nik']);
+        await preferences.setString('token', respondata['access_token']);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData['message'])),
+          SnackBar(content: Text(respondata['message'] ?? 'Login berhasil')),
         );
 
         print("Navigasi ke Dashboard...");
@@ -59,13 +55,15 @@ class _LoginState extends State<Login> {
           MaterialPageRoute(builder: (context) => DashboardPage()),
         );
       } else {
-        print("Login gagal: ${responseData['message']}");
+        final errorMessage = respondata['message'] ?? 'Login gagal';
+        print("Login gagal: $errorMessage");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login gagal: ${responseData['message']}')),
+          SnackBar(content: Text('Login gagal: $errorMessage')),
         );
       }
     } catch (e) {
       print("Terjadi kesalahan: $e");
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );
@@ -75,7 +73,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -84,16 +81,16 @@ class _LoginState extends State<Login> {
             const SizedBox(height: 50),
             Expanded(
               flex: 7,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40.0),
-                    topRight: Radius.circular(40.0),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40.0),
+                      topRight: Radius.circular(40.0),
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
                   child: Form(
                     key: _formSignInKey,
                     child: Column(

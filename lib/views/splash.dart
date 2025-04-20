@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'welcome.dart';
-import '../../widgets/costum_color.dart';
-import '../../widgets/custom_icon_button.dart';
+import 'auth/welcome.dart';
+import '../widgets/costum_color.dart';
+import '../widgets/custom_icon_button.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
