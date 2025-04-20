@@ -37,7 +37,7 @@ class ListSurat extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PengajuanSuratPage(
-                      jenisSurat: daftarSurat[index],
+                      // jenisSurat: daftarSurat[index],
                       namaSurat: daftarSurat[index],
                     ),
                   ),
