@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/aktivasi.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
 import 'providers/auth_provider.dart';
-import 'views/auth/splash.dart';
+import 'views/auth/aktivasi.dart';
 
 void main() {
   runApp(
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: Splash(),
+      home: RegisterScreen()
     );
   }
 }

@@ -23,7 +23,7 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.onSuffixPressed,
     this.readOnly = false,
-    this.validator,
+    this.validator, 
   });
 
   @override
