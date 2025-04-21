@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import '../../../theme/theme.dart';
 import '../../../services/berita_service.dart';
 import '../pengajuan/list_surat.dart';
 import '../pengajuan/pengajuan_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
+import '/methods/api.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -59,8 +62,9 @@ class _DashboardContentState extends State<DashboardContent> {
   String nik = "";
   String foto = "";
   List<String> berita = [];
+  List<String> suratList = [];
   bool isLoading = true;
-
+  BeritaSuratModel? dataModel;
   @override
   void initState() {
     super.initState();
@@ -79,12 +83,18 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Future<void> fetchBerita() async {
     try {
-      List<String> beritaData = await BeritaService().fetchBerita();
-      setState(() {
-        berita = beritaData;
-        isLoading = false;
-      });
+      var response = await API().getdatadashboard();
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+
+        setState(() {
+          dataModel = BeritaSuratModel.fromJson(data);
+          isLoading = false;
+        });
+        // print(dataModel?.surat.toString());
+      }
     } catch (e) {
+      print("Error: $e");
       setState(() {
         isLoading = false;
       });
@@ -120,7 +130,7 @@ class _DashboardContentState extends State<DashboardContent> {
                       radius: 25,
                       backgroundImage: foto.isNotEmpty
                           ? NetworkImage(foto)
-                          : AssetImage('assets/images/default_user.png')
+                          : AssetImage('assets/images/oled.jpg')
                               as ImageProvider,
                     ),
                     SizedBox(width: 10),
@@ -191,27 +201,19 @@ class _DashboardContentState extends State<DashboardContent> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 16),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: [
-                      _suratButton(context, 'SKTM', Colors.green),
-                      _suratButton(context, 'Surat Keterangan Usaha',
-                          Colors.yellow[700]!),
-                      _suratButton(context, 'Surat Izin Usaha', Colors.blue),
-                      _suratButton(context, 'Surat Ganti Nama', Colors.pink),
-                      _suratButton(
-                          context, 'Surat Keterangan Domisili', Colors.teal),
-                      _suratButton(
-                          context, 'Surat Keterangan Pindah', Colors.orange),
-                      _suratButton(
-                          context, 'Surat Keterangan Kematian', Colors.red),
-                      _suratButton(
-                          context, 'Surat Keterangan Lahir', Colors.purple),
-                      _lihatSemuaButton(context),
-                    ],
-                  ),
+                  dataModel == null
+                      ? Center(child: CircularProgressIndicator())
+                      : Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 20,
+                          runSpacing: 20,
+                          children: [
+                            ...dataModel!.surat.map((item) {
+                              return _suratButton(context, item, Colors.blue);
+                            }).toList(),
+                            _lihatSemuaButton(context),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -249,18 +251,22 @@ class _DashboardContentState extends State<DashboardContent> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  isLoading
+                  isLoading || dataModel == null
                       ? Center(child: CircularProgressIndicator())
                       : Column(
-                          children: berita.map((item) {
+                          children: dataModel!.berita.map((item) {
                             return Card(
                               child: ListTile(
                                 leading: Image.asset(
-                                  'assets/images/berita.png',
+                                  'assets/images/coba.png',
                                   width: 40,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.image_not_supported,
+                                        size: 40);
+                                  },
                                 ),
                                 title: Text(
-                                  item,
+                                  item.judul,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -302,13 +308,14 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget _suratButton(BuildContext context, String title, Color color) {
+  Widget _suratButton(BuildContext context, Surat item, Color color) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PengajuanSuratPage(namaSurat: title),
+            builder: (context) =>
+                PengajuanSuratPage(namaSurat: item.nama_surat),
           ),
         );
       },
@@ -323,7 +330,7 @@ class _DashboardContentState extends State<DashboardContent> {
           SizedBox(
             width: 70,
             child: Text(
-              title,
+              item.nama_surat,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12),
             ),
