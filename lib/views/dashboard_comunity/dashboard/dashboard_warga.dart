@@ -37,9 +37,12 @@ class _DashboardPageState extends State<DashboardPage> {
         showUnselectedLabels: false,
         elevation: 10,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Profil"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded), label: "Profil"),
         ],
       ),
     );
@@ -117,7 +120,8 @@ class _DashboardContentState extends State<DashboardContent> {
                       radius: 25,
                       backgroundImage: foto.isNotEmpty
                           ? NetworkImage(foto)
-                          : AssetImage('assets/images/default_user.png') as ImageProvider,
+                          : AssetImage('assets/images/default_user.png')
+                              as ImageProvider,
                     ),
                     SizedBox(width: 10),
                     Column(
@@ -166,7 +170,7 @@ class _DashboardContentState extends State<DashboardContent> {
 
           // Daftar Jenis Surat
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -184,8 +188,8 @@ class _DashboardContentState extends State<DashboardContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Pengajuan Surat",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 16),
                   Wrap(
                     alignment: WrapAlignment.center,
@@ -193,13 +197,18 @@ class _DashboardContentState extends State<DashboardContent> {
                     runSpacing: 20,
                     children: [
                       _suratButton(context, 'SKTM', Colors.green),
-                      _suratButton(context, 'Surat Keterangan Usaha', Colors.yellow[700]!),
+                      _suratButton(context, 'Surat Keterangan Usaha',
+                          Colors.yellow[700]!),
                       _suratButton(context, 'Surat Izin Usaha', Colors.blue),
                       _suratButton(context, 'Surat Ganti Nama', Colors.pink),
-                      _suratButton(context, 'Surat Keterangan Domisili', Colors.teal),
-                      _suratButton(context, 'Surat Keterangan Pindah', Colors.orange),
-                      _suratButton(context, 'Surat Keterangan Kematian', Colors.red),
-                      _suratButton(context, 'Surat Keterangan Lahir', Colors.purple),
+                      _suratButton(
+                          context, 'Surat Keterangan Domisili', Colors.teal),
+                      _suratButton(
+                          context, 'Surat Keterangan Pindah', Colors.orange),
+                      _suratButton(
+                          context, 'Surat Keterangan Kematian', Colors.red),
+                      _suratButton(
+                          context, 'Surat Keterangan Lahir', Colors.purple),
                       _lihatSemuaButton(context),
                     ],
                   ),
@@ -210,7 +219,7 @@ class _DashboardContentState extends State<DashboardContent> {
 
           // Berita
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
