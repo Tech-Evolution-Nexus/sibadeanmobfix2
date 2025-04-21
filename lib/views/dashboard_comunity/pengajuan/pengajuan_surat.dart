@@ -6,12 +6,10 @@ import '../../../services/pengajuan_servis.dart';
 import '../../../theme/theme.dart';
 
 class PengajuanSuratPage extends StatefulWidget {
-  final String jenisSurat;
   final String namaSurat;
 
   const PengajuanSuratPage({
     Key? key,
-    required this.jenisSurat,
     required this.namaSurat,
   }) : super(key: key);
 
@@ -60,7 +58,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         alamat: _alamatController.text,
         keterangan: _keteranganController.text,
         fileKK: _selectedFile!,
-        jenisSurat: widget.jenisSurat,
+        jenisSurat:"s",
       );
 
       if (response.containsKey("error")) {

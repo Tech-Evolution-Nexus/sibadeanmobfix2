@@ -1,4 +1,3 @@
-// Tambahan import tetap sama
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
@@ -38,12 +37,9 @@ class _DashboardPageState extends State<DashboardPage> {
         showUnselectedLabels: false,
         elevation: 10,
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded), label: "Profil"),
+          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
+          BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Profil"),
         ],
       ),
     );
@@ -121,21 +117,27 @@ class _DashboardContentState extends State<DashboardContent> {
                       radius: 25,
                       backgroundImage: foto.isNotEmpty
                           ? NetworkImage(foto)
-                          : AssetImage('assets/images/default_user.png')
-                              as ImageProvider,
+                          : AssetImage('assets/images/default_user.png') as ImageProvider,
                     ),
                     SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(nama,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold)),
-                        Text(nik,
-                            style:
-                                TextStyle(color: Colors.white70, fontSize: 12)),
+                        Text(
+                          nama,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          nik,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                     Spacer(),
@@ -157,12 +159,12 @@ class _DashboardContentState extends State<DashboardContent> {
                       _statusItem('Selesai', '20'),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
 
-          // Daftar Jenis Surat dibungkus Card Putih
+          // Daftar Jenis Surat
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Container(
@@ -175,15 +177,15 @@ class _DashboardContentState extends State<DashboardContent> {
                     color: Colors.black12,
                     blurRadius: 5,
                     offset: Offset(0, 2),
-                  )
+                  ),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Pengajuan Surat",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 16),
                   Wrap(
                     alignment: WrapAlignment.center,
@@ -191,18 +193,13 @@ class _DashboardContentState extends State<DashboardContent> {
                     runSpacing: 20,
                     children: [
                       _suratButton(context, 'SKTM', Colors.green),
-                      _suratButton(context, 'Surat Keterangan Usaha',
-                          Colors.yellow[700]!),
+                      _suratButton(context, 'Surat Keterangan Usaha', Colors.yellow[700]!),
                       _suratButton(context, 'Surat Izin Usaha', Colors.blue),
                       _suratButton(context, 'Surat Ganti Nama', Colors.pink),
-                      _suratButton(
-                          context, 'Surat Keterangan Domisili', Colors.teal),
-                      _suratButton(
-                          context, 'Surat Keterangan Pindah', Colors.orange),
-                      _suratButton(
-                          context, 'Surat Keterangan Kematian', Colors.red),
-                      _suratButton(
-                          context, 'Surat Keterangan Lahir', Colors.purple),
+                      _suratButton(context, 'Surat Keterangan Domisili', Colors.teal),
+                      _suratButton(context, 'Surat Keterangan Pindah', Colors.orange),
+                      _suratButton(context, 'Surat Keterangan Kematian', Colors.red),
+                      _suratButton(context, 'Surat Keterangan Lahir', Colors.purple),
                       _lihatSemuaButton(context),
                     ],
                   ),
@@ -211,7 +208,7 @@ class _DashboardContentState extends State<DashboardContent> {
             ),
           ),
 
-          // Berita Section dibungkus Card Putih
+          // Berita
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -224,16 +221,20 @@ class _DashboardContentState extends State<DashboardContent> {
                     color: Colors.black12,
                     blurRadius: 5,
                     offset: Offset(0, 2),
-                  )
+                  ),
                 ],
               ),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      Text("Berita & Peristiwa Badean",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                        "Berita & Peristiwa Badean",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Spacer(),
                       Icon(Icons.arrow_forward_ios, size: 14),
                     ],
@@ -245,11 +246,15 @@ class _DashboardContentState extends State<DashboardContent> {
                           children: berita.map((item) {
                             return Card(
                               child: ListTile(
-                                leading: Image.asset('assets/images/berita.png',
-                                    width: 40),
-                                title: Text(item,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
+                                leading: Image.asset(
+                                  'assets/images/berita.png',
+                                  width: 40,
+                                ),
+                                title: Text(
+                                  item,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 subtitle: Text('18 April 2025'),
                               ),
                             );
@@ -267,15 +272,23 @@ class _DashboardContentState extends State<DashboardContent> {
   Widget _statusItem(String title, String count) {
     return Column(
       children: [
-        Text(count,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: lightColorScheme.primary)),
+        Text(
+          count,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: lightColorScheme.primary,
+          ),
+        ),
         SizedBox(height: 4),
-        Text(title,
-            style: TextStyle(color: Colors.black54, fontSize: 12),
-            textAlign: TextAlign.center),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 12,
+          ),
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }
@@ -284,10 +297,11 @@ class _DashboardContentState extends State<DashboardContent> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    PengajuanSuratPage(namaSurat: title, jenisSurat: '')));
+          context,
+          MaterialPageRoute(
+            builder: (context) => PengajuanSuratPage(namaSurat: title),
+          ),
+        );
       },
       child: Column(
         children: [
@@ -299,8 +313,11 @@ class _DashboardContentState extends State<DashboardContent> {
           SizedBox(height: 8),
           SizedBox(
             width: 70,
-            child: Text(title,
-                textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -311,7 +328,9 @@ class _DashboardContentState extends State<DashboardContent> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ListSurat()));
+          context,
+          MaterialPageRoute(builder: (context) => ListSurat()),
+        );
       },
       child: Column(
         children: [
