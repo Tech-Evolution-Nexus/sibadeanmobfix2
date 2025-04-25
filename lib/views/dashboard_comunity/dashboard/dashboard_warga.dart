@@ -39,7 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: false,
         elevation: 10,
-        items: [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home_rounded), label: "Home"),
           BottomNavigationBarItem(
@@ -61,10 +61,9 @@ class _DashboardContentState extends State<DashboardContent> {
   String nama = "User";
   String nik = "";
   String foto = "";
-  List<String> berita = [];
-  List<String> suratList = [];
   bool isLoading = true;
   BeritaSuratModel? dataModel;
+
   @override
   void initState() {
     super.initState();
@@ -85,39 +84,42 @@ class _DashboardContentState extends State<DashboardContent> {
     try {
       var response = await API().getdatadashboard();
       if (response.statusCode == 200) {
-        final data = response.data['data'];
-
         setState(() {
-          dataModel = BeritaSuratModel.fromJson(data);
+          dataModel = BeritaSuratModel.fromJson(response.data['data']);
           isLoading = false;
         });
-        // print(dataModel?.surat.toString());
       }
     } catch (e) {
       print("Error: $e");
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final isSmall = width < 360;
+
     return SingleChildScrollView(
       child: Column(
         children: [
+          // Header biru
           Container(
-            padding: EdgeInsets.all(16),
+            width: double.infinity,
+            height: 250, // atau pakai height * 0.3 biar responsif
+            padding: EdgeInsets.all(width * 0.04),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   lightColorScheme.primary,
-                  const Color.fromARGB(255, 25, 44, 155)
+                  const Color.fromARGB(255, 25, 44, 155),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
               ),
@@ -127,13 +129,13 @@ class _DashboardContentState extends State<DashboardContent> {
                 Row(
                   children: [
                     CircleAvatar(
-                      radius: 25,
+                      radius: width * 0.07,
                       backgroundImage: foto.isNotEmpty
                           ? NetworkImage(foto)
-                          : AssetImage('assets/images/oled.jpg')
+                          : const AssetImage('assets/images/oled.jpg')
                               as ImageProvider,
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: width * 0.03),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -141,7 +143,7 @@ class _DashboardContentState extends State<DashboardContent> {
                           nama,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: isSmall ? 14 : 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -149,28 +151,52 @@ class _DashboardContentState extends State<DashboardContent> {
                           nik,
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 12,
+                            fontSize: isSmall ? 11 : 12,
                           ),
                         ),
                       ],
                     ),
-                    Spacer(),
-                    Icon(Icons.notifications, color: Colors.white),
+                    const Spacer(),
+                    const Icon(Icons.notifications, color: Colors.white),
                   ],
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: height * 0.02),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  padding: EdgeInsets.symmetric(
+                    horizontal:
+                        width * 0.05, // Pastikan padding kiri-kanan konsisten
+                    vertical: height * 0.015,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _statusItem('Menunggu persetujuan', '20'),
-                      Container(width: 1, height: 35, color: Colors.grey[300]),
-                      _statusItem('Selesai', '20'),
+                      /// Tambahkan teks "Pengajuan Surat" di atas status
+                      Text(
+                        "Pengajuan Surat",
+                        style: TextStyle(
+                          fontSize: isSmall ? 14 : 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.015),
+
+                      /// Status item di bawah
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _statusItem('Menunggu persetujuan', '20', isSmall),
+                          Container(
+                            width: 1,
+                            height: height * 0.04,
+                            color: Colors.grey[300],
+                          ),
+                          _statusItem('Selesai', '20', isSmall),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -178,56 +204,62 @@ class _DashboardContentState extends State<DashboardContent> {
             ),
           ),
 
-          // Daftar Jenis Surat
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
+          // Pengajuan Surat - overlap keluar dari container biru
+          Transform.translate(
+            offset: Offset(0, -40), // Geser naik agar setengah masuk biru
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: width * 0.05,
+                vertical: height * 0.020,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Pengajuan Surat",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 16),
-                  dataModel == null
-                      ? Center(child: CircularProgressIndicator())
-                      : Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 20,
-                          runSpacing: 20,
-                          children: [
-                            ...dataModel!.surat.map((item) {
-                              return _suratButton(context, item, Colors.blue);
-                            }).toList(),
-                            _lihatSemuaButton(context),
-                          ],
-                        ),
-                ],
+              // Sama seperti sebelumnya
+              child: Container(
+                padding: EdgeInsets.all(width * 0.04),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: height * 0.015),
+                    dataModel == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: width * 0.05,
+                            runSpacing: height * 0.02,
+                            children: [
+                              ...dataModel!.surat.map(
+                                (item) => _suratButton(
+                                    context, item, Colors.blue, width),
+                              ),
+                              _lihatSemuaButton(context, width),
+                            ],
+                          ),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Berita
+          // Berita & Peristiwa
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            padding: EdgeInsets.symmetric(
+                horizontal: width * 0.05, vertical: height * 0.02),
             child: Container(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(width * 0.04),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 5,
@@ -242,26 +274,25 @@ class _DashboardContentState extends State<DashboardContent> {
                       Text(
                         "Berita & Peristiwa Badean",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: isSmall ? 14 : 16,
+                            fontWeight: FontWeight.bold),
                       ),
-                      Spacer(),
-                      Icon(Icons.arrow_forward_ios, size: 14),
+                      const Spacer(),
+                      const Icon(Icons.arrow_forward_ios, size: 14),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: height * 0.01),
                   isLoading || dataModel == null
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : Column(
                           children: dataModel!.berita.map((item) {
                             return Card(
                               child: ListTile(
                                 leading: Image.asset(
                                   'assets/images/coba.png',
-                                  width: 40,
+                                  width: width * 0.1,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.image_not_supported,
+                                    return const Icon(Icons.image_not_supported,
                                         size: 40);
                                   },
                                 ),
@@ -269,8 +300,9 @@ class _DashboardContentState extends State<DashboardContent> {
                                   item.judul,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: isSmall ? 12 : 14),
                                 ),
-                                subtitle: Text('18 April 2025'),
+                                subtitle: const Text('18 April 2025'),
                               ),
                             );
                           }).toList(),
@@ -284,23 +316,23 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget _statusItem(String title, String count) {
+  Widget _statusItem(String title, String count, bool isSmall) {
     return Column(
       children: [
         Text(
           count,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: isSmall ? 16 : 18,
             color: lightColorScheme.primary,
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(
             color: Colors.black54,
-            fontSize: 12,
+            fontSize: isSmall ? 11 : 12,
           ),
           textAlign: TextAlign.center,
         ),
@@ -308,31 +340,31 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget _suratButton(BuildContext context, Surat item, Color color) {
+  Widget _suratButton(
+      BuildContext context, Surat item, Color color, double width) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                PengajuanSuratPage(namaSurat: item.nama_surat),
-          ),
+              builder: (context) =>
+                  PengajuanSuratPage(namaSurat: item.nama_surat)),
         );
       },
       child: Column(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: width * 0.08,
             backgroundColor: color,
-            child: Icon(Icons.mail_rounded, color: Colors.white),
+            child: const Icon(Icons.mail_rounded, color: Colors.white),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           SizedBox(
-            width: 70,
+            width: width * 0.2,
             child: Text(
               item.nama_surat,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ],
@@ -340,23 +372,21 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
-  Widget _lihatSemuaButton(BuildContext context) {
+  Widget _lihatSemuaButton(BuildContext context, double width) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ListSurat()),
-        );
+            context, MaterialPageRoute(builder: (context) => ListSurat()));
       },
       child: Column(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: width * 0.08,
             backgroundColor: Colors.grey.shade300,
-            child: Icon(Icons.apps_rounded, color: Colors.black),
+            child: const Icon(Icons.apps_rounded, color: Colors.black),
           ),
-          SizedBox(height: 8),
-          Text("Lihat Semua", style: TextStyle(fontSize: 12)),
+          const SizedBox(height: 8),
+          const Text("Lihat Semua", style: TextStyle(fontSize: 12)),
         ],
       ),
     );
