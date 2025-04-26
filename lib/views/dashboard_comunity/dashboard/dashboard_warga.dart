@@ -4,7 +4,6 @@ import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import '../../../theme/theme.dart';
-import '../../../services/berita_service.dart';
 import '../pengajuan/list_surat.dart';
 import '../pengajuan/pengajuan_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
@@ -16,7 +15,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _currentIndex = 0;
+  int _currentIndex = 0; //navigasi butoon
   final List<Widget> _pages = [
     DashboardContent(),
     PengajuanPage(),
