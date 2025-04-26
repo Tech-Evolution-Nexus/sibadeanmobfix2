@@ -104,10 +104,8 @@ class _DashboardContentState extends State<DashboardContent> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Header biru
           Container(
             width: double.infinity,
-            height: 250, // atau pakai height * 0.3 biar responsif
             padding: EdgeInsets.all(width * 0.04),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -162,8 +160,7 @@ class _DashboardContentState extends State<DashboardContent> {
                 SizedBox(height: height * 0.02),
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal:
-                        width * 0.05, // Pastikan padding kiri-kanan konsisten
+                    horizontal: width * 0.05,
                     vertical: height * 0.015,
                   ),
                   decoration: BoxDecoration(
@@ -173,7 +170,6 @@ class _DashboardContentState extends State<DashboardContent> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Tambahkan teks "Pengajuan Surat" di atas status
                       Text(
                         "Pengajuan Surat",
                         style: TextStyle(
@@ -182,8 +178,6 @@ class _DashboardContentState extends State<DashboardContent> {
                         ),
                       ),
                       SizedBox(height: height * 0.015),
-
-                      /// Status item di bawah
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -202,113 +196,98 @@ class _DashboardContentState extends State<DashboardContent> {
               ],
             ),
           ),
-
-          // Pengajuan Surat - overlap keluar dari container biru
-          Transform.translate(
-            offset: Offset(0, -40), // Geser naik agar setengah masuk biru
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: width * 0.05,
-                vertical: height * 0.020,
-              ),
-              // Sama seperti sebelumnya
-              child: Container(
-                padding: EdgeInsets.all(width * 0.04),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+          Container(
+            padding: EdgeInsets.all(width * 0.04),
+            margin: EdgeInsets.all(width * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: height * 0.015),
-                    dataModel == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: width * 0.05,
-                            runSpacing: height * 0.02,
-                            children: [
-                              ...dataModel!.surat.map(
-                                (item) => _suratButton(
-                                    context, item, Colors.blue, width),
-                              ),
-                              _lihatSemuaButton(context, width),
-                            ],
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: height * 0.015),
+                dataModel == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: width * 0.01,
+                        runSpacing: height * 0.02,
+                        children: [
+                          ...dataModel!.surat.map(
+                            (item) =>
+                                _suratButton(context, item, Colors.blue, width),
                           ),
-                  ],
-                ),
-              ),
+                          _lihatSemuaButton(context, width),
+                        ],
+                      ),
+                SizedBox(height: height * 0.02),
+              ],
             ),
           ),
-
-          // Berita & Peristiwa
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: width * 0.05, vertical: height * 0.02),
-            child: Container(
-              padding: EdgeInsets.all(width * 0.04),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Berita & Peristiwa Badean",
-                        style: TextStyle(
-                            fontSize: isSmall ? 14 : 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.arrow_forward_ios, size: 14),
-                    ],
-                  ),
-                  SizedBox(height: height * 0.01),
-                  isLoading || dataModel == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : Column(
-                          children: dataModel!.berita.map((item) {
-                            return Card(
-                              child: ListTile(
-                                leading: Image.asset(
-                                  'assets/images/coba.png',
-                                  width: width * 0.1,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.image_not_supported,
-                                        size: 40);
-                                  },
-                                ),
-                                title: Text(
-                                  item.judul,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: isSmall ? 12 : 14),
-                                ),
-                                subtitle: const Text('18 April 2025'),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                ],
-              ),
+          Container(
+            padding: EdgeInsets.all(width * 0.04),
+            margin: EdgeInsets.all(width * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: Offset(0, 2),
+                ),
+              ],
             ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                children: [
+                  Text(
+                    "Berita & Peristiwa Badean",
+                    style: TextStyle(
+                      fontSize: isSmall ? 14 : 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.arrow_forward_ios, size: 14),
+                ],
+              ),
+              SizedBox(height: height * 0.01),
+              isLoading || dataModel == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: dataModel!.berita.map((item) {
+                        return Card(
+                          child: ListTile(
+                            leading: Image.asset(
+                              'assets/images/coba.png',
+                              width: width * 0.1,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.image_not_supported,
+                                    size: 40);
+                              },
+                            ),
+                            title: Text(
+                              item.judul,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: isSmall ? 12 : 14),
+                            ),
+                            subtitle: const Text('18 April 2025'),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+            ]),
           ),
         ],
       ),
@@ -353,7 +332,7 @@ class _DashboardContentState extends State<DashboardContent> {
       child: Column(
         children: [
           CircleAvatar(
-            radius: width * 0.08,
+            radius: width * 0.06,
             backgroundColor: color,
             child: const Icon(Icons.mail_rounded, color: Colors.white),
           ),
@@ -380,7 +359,7 @@ class _DashboardContentState extends State<DashboardContent> {
       child: Column(
         children: [
           CircleAvatar(
-            radius: width * 0.08,
+            radius: width * 0.06,
             backgroundColor: Colors.grey.shade300,
             child: const Icon(Icons.apps_rounded, color: Colors.black),
           ),
