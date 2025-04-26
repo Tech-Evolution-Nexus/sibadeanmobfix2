@@ -146,10 +146,18 @@ class API {
     }
   }
 
-
   Future<dynamic> getdatadashboard() async {
     try {
       final response = await _dio.get('dash');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getdatasurat() async {
+    try {
+      final response = await _dio.get('surat');
       return response;
     } catch (e) {
       print('Error saat logout: $e');
