@@ -57,16 +57,24 @@ class InformasiDiriPage extends StatelessWidget {
                               const Center(
                                 child: Text(
                                   "Muhammad Nor Kholit",
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               const SizedBox(height: 4),
                               // Email & NIK
                               const Center(
-                                child: Text("mnorkholit7@gmail.com | 357303030982"),
+                                child: Text(
+                                    "mnorkholit7@gmail.com | 357303030982"),
                               ),
                               const SizedBox(height: 16),
                               // Detail Profesi, Telepon, Agama
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: const [],
+                              ),
                               const SizedBox(height: 16),
                               const Text(
                                 "Alamat",
