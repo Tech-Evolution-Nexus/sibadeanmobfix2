@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
-  // === Login User ===
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://localhost:8000/api/'));
+  // === Login User ===2
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.155:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');

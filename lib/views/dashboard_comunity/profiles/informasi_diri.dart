@@ -67,14 +67,6 @@ class InformasiDiriPage extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               // Detail Profesi, Telepon, Agama
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  DetailItem(icon: Icons.work, label: "Guru"),
-                                  DetailItem(icon: Icons.phone, label: "081233882834"),
-                                  DetailItem(icon: Icons.mosque, label: "Islam"),
-                                ],
-                              ),
                               const SizedBox(height: 16),
                               const Text(
                                 "Alamat",
