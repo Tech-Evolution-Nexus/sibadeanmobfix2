@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
+import 'informasi_diri.dart';
+import 'ganti_email.dart';
+import 'ganti_password.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -10,9 +14,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _nameController =
-      TextEditingController(text: "User");
-  final TextEditingController _emailController =
-      TextEditingController(text: "user@email.com");
+      TextEditingController(text: "Muhammad Nor Kholit");
+  final TextEditingController _nikController =
+      TextEditingController(text: "327303030982");
+
   void logout() async {
     final response = await API().logout();
     if (response.statusCode == 200) {
@@ -32,129 +37,142 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profil")),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Avatar Profile
-            Center(
-              child: Column(
+      backgroundColor: Colors.blue.shade900,
+      body: Column(
+        children: [
+          const SizedBox(height: 60),
+          // Foto Profil dan Nama
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: AssetImage('assets/profile.png'),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _nameController.text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _nikController.text,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 30),
+
+          // Card Menu
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(top: 30),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              ),
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 children: [
-                 CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage('assets/profile.png'),
-                  ), 
-                  SizedBox(height: 10),
-                  Text(
-                    _nameController.text,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    _emailController.text,
-                    style: TextStyle(color: Colors.grey),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 3,
+                    child: Column(
+                      children: [
+                        buildMenuItem(
+                          icon: Icons.person_outline,
+                          title: 'Informasi Diri',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InformasiDiriPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.email_outlined,
+                          title: 'Ganti Email',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GantiEmailPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.lock_outline,
+                          title: 'Ganti Password',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GantiPasswordPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.info_outline,
+                          title: 'Tentang',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TentangPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.logout,
+                          title: 'Keluar',
+                          iconColor: Colors.red,
+                          onTap: logout,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
-
-            // Card untuk Edit Profil
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 3,
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(labelText: "Nama"),
-                    ),
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(labelText: "Email"),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      child: Text("Simpan Perubahan"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Menu Pengaturan
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 3,
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.lock, color: Colors.blue),
-                    title: Text("Ubah Kata Sandi"),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // TODO: Tambahkan navigasi ke halaman ubah kata sandi
-                    },
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.notifications, color: Colors.orange),
-                    title: Text("Notifikasi"),
-                    trailing: Switch(
-                      value: true,
-                      onChanged: (value) {},
-                    ),
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.palette, color: Colors.purple),
-                    title: Text("Tema Aplikasi"),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // TODO: Tambahkan navigasi ke halaman tema aplikasi
-                    },
-                  ),
-                  Divider(),
-                  ListTile(
-                    leading: Icon(Icons.help, color: Colors.green),
-                    title: Text("Bantuan"),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // TODO: Tambahkan navigasi ke halaman bantuan
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Tombol Logout
-            ElevatedButton(
-              onPressed: () {
-                logout();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-              ),
-              child: Text("Keluar", style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget buildMenuItem({
+    required IconData icon,
+    required String title,
+    Color? iconColor,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor ?? Colors.blue.shade900),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
+  }
+
+  Widget buildDivider() {
+    return const Divider(
+      height: 1,
+      thickness: 1,
+      indent: 16,
+      endIndent: 16,
     );
   }
 }
