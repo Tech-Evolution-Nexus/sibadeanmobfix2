@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
 import '../pengajuan/pengajuan_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import '/methods/api.dart';
+import 'package:gap/gap.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -101,196 +104,249 @@ class _DashboardContentState extends State<DashboardContent> {
     final height = mediaQuery.size.height;
     final isSmall = width < 360;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(width * 0.04),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  lightColorScheme.primary,
-                  const Color.fromARGB(255, 25, 44, 155),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: width * 0.07,
-                      backgroundImage: foto.isNotEmpty
-                          ? NetworkImage(foto)
-                          : const AssetImage('assets/images/oled.jpg')
-                              as ImageProvider,
-                    ),
-                    SizedBox(width: width * 0.03),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          nama,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isSmall ? 14 : 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          nik,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: isSmall ? 11 : 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    const Icon(Icons.notifications, color: Colors.white),
-                  ],
-                ),
-                SizedBox(height: height * 0.02),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.05,
-                    vertical: height * 0.015,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Pengajuan Surat",
-                        style: TextStyle(
-                          fontSize: isSmall ? 14 : 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: height * 0.015),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _statusItem('Menunggu persetujuan', '20', isSmall),
-                          Container(
-                            width: 1,
-                            height: height * 0.04,
-                            color: Colors.grey[300],
-                          ),
-                          _statusItem('Selesai', '20', isSmall),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(width * 0.04),
-            margin: EdgeInsets.all(width * 0.04),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: height * 0.015),
-                dataModel == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: width * 0.01,
-                        runSpacing: height * 0.02,
-                        children: [
-                          ...dataModel!.surat.map(
-                            (item) =>
-                                _suratButton(context, item, Colors.blue, width),
-                          ),
-                          _lihatSemuaButton(context, width),
-                        ],
-                      ),
-                SizedBox(height: height * 0.02),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(width * 0.04),
-            margin: EdgeInsets.all(width * 0.04),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
+    return ListView(
+      padding: const EdgeInsets.all(0),
+      children: [
+        Stack(
+          children: [
+            buildBackground(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
                 children: [
-                  Text(
-                    "Berita & Peristiwa Badean",
-                    style: TextStyle(
-                      fontSize: isSmall ? 14 : 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.arrow_forward_ios, size: 14),
+                  const Gap(16),
+                  buildHeader(),
+                  const Gap(16),
+                  cardhero(),
+                  const Gap(16),
+                  pengajuan(),
                 ],
               ),
-              SizedBox(height: height * 0.01),
-              isLoading || dataModel == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: dataModel!.berita.map((item) {
-                        return Card(
-                          child: ListTile(
-                            leading: Image.asset(
-                              'assets/images/coba.png',
-                              width: width * 0.1,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.image_not_supported,
-                                    size: 40);
-                              },
-                            ),
-                            title: Text(
-                              item.judul,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: isSmall ? 12 : 14),
-                            ),
-                            subtitle: const Text('18 April 2025'),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-            ]),
+            ),
+          ],
+        ),
+        const Gap(16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: berita(),
+        ),
+        const Gap(16),
+      ],
+    );
+  }
+
+  Widget buildBackground() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    return Container(
+      height: width * 0.6,
+      decoration: BoxDecoration(
+        color: lightColorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
+    );
+  }
+
+  Widget buildHeader() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final isSmall = width < 360;
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: width * 0.07,
+          backgroundImage: foto.isNotEmpty
+              ? NetworkImage(foto)
+              : const AssetImage('assets/images/oled.jpg') as ImageProvider,
+        ),
+        SizedBox(width: width * 0.03),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              nama,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isSmall ? 14 : 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              nik,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: isSmall ? 11 : 12,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        const Icon(Icons.notifications, color: Colors.white),
+      ],
+    );
+  }
+
+  Widget cardhero() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final isSmall = width < 360;
+
+    final horizontalPadding = width * 0.04;
+    final verticalPadding = height * 0.02;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Pengajuan Surat",
+            style: TextStyle(
+              fontSize: isSmall ? 14 : 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: verticalPadding),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _statusItem('Menunggu persetujuan', '20', isSmall),
+              Container(
+                width: 1,
+                height: height * 0.04,
+                color: Colors.grey[300],
+              ),
+              _statusItem('Selesai', '20', isSmall),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget pengajuan() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final horizontalPadding = width * 0.04;
+    final verticalPadding = height * 0.02;
+    final contentPadding = width * 0.05;
+    return Container(
+      width: double.infinity, // agar container selebar layar
+      padding: EdgeInsets.all(contentPadding),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          dataModel == null
+              ? const Center(child: CircularProgressIndicator())
+              : Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: width * 0.02,
+                  runSpacing: height * 0.01,
+                  children: [
+                    ...dataModel!.surat.map(
+                      (item) => _suratButton(context, item, Colors.blue, width),
+                    ),
+                    _lihatSemuaButton(context, width),
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget berita() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final horizontalPadding = width * 0.04;
+    final verticalPadding = height * 0.02;
+    final isSmall = width < 360;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(width * 0.04),
+      decoration: _boxDecoration(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          children: [
+            Text(
+              "Berita & Peristiwa Badean",
+              style: TextStyle(
+                fontSize: isSmall ? 14 : 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios, size: 14),
+          ],
+        ),
+        isLoading || dataModel == null
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: dataModel!.berita.map((item) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailBerita(),
+                            ),
+                          );
+                        },
+                        dense: true,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                        leading: Image.asset(
+                          'assets/images/coba.png',
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.image_not_supported,
+                                size: 40);
+                          },
+                        ),
+                        title: Text(
+                          item.judul,
+                          maxLines: 2, // Set maxLines to 2 for 2-line text
+                          overflow: TextOverflow
+                              .ellipsis, // Add ellipsis for overflow text
+                          style: TextStyle(fontSize: isSmall ? 12 : 14),
+                        ),
+                        subtitle: const Text('18 April 2025'),
+                      ),
+                      const Divider(
+                          height: 1), // Garis pemisah antar berita (opsional)
+                    ],
+                  );
+                }).toList(),
+              ),
+      ]),
+    );
+  }
+
+  BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 5,
+          offset: Offset(0, 2),
+        ),
+      ],
     );
   }
 
@@ -320,32 +376,38 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Widget _suratButton(
       BuildContext context, Surat item, Color color, double width) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
+    final itemWidth = (width - (3 * width * 0.02)) / 5.5; // 4 kolom, 3 jarak
+
+    return SizedBox(
+      width: itemWidth,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
               builder: (context) =>
-                  PengajuanSuratPage(namaSurat: item.nama_surat)),
-        );
-      },
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: width * 0.06,
-            backgroundColor: color,
-            child: const Icon(Icons.mail_rounded, color: Colors.white),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: width * 0.2,
-            child: Text(
+                  PengajuanSuratPage(namaSurat: item.nama_surat),
+            ),
+          );
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: itemWidth * 0.3, // proporsional dengan lebar item
+              backgroundColor: color,
+              child: const Icon(Icons.mail_rounded, color: Colors.white),
+            ),
+            const SizedBox(height: 8),
+            Text(
               item.nama_surat,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 12),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

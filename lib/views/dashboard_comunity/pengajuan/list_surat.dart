@@ -52,23 +52,27 @@ class ListSuratState extends State<ListSurat> {
         backgroundColor: lightColorScheme.primary,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        children: [
-          SizedBox(height: height * 0.015),
-          dataModel == null
-              ? const Center(child: CircularProgressIndicator())
-              : Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: width * 0.05,
-                  runSpacing: height * 0.02,
-                  children: [
-                    ...dataModel!.map(
-                      (item) => _suratButton(context, item, Colors.blue, width),
-                    ),
-                  ],
-                ),
-          SizedBox(height: height * 0.02),
-        ],
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: height * 0.015),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            dataModel == null
+                ? const Center(child: CircularProgressIndicator())
+                : Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: width * 0.05,
+                    runSpacing: height * 0.02,
+                    children: [
+                      ...dataModel!.map(
+                        (item) =>
+                            _suratButton(context, item, Colors.blue, width),
+                      ),
+                    ],
+                  ),
+            SizedBox(height: height * 0.02),
+          ],
+        ),
       ),
     );
   }
