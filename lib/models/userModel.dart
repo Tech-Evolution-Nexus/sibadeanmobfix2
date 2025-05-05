@@ -2,34 +2,34 @@ class UserModel {
   final int id;
   final String name;
   final String email;
-  final String nik;
-  final String role;
   final String token;
   final MasyarakatModel? masyarakat;
 
   UserModel({
     required this.id,
     required this.name,
-    required this.nik,
-    required this.role,
     required this.email,
     required this.token,
     required this.masyarakat,
   });
+  
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['user']['id'] ?? 0,
-      name: json['user']['name'] ?? '',
-      nik: json['user']['nik'] ?? '',
-      role: json['user']['role'] ?? '',
-      email: json['user']['email'] ?? '',
-      token: json['token'] ?? '', // Ambil token langsung
-      masyarakat: json['user']['masyarakat'] != null
-          ? MasyarakatModel.fromJson(json['user']['masyarakat'])
-          : null,
-    );
-  }
+ factory UserModel.fromJson(Map<String, dynamic> json) {
+  
+  return UserModel(
+    
+    id: json['user']['id'] ?? 0,
+    name: json['user']['name'] ?? '',
+    email: json['user']['email'] ?? '',
+    token: json['token'] ?? '', // Ambil token langsung
+    masyarakat: json['user']['masyarakat'] != null
+        ? MasyarakatModel.fromJson(json['user']['masyarakat'])
+        : null,
+        
+  );
+}
+
+
 }
 
 class MasyarakatModel {
