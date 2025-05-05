@@ -160,7 +160,7 @@ class _DashboardContentState extends State<DashboardContent> {
           radius: width * 0.07,
           backgroundImage: foto.isNotEmpty
               ? NetworkImage(foto)
-              : const AssetImage('assets/images/oled.jpg') as ImageProvider,
+              : const AssetImage('assets/images/logo.jpg') as ImageProvider,
         ),
         SizedBox(width: width * 0.03),
         Column(
