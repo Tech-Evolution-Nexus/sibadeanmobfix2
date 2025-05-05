@@ -280,7 +280,9 @@ class _DashboardContentState extends State<DashboardContent> {
                               item.judul,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: isSmall ? 12 : 14),
+                              style: TextStyle(
+                                  fontSize: isSmall ? 12 : 14,
+                                  fontWeight: FontWeight.w600),
                             ),
                             subtitle: const Text('18 April 2025'),
                           ),
@@ -320,34 +322,36 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Widget _suratButton(
       BuildContext context, Surat item, Color color, double width) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  PengajuanSuratPage(namaSurat: item.nama_surat)),
-        );
-      },
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: width * 0.06,
-            backgroundColor: color,
-            child: const Icon(Icons.mail_rounded, color: Colors.white),
+    return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PengajuanSuratPage(namaSurat: item.nama_surat)),
+            );
+          },
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: width * 0.06,
+                backgroundColor: color,
+                child: const Icon(Icons.mail_rounded, color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: width * 0.2,
+                child: Text(
+                  item.nama_surat,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: width * 0.2,
-            child: Text(
-              item.nama_surat,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _lihatSemuaButton(BuildContext context, double width) {
