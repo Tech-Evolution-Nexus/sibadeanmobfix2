@@ -46,6 +46,7 @@ class _LoginState extends State<Login> {
         // Simpan data ke SharedPreferences
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setInt('user_id', userData['id']);
+        await preferences.setString('role', userData['role']);
         await preferences.setString('nik', userData['masyarakat']['nik']);
         await preferences.setString('token', responData['access_token']);
 
@@ -189,7 +190,6 @@ class _LoginState extends State<Login> {
                                     12), // sudut tombol agak bulat
                               ),
                             ),
-                            
                             onPressed: () {
                               print("Tombol login ditekan!");
                               if (_formSignInKey.currentState!.validate()) {
