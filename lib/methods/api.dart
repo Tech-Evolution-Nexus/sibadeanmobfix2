@@ -5,8 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://127.0.0.1:8000/api/"));
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://127.0.0.1:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -162,6 +161,25 @@ class API {
       return response;
     } catch (e) {
       print('Error saat logout: $e');
+    }
+  }
+
+  // === Aktivasi Akun ===
+  Future<dynamic> getRiwayatPengajuan({required String nik}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get(
+        "riwayat-pengajuan/$nik",
+      );
+
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
+
+      return e;
     }
   }
 }

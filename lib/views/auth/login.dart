@@ -48,6 +48,7 @@ class _LoginState extends State<Login> {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setInt('user_id', userData['id']);
         await preferences.setString('role', userData['role']);
+        await preferences.setString('nama', userData['masyarakat']['nama_lengkap']);
         await preferences.setString('nik', userData['masyarakat']['nik']);
         await preferences.setString('token', responData['access_token']);
 
@@ -81,6 +82,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
