@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
 import '../pengajuan/pengajuan_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import '/methods/api.dart';
-import 'package:gap/gap.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -160,7 +157,7 @@ class _DashboardContentState extends State<DashboardContent> {
           radius: width * 0.07,
           backgroundImage: foto.isNotEmpty
               ? NetworkImage(foto)
-              : const AssetImage('assets/images/logo.jpg') as ImageProvider,
+              : const AssetImage('assets/images/oled.jpg') as ImageProvider,
         ),
         SizedBox(width: width * 0.03),
         Column(
@@ -376,38 +373,32 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Widget _suratButton(
       BuildContext context, Surat item, Color color, double width) {
-    final itemWidth = (width - (3 * width * 0.02)) / 5.5; // 4 kolom, 3 jarak
-
-    return SizedBox(
-      width: itemWidth,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
               builder: (context) =>
-                  PengajuanSuratPage(namaSurat: item.nama_surat),
-            ),
-          );
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: itemWidth * 0.3, // proporsional dengan lebar item
-              backgroundColor: color,
-              child: const Icon(Icons.mail_rounded, color: Colors.white),
-            ),
-            const SizedBox(height: 8),
-            Text(
+                  PengajuanSuratPage(namaSurat: item.nama_surat)),
+        );
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: width * 0.06,
+            backgroundColor: color,
+            child: const Icon(Icons.mail_rounded, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: width * 0.2,
+            child: Text(
               item.nama_surat,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 12),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
