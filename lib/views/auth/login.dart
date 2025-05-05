@@ -38,6 +38,7 @@ class _LoginState extends State<Login> {
     }
     try {
       final response = await API().loginUser(nik: nik, password: pass);
+      print(response.data);
       if (response.statusCode == 200 &&
           response.data["data"].containsKey('access_token')) {
         final responData = response.data["data"];
