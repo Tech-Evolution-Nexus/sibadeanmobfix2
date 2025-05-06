@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/helper/constant.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import '../../../theme/theme.dart';
@@ -13,34 +15,11 @@ class PengajuanPage extends StatefulWidget {
 class _PengajuanPageState extends State<PengajuanPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<Map<String, String>> daftarSurat = [
-    {
-      'namaPengguna': 'Ahmad Fauzi',
-      'namaSurat': 'Surat Keterangan Aktif',
-      'tanggal': '5 Mei 2025',
-      'status': 'di_terima_rw',
-    },
-    {
-      'namaPengguna': 'Siti Aminah',
-      'namaSurat': 'Surat Domisili',
-      'tanggal': '2 Mei 2025',
-      'status': 'di_terima_rw',
-    },
-    {
-      'namaPengguna': 'Budi Hartono',
-      'namaSurat': 'Surat Izin Penelitian',
-      'tanggal': '1 Mei 2025',
-      'status': 'di_terima_rw',
-    },
-    {
-      'namaPengguna': 'Budi Hartono',
-      'namaSurat': 'Surat Izin Penelitian',
-      'tanggal': '1 Mei 2025',
-      'status': 'di_terima_rw',
-    },
-  ];
-  List<PengajuanSurat>? pengajuanModel;
+  List<PengajuanSurat> pengajuanMenunggu = [];
+  List<PengajuanSurat> pengajuanProses = [];
+  List<PengajuanSurat> pengajuanSelesai = [];
+  List<PengajuanSurat> pengajuanTolak = [];
+  List<PengajuanSurat> pengajuanBatal = [];
 
   @override
   void initState() {
@@ -63,16 +42,28 @@ class _PengajuanPageState extends State<PengajuanPage>
       var response = await API().getRiwayatPengajuan(nik: user["nik"]);
 
       if (response.statusCode == 200) {
-        print(response.data["data"]);
         setState(() {
-          pengajuanModel = (response.data["data"] as List)
+          pengajuanMenunggu =
+              (response.data["data"]["pengajuanMenunggu"] as List)
+                  .map((item) => PengajuanSurat.fromJson(item))
+                  .toList();
+          pengajuanProses = (response.data["data"]["pengajuanProses"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanTolak = (response.data["data"]["pengajuanTolak"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanBatal = (response.data["data"]["pengajuanBatal"] as List)
               .map((item) => PengajuanSurat.fromJson(item))
               .toList();
           // isLoading = false;
         });
       }
     } catch (e) {
-      // print("Error: $e");
+      print("Error: $e");
       // setState(() => isLoading = false);
     }
   }
@@ -107,10 +98,14 @@ class _PengajuanPageState extends State<PengajuanPage>
     switch (status) {
       case 'selesai':
         return Colors.green;
-      case 'ditolak':
+      case 'di_tolak_rt':
+      case 'di_tolak_rw':
+      case 'di_tolak_lurah':
         return Colors.red;
       case 'pending':
         return Colors.grey;
+      case 'dibatalkan':
+        return Colors.red;
       case 'di_terima_rw':
       case 'di_terima_rt':
         return Colors.orange;
@@ -123,10 +118,14 @@ class _PengajuanPageState extends State<PengajuanPage>
     switch (status) {
       case 'selesai':
         return "Selesai";
-      case 'ditolak':
+      case 'di_tolak_rt':
+      case 'di_tolak_rw':
+      case 'di_tolak_lurah':
         return "Ditolak";
       case 'pending':
         return "Menunggu";
+      case 'dibatalkan':
+        return "Dibatalkan";
       case 'di_terima_rw':
       case 'di_terima_rt':
         return "Diterima Rw";
@@ -135,94 +134,86 @@ class _PengajuanPageState extends State<PengajuanPage>
     }
   }
 
-  Widget statusSurat(String tabTitle) {
+  Widget statusSurat(String tabTitle, List<PengajuanSurat> pengajuan) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
     return ListView.builder(
-      itemCount: daftarSurat.length,
+      itemCount: pengajuan?.length ?? 0,
       itemBuilder: (context, index) {
-        final surat = daftarSurat[index];
-        Color headerColor = getHeaderColor(surat['status'] ?? "");
+        final surat = pengajuan?[index];
+        Color headerColor = getHeaderColor(surat?.status ?? "");
 
         return Card(
-          color: Colors.white,
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          elevation: 1,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Surat ${surat['namaSurat']} ditekan')),
+                SnackBar(
+                  content: Text('Surat ${surat?.surat?.nama_surat} ditekan'),
+                ),
               );
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: headerColor,
-                  ),
+                Padding(
+                  padding: EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.mail_outline,
-                        color: Colors.white,
+                      CircleAvatar(
+                        radius: width * 0.05,
+                        backgroundColor: headerColor,
+                        child:
+                            const Icon(Icons.mail_rounded, color: Colors.white),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        '${formatStatus(surat['status'] ?? "")}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        'Pengajuan: ${surat['tanggal']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white.withOpacity(0.9),
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Body
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${surat['namaSurat']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(Icons.person, size: 16, color: Colors.grey[600]),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Pengguna: ${surat['namaPengguna']}',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[800],
-                              ),
+                      Gap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.surat.nama_surat ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  formatStatus(surat?.status ?? ""),
+                                  style: TextStyle(
+                                      color: headerColor, fontSize: 14),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                            Gap(6),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.masyarakat.namaLengkap ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  surat?.createdAt ?? "",
+                                  style: TextStyle(
+                                      color: Colors.black54, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -255,15 +246,18 @@ class _PengajuanPageState extends State<PengajuanPage>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          statusSurat("Menunggu"),
-          statusSurat("Diproses"),
-          statusSurat("Download"),
-          statusSurat("Ditolak"),
-          statusSurat("Dibatalkan"),
-        ],
+      body: RefreshIndicator(
+        onRefresh: fetchData, // This is where data will be refreshed
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            statusSurat("Menunggu", pengajuanMenunggu),
+            statusSurat("Diproses", pengajuanProses),
+            statusSurat("Download", pengajuanSelesai),
+            statusSurat("Ditolak", pengajuanTolak),
+            statusSurat("Dibatalkan", pengajuanBatal),
+          ],
+        ),
       ),
     );
   }
