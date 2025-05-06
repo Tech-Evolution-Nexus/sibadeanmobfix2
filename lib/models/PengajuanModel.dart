@@ -1,10 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
 class PengajuanSurat {
-  final String id;
+  final int id;
   final String nik;
-  final String idSurat;
+  final int idSurat;
   final String nomorSurat;
   final String status;
   final String pengantarRt;
@@ -28,7 +29,20 @@ class PengajuanSurat {
     required this.createdAt,
   });
 
+  // Fungsi untuk memformat tanggal
+  String get formattedCreatedAt {
+    try {
+      DateTime date = DateTime.parse(createdAt);
+      return DateFormat('dd-MM-yyyy')
+          .format(date); // Ganti dengan format yang diinginkan
+    } catch (e) {
+      return createdAt; // Jika terjadi kesalahan, kembalikan tanggal asli
+    }
+  }
+
   factory PengajuanSurat.fromJson(Map<String, dynamic> json) {
+    DateTime date = DateTime.parse(json["created_at"]);
+    String dateFormat = DateFormat('dd/MM/yyyy').format(date);
     return PengajuanSurat(
       id: json['id'] ?? '',
       nik: json['nik'] ?? '',
@@ -37,10 +51,10 @@ class PengajuanSurat {
       status: json['status'] ?? '',
       pengantarRt: json['pengantar_rt'] ?? '',
       keterangan: json['keterangan'] ?? '',
-      keteranganDitolak: json['keterangan_ditolak'] ?? '',  
+      keteranganDitolak: json['keterangan_ditolak'] ?? '',
       masyarakat: MasyarakatModel.fromJson(json["masyarakat"]),
       surat: Surat.fromJson(json["surat"]),
-      createdAt: json['created_at'] ?? '',
+      createdAt: dateFormat ?? '',
     );
   }
 }

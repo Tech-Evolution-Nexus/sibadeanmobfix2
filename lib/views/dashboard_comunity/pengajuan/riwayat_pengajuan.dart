@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/helper/constant.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import '../../../theme/theme.dart';
@@ -13,34 +15,17 @@ class PengajuanPage extends StatefulWidget {
 class _PengajuanPageState extends State<PengajuanPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<Map<String, String>> daftarSurat = [
-    {
-      'namaPengguna': 'Ahmad Fauzi',
-      'namaSurat': 'Surat Keterangan Aktif',
-      'tanggal': '5 Mei 2025',
-      'status': 'Menunggu Rw',
-    },
-    {
-      'namaPengguna': 'Siti Aminah',
-      'namaSurat': 'Surat Domisili',
-      'tanggal': '2 Mei 2025',
-      'status': 'Diterima Rw',
-    },
-    {
-      'namaPengguna': 'Budi Hartono',
-      'namaSurat': 'Surat Izin Penelitian',
-      'tanggal': '1 Mei 2025',
-      'status': 'Ditolak',
-    },
-  ];
-  List<PengajuanSurat>? pengajuanModel;
+  List<PengajuanSurat> pengajuanMenunggu = [];
+  List<PengajuanSurat> pengajuanProses = [];
+  List<PengajuanSurat> pengajuanSelesai = [];
+  List<PengajuanSurat> pengajuanTolak = [];
+  List<PengajuanSurat> pengajuanBatal = [];
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -57,16 +42,28 @@ class _PengajuanPageState extends State<PengajuanPage>
       var response = await API().getRiwayatPengajuan(nik: user["nik"]);
 
       if (response.statusCode == 200) {
-        print(response.data["data"]);
         setState(() {
-          pengajuanModel = (response.data["data"] as List)
+          pengajuanMenunggu =
+              (response.data["data"]["pengajuanMenunggu"] as List)
+                  .map((item) => PengajuanSurat.fromJson(item))
+                  .toList();
+          pengajuanProses = (response.data["data"]["pengajuanProses"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanTolak = (response.data["data"]["pengajuanTolak"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          pengajuanBatal = (response.data["data"]["pengajuanBatal"] as List)
               .map((item) => PengajuanSurat.fromJson(item))
               .toList();
           // isLoading = false;
         });
       }
     } catch (e) {
-      // print("Error: $e");
+      print("Error: $e");
       // setState(() => isLoading = false);
     }
   }
@@ -74,13 +71,17 @@ class _PengajuanPageState extends State<PengajuanPage>
   Widget buildStatusText(String? status) {
     Color color;
     switch (status?.toLowerCase()) {
-      case 'diterima':
+      case 'selesai':
         color = Colors.green;
         break;
       case 'ditolak':
         color = Colors.red;
         break;
-      case 'diproses':
+      case 'pending':
+        color = Colors.grey;
+        break;
+      case 'di_terima_rw':
+      case 'di_terima_rt':
         color = Colors.orange;
         break;
       default:
@@ -95,100 +96,129 @@ class _PengajuanPageState extends State<PengajuanPage>
 
   Color getHeaderColor(String status) {
     switch (status) {
-      case 'Diterima':
+      case 'selesai':
         return Colors.green;
-      case 'Ditolak':
+      case 'di_tolak_rt':
+      case 'di_tolak_rw':
+      case 'di_tolak_lurah':
         return Colors.red;
-      case 'Diproses':
+      case 'pending':
+        return Colors.grey;
+      case 'dibatalkan':
+        return Colors.red;
+      case 'di_terima_rw':
+      case 'di_terima_rt':
         return Colors.orange;
       default:
         return Colors.grey;
     }
   }
 
-  Widget statusSurat(String tabTitle) {
-    // print(pengajuanModel);
+  String formatStatus(String status) {
+    switch (status) {
+      case 'selesai':
+        return "Selesai";
+      case 'di_tolak_rt':
+      case 'di_tolak_rw':
+      case 'di_tolak_lurah':
+        return "Ditolak";
+      case 'pending':
+        return "Menunggu";
+      case 'dibatalkan':
+        return "Dibatalkan";
+      case 'di_terima_rw':
+      case 'di_terima_rt':
+        return "Diterima Rw";
+      default:
+        return "Menunggu";
+    }
+  }
+
+  Widget statusSurat(String tabTitle, List<PengajuanSurat> pengajuan) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
     return ListView.builder(
-      itemCount: daftarSurat.length,
+      itemCount: pengajuan?.length ?? 0,
       itemBuilder: (context, index) {
-        final surat = daftarSurat[index];
-        Color headerColor = getHeaderColor(surat['status'] ?? "");
+        final surat = pengajuan?[index];
+        Color headerColor = getHeaderColor(surat?.status ?? "");
 
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          // elevation: 5,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {
-              // Aksi saat card ditekan (misalnya, menampilkan detail)
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Surat ${surat['namaSurat']} ditekan')),
+                SnackBar(
+                  content: Text('Surat ${surat?.surat?.nama_surat} ditekan'),
+                ),
               );
             },
-            child: Padding(
-              padding: const EdgeInsets.all(0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header dengan status dan ikon
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: headerColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: width * 0.05,
+                        backgroundColor: headerColor,
+                        child:
+                            const Icon(Icons.mail_rounded, color: Colors.white),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline, // Ikon default
-                          color: Colors.white,
+                      Gap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.surat.nama_surat ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  formatStatus(surat?.status ?? ""),
+                                  style: TextStyle(
+                                      color: headerColor, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Gap(6),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.masyarakat.namaLengkap ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  surat?.createdAt ?? "",
+                                  style: TextStyle(
+                                      color: Colors.black54, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          '${surat['status']}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  // Body card dengan data surat
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${surat['namaSurat']}',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Nama Pengguna: ${surat['namaPengguna']}',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Tanggal Pengajuan: ${surat['tanggal']}',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[500]),
-                        ),
-                        SizedBox(height: 8),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
@@ -209,20 +239,25 @@ class _PengajuanPageState extends State<PengajuanPage>
           indicatorColor: Colors.white,
           tabs: [
             Tab(text: "Menunggu"),
-            Tab(text: "Diterima"),
+            Tab(text: "Diproses"),
             Tab(text: "Download"),
+            Tab(text: "Ditolak"),
             Tab(text: "Dibatalkan"),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          statusSurat("Menunggu"),
-          statusSurat("Diterima"),
-          statusSurat("Download"),
-          statusSurat("Dibatalkan"),
-        ],
+      body: RefreshIndicator(
+        onRefresh: fetchData, // This is where data will be refreshed
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            statusSurat("Menunggu", pengajuanMenunggu),
+            statusSurat("Diproses", pengajuanProses),
+            statusSurat("Download", pengajuanSelesai),
+            statusSurat("Ditolak", pengajuanTolak),
+            statusSurat("Dibatalkan", pengajuanBatal),
+          ],
+        ),
       ),
     );
   }

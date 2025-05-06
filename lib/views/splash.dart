@@ -4,6 +4,7 @@ import 'auth/welcome.dart';
 import '../widgets/costum_color.dart';
 import '../widgets/custom_icon_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -18,9 +19,9 @@ class _SplashState extends State<Splash> {
     super.initState();
     // Delay 3 detik sebelum berpindah ke Login
     Future.delayed(Duration(seconds: 4), () async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final user = await Auth.user();
       Widget view;
-      if (prefs.getInt("user_id") != null) {
+      if (user["user_id"] != null) {
         view = DashboardPage();
       } else {
         view = WelcomeScreen();
