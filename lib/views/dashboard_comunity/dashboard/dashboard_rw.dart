@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gap/gap.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../riwayatsurat/riwayat_surat_rw.dart';
-import '../../../services/berita_service.dart';
+import '../riwayatsurat/riwayat_surat_rw.dart'; // pastikan ini tersedia
 
 class DashboardRW extends StatefulWidget {
   @override
@@ -31,7 +34,7 @@ class _DashboardRWState extends State<DashboardRW> {
         },
         selectedItemColor: lightColorScheme.primary,
         unselectedItemColor: Colors.grey,
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.history_rounded), label: "Riwayat"),
           BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Profil"),
@@ -47,144 +50,202 @@ class HomeRW extends StatefulWidget {
 }
 
 class _HomeRWState extends State<HomeRW> {
-  String nama = "RW";
+  String nama = "User";
+  String nik = "";
   String foto = "";
-  List<String> berita = [];
-  int totalSuratMasuk = 0;
   bool isLoading = true;
+  BeritaSuratModel? dataModel;
 
   @override
   void initState() {
     super.initState();
     getUserData();
     fetchBerita();
-    fetchTotalSurat();
   }
 
   Future<void> getUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final user = await Auth.user();
     setState(() {
-      nama = prefs.getString('nama') ?? "RW";
-      foto = prefs.getString('foto') ?? "";
+      nama = user['nama'] ?? "User";
+      nik = user['nik'] ?? "NIK tidak ditemukan";
+      foto = user['foto'] ?? "";
     });
   }
 
   Future<void> fetchBerita() async {
     try {
-      List<String> beritaData = await BeritaService().fetchBerita();
-      setState(() {
-        berita = beritaData;
-        isLoading = false;
-      });
+      var response = await API().getdatadashboard();
+      if (response.statusCode == 200) {
+        setState(() {
+          dataModel = BeritaSuratModel.fromJson(response.data['data']);
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      print("Error: $e");
+      setState(() => isLoading = false);
     }
-  }
-
-  Future<void> fetchTotalSurat() async {
-    // Simulasi API mengambil total surat masuk
-    await Future.delayed(Duration(seconds: 2));
-    setState(() {
-      totalSuratMasuk = 20; // Gantilah dengan data dari API
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Header dengan Nama RW dan Foto Profil
-        Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [lightColorScheme.primary, Colors.blueAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Selamat Datang, $nama!",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-              CircleAvatar(
-                radius: 25,
-                backgroundImage: foto.isNotEmpty
-                    ? NetworkImage(foto)
-                    : AssetImage('assets/images/default_user.png')
-                        as ImageProvider,
-              ),
-            ],
-          ),
-        ),
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final isSmall = width < 360;
 
-        // Card Total Surat Masuk
-        Container(
-          margin: EdgeInsets.all(16),
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: const EdgeInsets.all(0),
+      children: [
+        Stack(
+          children: [
+            buildBackground(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
                 children: [
-                  Text("Total Surat Masuk", style: TextStyle(fontSize: 16)),
-                  Text("$totalSuratMasuk",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const Gap(16),
+                  buildHeader(),
+                  const Gap(16),
+                  cardHero(),
+                  const Gap(16),
                 ],
               ),
-              Icon(Icons.mail_rounded, size: 40, color: Colors.blue),
+            ),
+          ],
+        ),
+        const Gap(16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: berita(),
+        ),
+        const Gap(16),
+      ],
+    );
+  }
+
+  Widget buildBackground() {
+    final width = MediaQuery.of(context).size.width;
+    return Container(
+      height: width * 0.5,
+      decoration: BoxDecoration(
+        color: lightColorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+    );
+  }
+
+  Widget buildHeader() {
+    final width = MediaQuery.of(context).size.width;
+    final isSmall = width < 360;
+
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: width * 0.07,
+          backgroundImage: foto.isNotEmpty
+              ? NetworkImage(foto)
+              : const AssetImage('assets/images/6.jpg') as ImageProvider,
+        ),
+        SizedBox(width: width * 0.03),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(nama, style: TextStyle(color: Colors.white, fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
+            Text(nik, style: TextStyle(color: Colors.white70, fontSize: isSmall ? 11 : 12)),
+          ],
+        ),
+        const Spacer(),
+        const Icon(Icons.notifications, color: Colors.white),
+      ],
+    );
+  }
+
+  Widget cardHero() {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final isSmall = width < 360;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: width * 0.04, vertical: height * 0.01),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Pengajuan Surat", style: TextStyle(fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: height * 0.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(child: _statusItem('Menunggu persetujuan', '17', isSmall)),
+              Container(width: 1, height: height * 0.04, color: Colors.grey[300]),
+              Expanded(child: _statusItem('Selesai', '20', isSmall)),
             ],
           ),
-        ),
+        ],
+      ),
+    );
+  }
 
-        // Berita
-        Container(
-          height: 150,
-          margin: EdgeInsets.symmetric(vertical: 10),
-          child: isLoading
-              ? Center(child: CircularProgressIndicator())
-              : berita.isEmpty
-                  ? Center(child: Text("Tidak ada berita"))
-                  : PageView.builder(
-                      itemCount: berita.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
-                          ),
-                          child: Card(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Text(
-                                  berita[index],
-                                  style: TextStyle(color: Colors.black, fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-        ),
+  Widget berita() {
+    final width = MediaQuery.of(context).size.width;
+    final isSmall = width < 360;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(width * 0.04),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("Berita & Peristiwa Badean", style: TextStyle(fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios, size: 14),
+            ],
+          ),
+          isLoading || dataModel == null
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: dataModel!.berita.map((item) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailBerita())),
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                          leading: Image.asset('assets/images/coba.png', width: 40, height: 40, fit: BoxFit.cover),
+                          title: Text(item.judul, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: isSmall ? 12 : 14)),
+                          subtitle: const Text('18 April 2025'),
+                        ),
+                        const Divider(height: 1),
+                      ],
+                    );
+                  }).toList(),
+                ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration _boxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))],
+    );
+  }
+
+  Widget _statusItem(String title, String count, bool isSmall) {
+    return Column(
+      children: [
+        Text(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isSmall ? 16 : 18, color: lightColorScheme.primary)),
+        const SizedBox(height: 4),
+        Text(title, style: TextStyle(color: Colors.black54, fontSize: isSmall ? 11 : 12), textAlign: TextAlign.center),
       ],
     );
   }

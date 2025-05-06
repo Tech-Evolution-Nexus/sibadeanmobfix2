@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
-import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
 import '../riwayatsurat/riwayat_surat_rt.dart';
-import '../../../services/berita_service.dart';
+
 
 class DashboardRT extends StatefulWidget {
   @override
