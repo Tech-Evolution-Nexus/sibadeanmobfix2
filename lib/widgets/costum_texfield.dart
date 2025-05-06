@@ -8,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   final bool obscureText;
   final IconData? prefixIcon;
   final bool readOnly;
+  final int? maxLength;
   final IconData? suffixIcon;
   final VoidCallback? onSuffixPressed;
   final String? Function(String?)? validator;
@@ -23,7 +24,8 @@ class CustomTextField extends StatefulWidget {
     this.suffixIcon,
     this.onSuffixPressed,
     this.readOnly = false,
-    this.validator, 
+    this.validator,
+    this.maxLength,
   });
 
   @override
@@ -72,10 +74,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
         keyboardType: widget.keyboardType,
         readOnly: widget.readOnly,
         obscureText: widget.obscureText,
+        maxLength: widget.maxLength,
         obscuringCharacter: '*',
         validator: widget.validator,
         focusNode: _focusNode, // Tambahkan FocusNode
-        style: TextStyle(fontSize: deviceWidth * 0.04),
+        style: TextStyle(fontSize: deviceWidth * 0.03),
 
         decoration: InputDecoration(
           prefixIcon: widget.prefixIcon != null
@@ -90,8 +93,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               : null,
           labelText: widget.labelText,
           hintText: widget.hintText,
-          labelStyle: TextStyle(fontSize: 16),
-          hintStyle: TextStyle(fontSize: 16, color: Colors.grey),
+          labelStyle: TextStyle(fontSize: 14),
+          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
           contentPadding: EdgeInsets.symmetric(
               horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
           border: OutlineInputBorder(

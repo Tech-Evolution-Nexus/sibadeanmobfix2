@@ -174,4 +174,40 @@ class API {
       print('Error saat logout: $e');
     }
   }
+
+  // === Aktivasi Akun ===
+  Future<dynamic> getRiwayatPengajuan({required String nik}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get(
+        "riwayat-pengajuan/$nik",
+      );
+
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
+
+      return e;
+    }
+  }
+  Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get(
+        "anggota-keluarga/$nokk",
+      );
+
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
+
+      return e;
+    }
+  }
 }
