@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+
 import '/methods/api.dart';
 
 class DetailRiwayat extends StatefulWidget {
@@ -29,6 +29,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
       if (response.statusCode == 200) {
         setState(() {
+          print(widget.idPengajuan);
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
           isLoading = false;
         });
@@ -43,9 +44,23 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Visibility(
+          visible: pengajuanData?.status == "selesai",
+          child: Container(
+            width: 60,
+            height: 60,
+            child: FloatingActionButton(
+              backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
+              tooltip: 'Unduh Surat',
+              onPressed: () {},
+              shape: const CircleBorder(), // memastikan bentuk lingkaran
+              child: const Icon(Icons.download, color: Colors.white, size: 28),
+            ),
+          )),
       appBar: AppBar(
         leading: BackButton(color: Colors.black),
-        title: Text("Detail Pengajuan", style: TextStyle(color: Colors.black)),
+        title: Text("Detail Pengajuan",
+            style: TextStyle(color: Colors.black, fontSize: 16)),
         backgroundColor: Colors.white,
         shadowColor: Colors.black.withOpacity(0.1),
       ),
@@ -66,33 +81,31 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   borderRadius: BorderRadius.circular(12),
                                   side: BorderSide(
                                     color: Colors.black26,
-                                    width: .2,
+                                    width: 0.2,
                                   ),
                                 ),
-                                elevation: 1,
+                                elevation: 0,
                                 color: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text("Informasi Pengajuan",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600)),
-                                      SizedBox(height: 16),
-                                      _infoItem("Nama Surat",
-                                          pengajuanData!.surat.nama_surat),
-                                      _infoItem("Nomor Surat",
-                                          pengajuanData!.nomorSurat),
-                                      Row(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color:
+                                            _warnaStatus(pengajuanData!.status),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        ),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      child: Row(
                                         children: [
                                           Icon(
                                             _iconStatus(pengajuanData!.status),
-                                            color: _warnaStatus(
-                                                pengajuanData!.status),
+                                            color: Colors.white,
                                             size: 18,
                                           ),
                                           SizedBox(width: 8),
@@ -102,21 +115,42 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                                   pengajuanData!.status),
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: _warnaStatus(
-                                                    pengajuanData!.status),
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 8),
-                                      _infoItem(
-                                          "Tanggal Pengajuan",
-                                          formatTanggal(
-                                              pengajuanData!.createdAt)),
-                                    ],
-                                  ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Informasi Pengajuan",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(height: 16),
+                                          _infoItem("Nama Surat",
+                                              pengajuanData!.surat.nama_surat),
+                                          _infoItem("Nomor Surat",
+                                              pengajuanData!.nomorSurat),
+                                          // SizedBox(height: 8),
+                                          _infoItem(
+                                            "Tanggal Pengajuan",
+                                            formatTanggal(
+                                                pengajuanData!.createdAt),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               Gap(12),
@@ -128,7 +162,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                     width: .2,
                                   ),
                                 ),
-                                elevation: 1,
+                                elevation: 0,
                                 color: Colors.white,
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),

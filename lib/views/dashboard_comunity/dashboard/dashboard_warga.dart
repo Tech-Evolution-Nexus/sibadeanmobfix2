@@ -406,8 +406,7 @@ class _DashboardContentState extends State<DashboardContent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DaftarAnggotaKeluargaView()),
+                  builder: (context) => DaftarAnggotaKeluargaView()),
             );
           },
           child: Column(
