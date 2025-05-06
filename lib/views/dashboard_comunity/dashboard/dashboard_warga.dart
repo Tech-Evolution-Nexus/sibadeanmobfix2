@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
@@ -157,7 +158,7 @@ class _DashboardContentState extends State<DashboardContent> {
           radius: width * 0.07,
           backgroundImage: foto.isNotEmpty
               ? NetworkImage(foto)
-              : const AssetImage('assets/images/oled.jpg') as ImageProvider,
+              : const AssetImage('assets/images/6.jpg') as ImageProvider,
         ),
         SizedBox(width: width * 0.03),
         Column(
