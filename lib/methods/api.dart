@@ -182,6 +182,25 @@ class API {
       return e;
     }
   }
+
+  Future<dynamic> getRiwayatPengajuanDetail({required int idPengajuan}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get(
+        "riwayat-pengajuan-detail/$idPengajuan",
+      );
+
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
+
+      return e;
+    }
+  }
+
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
       // Mengambil data dari API
