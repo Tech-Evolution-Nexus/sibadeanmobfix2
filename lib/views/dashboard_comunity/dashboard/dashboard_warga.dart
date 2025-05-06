@@ -300,7 +300,8 @@ class _DashboardContentState extends State<DashboardContent> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailBerita(),
+                              builder: (context) =>
+                                  DetailBerita(id: item.id.toInt()),
                             ),
                           );
                         },
