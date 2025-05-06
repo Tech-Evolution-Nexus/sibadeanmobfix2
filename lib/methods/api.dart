@@ -126,7 +126,7 @@ class API {
     try {
       // Ambil token yang ada di SharedPreferences
       String? token = await _getToken();
-
+    
       if (token != null) {
         final response = await _dio.post(
           'logout',
@@ -136,7 +136,6 @@ class API {
             },
           ),
         );
-
         return response;
       } else {
         print('Tidak ada token yang tersimpan');
@@ -193,6 +192,7 @@ class API {
       return e;
     }
   }
+
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
       // Mengambil data dari API

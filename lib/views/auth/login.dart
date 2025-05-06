@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import '../../methods/api.dart';
 import '../../theme/theme.dart';
 import 'verifikasi.dart';
@@ -39,30 +41,60 @@ class _LoginState extends State<Login> {
     try {
       final response = await API().loginUser(nik: nik, password: pass);
       print(response.data);
+
       if (response.statusCode == 200 &&
           response.data["data"].containsKey('access_token')) {
         final responData = response.data["data"];
         final userData = responData['user'];
 
-        // Simpan data ke SharedPreferences
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        await preferences.setInt('user_id', userData['id']);
-        await preferences.setString('role', userData['role']);
-        await preferences.setString(
-            'nama', userData['masyarakat']['nama_lengkap']);
-        await preferences.setString('nik', userData['masyarakat']['nik']);
-        await preferences.setString('token', responData['access_token']);
+        // Periksa role dan simpan data ke SharedPreferences hanya jika role valid
+        if (userData['role'] == 'rt' ||
+            userData['role'] == 'rw' ||
+            userData['role'] == 'warga') {
+          // Simpan data ke SharedPreferences
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          await preferences.setInt('user_id', userData['id']);
+          await preferences.setString('role', userData['role']);
+          await preferences.setString(
+              'nama', userData['masyarakat']['nama_lengkap']);
+          await preferences.setString('nik', userData['masyarakat']['nik']);
+          await preferences.setString('token', responData['access_token']);
 
-        // Tampilkan pesan berhasil
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'] ?? 'Login berhasil')),
-        );
+          // Tampilkan pesan berhasil
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(response.data['message'] ?? 'Login berhasil')),
+          );
 
-        print("Navigasi ke Dashboard...");
-        // Navigasi ke halaman Dashboard
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => DashboardPage()),
-        );
+          print("Navigasi ke Dashboard...");
+
+          // Navigasi ke halaman Dashboard berdasarkan role
+          if (userData['role'] == 'rt') {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => DashboardRT()),
+            );
+          } else if (userData['role'] == 'rw') {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => DashboardRW()),
+            );
+          } else if (userData['role'] == 'masyarakat') {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => DashboardPage()),
+            );
+          }
+        } else {
+          // Jika role tidak valid, tampilkan pesan dan tidak simpan data ke SharedPreferences
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Akses ditolak: Peran Anda tidak dapat mengakses aplikasi ini')),
+          );
+
+          // Kembalikan ke halaman login
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => Login()),
+          );
+        }
       } else {
         // Jika login gagal
         final errorMessage = response.data['message'] ?? 'Login gagal';
