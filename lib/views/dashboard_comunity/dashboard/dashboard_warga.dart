@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import "package:gap/gap.dart";
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
-import '../pengajuan/pengajuan_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
@@ -402,8 +403,7 @@ class _DashboardContentState extends State<DashboardContent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DaftarAnggotaKeluargaView()),
+                  builder: (context) => DaftarAnggotaKeluargaView()),
             );
           },
           child: Column(
