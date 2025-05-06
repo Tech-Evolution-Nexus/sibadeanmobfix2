@@ -93,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             slides[index]["title"]!,
                             style: const TextStyle(
                               fontFamily: 'Montserrat',
-                              fontSize: 20.0,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
@@ -106,7 +106,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               slides[index]["description"]!,
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black54,
                               ),
@@ -160,7 +160,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           color: Colors.white,
                           fontSize: 16,
                           fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -182,7 +182,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

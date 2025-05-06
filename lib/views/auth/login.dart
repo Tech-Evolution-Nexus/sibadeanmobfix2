@@ -48,7 +48,8 @@ class _LoginState extends State<Login> {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.setInt('user_id', userData['id']);
         await preferences.setString('role', userData['role']);
-        await preferences.setString('nama', userData['masyarakat']['nama_lengkap']);
+        await preferences.setString(
+            'nama', userData['masyarakat']['nama_lengkap']);
         await preferences.setString('nik', userData['masyarakat']['nik']);
         await preferences.setString('token', responData['access_token']);
 
@@ -82,18 +83,17 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 50),
             Expanded(
               flex: 7,
               child: SingleChildScrollView(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+                  padding: const EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 20.0),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -179,7 +179,7 @@ class _LoginState extends State<Login> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 16),
                         SizedBox(
                           width: double
                               .infinity, // Tombol akan selebar container induknya
@@ -194,7 +194,6 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             onPressed: () {
-                              print("Tombol login ditekan!");
                               if (_formSignInKey.currentState!.validate()) {
                                 loginUser();
                               }
@@ -204,13 +203,13 @@ class _LoginState extends State<Login> {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 color: Colors.white,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 24),
                         // const SizedBox(height: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
