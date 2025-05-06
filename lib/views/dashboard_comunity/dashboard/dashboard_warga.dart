@@ -147,8 +147,8 @@ class _DashboardContentState extends State<DashboardContent> {
       decoration: BoxDecoration(
         color: lightColorScheme.primary,
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
         ),
       ),
     );
@@ -220,17 +220,22 @@ class _DashboardContentState extends State<DashboardContent> {
           ),
           SizedBox(height: verticalPadding),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment
+                .spaceAround, // bisa dihapus karena Expanded akan mengatur lebar
             children: [
-              _statusItem('Menunggu persetujuan', '20', isSmall),
+              Expanded(
+                child: _statusItem('Menunggu persetujuan', '20', isSmall),
+              ),
               Container(
                 width: 1,
                 height: height * 0.04,
                 color: Colors.grey[300],
               ),
-              _statusItem('Selesai', '20', isSmall),
+              Expanded(
+                child: _statusItem('Selesai', '20', isSmall),
+              ),
             ],
-          ),
+          )
         ],
       ),
     );
