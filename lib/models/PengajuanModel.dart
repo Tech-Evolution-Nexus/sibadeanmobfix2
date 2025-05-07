@@ -6,11 +6,11 @@ class PengajuanSurat {
   final int id;
   final String nik;
   final int idSurat;
-  final String nomorSurat;
+  final String? nomorSurat;
   final String status;
-  final String pengantarRt;
-  final String keterangan;
-  final String keteranganDitolak;
+  final String? pengantarRt;
+  final String? keterangan;
+  final String? keteranganDitolak;
   final MasyarakatModel masyarakat;
   final Surat surat;
   final String createdAt;

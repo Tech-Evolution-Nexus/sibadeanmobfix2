@@ -29,7 +29,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
       if (response.statusCode == 200) {
         setState(() {
-          print(widget.idPengajuan);
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
           isLoading = false;
         });
