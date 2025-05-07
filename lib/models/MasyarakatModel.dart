@@ -48,7 +48,7 @@ class MasyarakatModel {
   factory MasyarakatModel.fromJson(Map<String, dynamic> json) {
     return MasyarakatModel(
       nik: json['nik'] ?? '',
-      idUser: json['id_user'] ?? '',
+      idUser: json['id_user']?.toString() ?? '',
       noKk: json['no_kk'] ?? '',
       namaLengkap: json['nama_lengkap'] ?? '',
       jenisKelamin: json['jenis_kelamin'] ?? '',

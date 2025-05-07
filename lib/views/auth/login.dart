@@ -50,6 +50,7 @@ class _LoginState extends State<Login> {
         await preferences.setString('role', userData['role']);
         await preferences.setString(
             'nama', userData['masyarakat']['nama_lengkap']);
+        await preferences.setString('no_kk', userData['masyarakat']["no_kk"]);
         await preferences.setString('nik', userData['masyarakat']['nik']);
         await preferences.setString('token', responData['access_token']);
 

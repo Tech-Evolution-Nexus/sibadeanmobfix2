@@ -7,7 +7,8 @@ class DaftarAnggotaKeluargaView extends StatefulWidget {
   const DaftarAnggotaKeluargaView({Key? key}) : super(key: key);
 
   @override
-  State<DaftarAnggotaKeluargaView> createState() => _DaftarAnggotaKeluargaViewState();
+  State<DaftarAnggotaKeluargaView> createState() =>
+      _DaftarAnggotaKeluargaViewState();
 }
 
 class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
@@ -24,7 +25,6 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
     try {
       final user = await Auth.user();
       var response = await API().getAnggotaKeluarga(nokk: user["noKk"]);
-
       if (response.statusCode == 200) {
         setState(() {
           anggotaKeluarga = (response.data["data"] as List)
@@ -75,9 +75,11 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                               child: ListTile(
                                 title: Text(
                                   anggota.namaLengkap,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                subtitle: Text('${anggota.statusKeluarga} - ${anggota.nik}'),
+                                subtitle: Text(
+                                    '${anggota.statusKeluarga} - ${anggota.nik}'),
                                 onTap: () {
                                   // Aksi saat dipilih
                                 },
