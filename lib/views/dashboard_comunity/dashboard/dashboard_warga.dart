@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import "package:gap/gap.dart";
@@ -74,7 +75,7 @@ class _DashboardContentState extends State<DashboardContent> {
   void initState() {
     super.initState();
     getUserData();
-    fetchBerita();
+    fetchDash();
   }
 
   Future<void> getUserData() async {
@@ -86,7 +87,7 @@ class _DashboardContentState extends State<DashboardContent> {
     });
   }
 
-  Future<void> fetchBerita() async {
+  Future<void> fetchDash() async {
     try {
       var response = await API().getdatadashboard();
       if (response.statusCode == 200) {
@@ -253,18 +254,28 @@ class _DashboardContentState extends State<DashboardContent> {
       padding: EdgeInsets.all(width * 0.04),
       decoration: _boxDecoration(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          children: [
-            Text(
-              "Berita & Peristiwa Badean",
-              style: TextStyle(
-                fontSize: isSmall ? 14 : 16,
-                fontWeight: FontWeight.bold,
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListBerita(),
               ),
-            ),
-            const Spacer(),
-            const Icon(Icons.arrow_forward_ios, size: 14),
-          ],
+            );
+          },
+          child: Row(
+            children: [
+              Text(
+                "Berita & Peristiwa Badean",
+                style: TextStyle(
+                  fontSize: isSmall ? 14 : 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios, size: 14),
+            ],
+          ),
         ),
         isLoading || dataModel == null
             ? const Center(child: CircularProgressIndicator())
@@ -277,7 +288,8 @@ class _DashboardContentState extends State<DashboardContent> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailBerita(),
+                              builder: (context) =>
+                                  DetailBerita(id: item.id.toInt()),
                             ),
                           );
                         },
@@ -403,7 +415,8 @@ class _DashboardContentState extends State<DashboardContent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DaftarAnggotaKeluargaView()),
+                  builder: (context) => DaftarAnggotaKeluargaView(
+                      idsurat: item.id, namasurat: item.nama_surat)),
             );
           },
           child: Column(

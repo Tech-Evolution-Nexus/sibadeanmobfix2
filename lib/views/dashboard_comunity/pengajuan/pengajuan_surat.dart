@@ -2,16 +2,21 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/models/LampiranSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/suratlampiranmodel.dart';
 import '../../../services/pengajuan_servis.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/costum_texfield.dart';
 
 class PengajuanSuratPage extends StatefulWidget {
   final String namaSurat;
+  final int idsurat;
 
   const PengajuanSuratPage({
     Key? key,
     required this.namaSurat,
+    required this.idsurat,
   }) : super(key: key);
 
   @override
@@ -23,6 +28,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   File? _selectedFile;
   Uint8List? _selectedFileBytes;
   String? _fileName;
+  SuratLampiranModel? dataModel;
+  bool isLoading = true;
   final PageController _pageController = PageController();
   int _currentPage = 0;
   TextEditingController fullNameController = TextEditingController();
@@ -38,13 +45,18 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController rtController = TextEditingController();
   TextEditingController rwController = TextEditingController();
-
+  List<TextEditingController> fieldControllers = [];
   String? selectedGender;
   String? selectedAgama;
 
   // Image File
   File? kkGambar;
   Uint8List? kkGambarBytes;
+  void initState() {
+    super.initState();
+    fetchSurat();
+  }
+
   void nextPage() {
     if (_formKey.currentState!.validate()) {
       _pageController.nextPage(
@@ -63,7 +75,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
     setState(() => _currentPage--);
   }
 
-  Future<void> _pickFile() async {
+  Future<void> _pickFile(int idlampiran) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png', 'pdf'],
@@ -82,6 +94,25 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("File tidak valid atau gagal dipilih")),
       );
+    }
+  }
+
+  Future<void> fetchSurat() async {
+    try {
+      var response =
+          await API().getdatadetailpengajuansurat(idsurat: widget.idsurat);
+      ();
+      if (response.statusCode == 200) {
+        print(response.data['data']['surat']);
+        setState(() {
+          dataModel =
+              SuratLampiranModel.fromJson(response.data['data']['surat']);
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() => isLoading = false);
     }
   }
 
@@ -246,7 +277,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                   color: Colors.grey)),
                                         SizedBox(height: 10),
                                         ElevatedButton.icon(
-                                          onPressed: _pickFile,
+                                          onPressed: () {},
                                           icon: Icon(Icons.upload_file),
                                           label: Text("Upload Foto KK"),
                                         ),
@@ -276,126 +307,110 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                           ),
                           Column(
                             children: [
-                              CustomTextField(
-                                controller: noKkController,
-                                labelText: "No KK",
-                                hintText: "Masukkan No KK",
-                                keyboardType: TextInputType.number,
-                                validator: (value) => value!.length != 16
-                                    ? "No KK harus 16 digit"
-                                    : null,
+                              Container(
+                                width: double.infinity,
+                                child: isLoading || dataModel?.fields == null
+                                    ? const Center(
+                                        child: CircularProgressIndicator())
+                                    : Column(
+                                        children: List.generate(
+                                            dataModel!.fields.length, (i) {
+                                          final item = dataModel!.fields[i];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 12.0),
+                                            child: CustomTextField(
+                                              controller: fieldControllers[i],
+                                              labelText: "Field ${i + 1}",
+                                              hintText:
+                                                  "Masukkan ${item.namaField ?? 'data'}",
+                                              keyboardType: TextInputType.text,
+                                            ),
+                                          );
+                                        }),
+                                      ),
                               ),
+                              const SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   ElevatedButton(
                                     onPressed: prevPage,
-                                    child: Text("Kembali"),
+                                    child: const Text("Kembali"),
                                   ),
                                   ElevatedButton(
-                                    onPressed: nextPage,
-                                    child: Text("Selanjutnya"),
+                                    onPressed: _submitPengajuan,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 24),
+                                      textStyle: const TextStyle(fontSize: 16),
+                                    ),
+                                    child: const Text("Ajukan Surat"),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          Column(children: [
-                            Container(
-                              width: double.infinity,
-                              child: Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Upload File Pengantar Rt (Opsional):",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                          Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                child: isLoading ||
+                                        dataModel!.lampiransurat == null
+                                    ? const Center(
+                                        child: CircularProgressIndicator())
+                                    : Column(
+                                        children: dataModel!.lampiransurat
+                                            .map((item) {
+                                          return Column(
+                                            children: [
+                                              Card(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8),
+                                                child: ListTile(
+                                                  title: Text(item
+                                                      .lampiran.namaLampiran),
+                                                  subtitle:
+                                                      Text("Belum ada gambar"),
+                                                  trailing: IconButton(
+                                                    icon: const Icon(
+                                                        Icons.upload),
+                                                    onPressed: () => _pickFile(
+                                                        item.idLampiran),
+                                                  ),
+                                                ),
+                                              ),
+                                              const Divider(height: 1),
+                                            ],
+                                          );
+                                        }).toList(),
                                       ),
-                                      SizedBox(height: 10),
-                                      if (_selectedFileBytes != null ||
-                                          _selectedFile != null)
-                                        Column(
-                                          children: [
-                                            Text("File Terpilih: $_fileName",
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            SizedBox(height: 10),
-                                            if (_fileName != null &&
-                                                (_fileName!.endsWith('.jpg') ||
-                                                    _fileName!
-                                                        .endsWith('.png')))
-                                              _selectedFileBytes != null
-                                                  ? Image.memory(
-                                                      _selectedFileBytes!,
-                                                      height: 100,
-                                                    )
-                                                  : _selectedFile != null
-                                                      ? Image.file(
-                                                          _selectedFile!,
-                                                          height: 100,
-                                                        )
-                                                      : Container(),
-                                          ],
-                                        )
-                                      else
-                                        Text("Belum ada file yang dipilih",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
-                                      SizedBox(height: 10),
-                                      ElevatedButton.icon(
-                                        onPressed: _pickFile,
-                                        icon: Icon(Icons.upload_file),
-                                        label: Text("Upload Foto KK"),
-                                      ),
-                                      if (kkGambar != null ||
-                                          kkGambarBytes != null)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Text(
-                                            "Gambar KK telah dipilih!",
-                                            style:
-                                                TextStyle(color: Colors.green),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: prevPage,
-                                  child: Text("Kembali"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: _submitPengajuan,
-                                  child: Text("Ajukan Surat"),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 12),
-                                    textStyle: TextStyle(fontSize: 16),
+                              const SizedBox(
+                                  height: 16), // Jarak antara daftar dan tombol
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: prevPage,
+                                    child: const Text("Kembali"),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ])
+                                  ElevatedButton(
+                                    onPressed: _submitPengajuan,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 24),
+                                      textStyle: const TextStyle(fontSize: 16),
+                                    ),
+                                    child: const Text("Ajukan Surat"),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),

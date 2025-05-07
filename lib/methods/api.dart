@@ -163,6 +163,24 @@ class API {
     }
   }
 
+  Future<dynamic> getdatadetailpengajuansurat({required int idsurat}) async {
+    try {
+      final response = await _dio.get('detail-pengajuan/$idsurat');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getberita() async {
+    try {
+      final response = await _dio.get('berita');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
   Future<dynamic> getdetailbrita({required int id}) async {
     // print(id);
     try {
@@ -220,10 +238,7 @@ class API {
 
       return response;
     } on DioException catch (e) {
-      // Menampilkan error jika ada
-      if (kDebugMode) {
-        debugPrint('Error: ${e.response}');
-      }
+      print('Error: ${e}');
 
       return e;
     }

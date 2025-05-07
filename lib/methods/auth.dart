@@ -9,6 +9,7 @@ class Auth {
       'role': prefs.getString('role'),
       'nama': prefs.getString('nama'),
       'nik': prefs.getString('nik'),
+      'noKK': prefs.getString('noKK'),
       'token': prefs.getString('token'),
     };
   }
