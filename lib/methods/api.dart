@@ -231,16 +231,11 @@ class API {
 
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
-      // Mengambil data dari API
-      var response = await _dio.get(
-        "anggota-keluarga/$nokk",
-      );
-
+      final response = await _dio.get("anggota-keluarga/$nokk");
       return response;
     } on DioException catch (e) {
-      print('Error: ${e}');
-
-      return e;
+      print('Dio Error: ${e.response?.statusCode} - ${e.message}');
+      throw e; // ⬅ ini penting, bukan return e
     }
   }
 
@@ -271,7 +266,7 @@ class API {
     }
   }
 
-    Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
+  Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
     try {
       print('NIK: $nik');
       final response = await _dio.post(

@@ -8,7 +8,8 @@ class DaftarAnggotaKeluargaView extends StatefulWidget {
   final int idsurat;
   final String namasurat;
 
-  const DaftarAnggotaKeluargaView({Key? key, required this.idsurat,required this.namasurat})
+  const DaftarAnggotaKeluargaView(
+      {Key? key, required this.idsurat, required this.namasurat})
       : super(key: key);
 
   @override
@@ -27,28 +28,41 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   }
 
   Future<void> fetchData() async {
-    try {
-      final user = await Auth.user();
+  try {
+    final user = await Auth.user();
+    final nokk = user['noKK']?.toString();
 
-      var response =
-          await API().getAnggotaKeluarga(nokk: user['noKK'].toString());
+    print("NoKK dari user: $nokk");
 
-      if (response.statusCode == 200) {
-        // print(response.data["data"]);
-        setState(() {
-          anggotaKeluarga = (response.data["data"] as List)
-              .map((item) => MasyarakatModel.fromJson(item))
-              .toList();
-          isLoading = false;
-        });
-      } else {
-        setState(() => isLoading = false);
-      }
-    } catch (e) {
-      print("Error: $e");
+    if (nokk == null || nokk.isEmpty) {
+      print("NoKK tidak ditemukan!");
+      setState(() => isLoading = false);
+      return;
+    }
+
+    var response = await API().getAnggotaKeluarga(nokk: nokk);
+
+    if (response.statusCode == 200 && response.data != null && response.data["data"] != null) {
+      final List<dynamic> dataJson = response.data["data"];
+
+      // Tampilkan log per item di console
+      dataJson.forEach((item) => print("Item json: $item"));
+
+      setState(() {
+        anggotaKeluarga = dataJson
+            .map((item) => MasyarakatModel.fromJson(item))
+            .toList();
+        isLoading = false;
+      });
+    } else {
+      print("Gagal fetch data: statusCode ${response.statusCode}");
       setState(() => isLoading = false);
     }
+  } catch (e) {
+    print("Error saat fetch data: $e");
+    setState(() => isLoading = false);
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +108,8 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => PengajuanSuratPage(
-                                          idsurat: widget.idsurat,namaSurat: widget.namasurat),
+                                          idsurat: widget.idsurat,
+                                          namaSurat: widget.namasurat),
                                     ),
                                   );
                                 },
