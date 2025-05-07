@@ -2,7 +2,7 @@ import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
 class MasyarakatModel {
   final String nik;
-  final String idUser;
+  final int idUser;
   final String noKk;
   final String namaLengkap;
   final String jenisKelamin;

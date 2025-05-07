@@ -6,6 +6,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk
 import 'informasi_diri.dart';
 import 'ganti_email.dart';
 import 'ganti_password.dart';
+import 'ganti_noHp.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -25,6 +26,9 @@ class _ProfilePageState extends State<ProfilePage> {
       await preferences.remove('user_id');
       await preferences.remove('nik');
       await preferences.remove('token');
+      await preferences.remove('nama');
+      await preferences.remove('nik');
+      await preferences.remove('noKK');
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -44,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Foto Profil dan Nama
           CircleAvatar(
             radius: 50,
-            backgroundImage: AssetImage('assets/profile.png'),
+            backgroundImage: AssetImage('assets/images/6.jpg'),
           ),
           const SizedBox(height: 10),
           Text(
@@ -104,6 +108,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => GantiEmailPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.phone_android_outlined,
+                          title: 'Ganti Nomor HP',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GantiNoHpPage()),
                             );
                           },
                         ),

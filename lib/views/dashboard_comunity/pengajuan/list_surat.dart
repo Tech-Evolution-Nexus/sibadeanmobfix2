@@ -45,12 +45,11 @@ class ListSuratState extends State<ListSurat> {
     final isSmall = width < 360;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Daftar Semua Surat",
-          style: TextStyle(color: Colors.white, fontSize: 15),
+        title: const Text('List Surat'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: lightColorScheme.primary,
-        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: height * 0.015),
@@ -109,8 +108,8 @@ Widget _suratButton(
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                PengajuanSuratPage(namaSurat: item.nama_surat)),
+            builder: (context) => PengajuanSuratPage(
+                idsurat: item.id, namaSurat: item.nama_surat)),
       );
     },
     child: Column(

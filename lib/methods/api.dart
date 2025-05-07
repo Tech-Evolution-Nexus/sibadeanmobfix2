@@ -136,7 +136,6 @@ class API {
             },
           ),
         );
-
         return response;
       } else {
         print('Tidak ada token yang tersimpan');
@@ -158,6 +157,35 @@ class API {
   Future<dynamic> getdatasurat() async {
     try {
       final response = await _dio.get('surat');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getdatadetailpengajuansurat({required int idsurat}) async {
+    try {
+      final response = await _dio.get('detail-pengajuan/$idsurat');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getberita() async {
+    try {
+      final response = await _dio.get('berita');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getdetailbrita({required int id}) async {
+    // print(id);
+    try {
+      final response = await _dio.get('berita/$id');
+      print(response.data['data']['berita']);
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -210,12 +238,80 @@ class API {
 
       return response;
     } on DioException catch (e) {
-      // Menampilkan error jika ada
-      if (kDebugMode) {
-        debugPrint('Error: ${e.response}');
-      }
+      print('Error: ${e}');
 
       return e;
+    }
+  }
+
+  Future<dynamic> chgPass(
+      {required String nik,
+      required String password,
+      required String newPass,
+      required String confPass}) async {
+    try {
+      print('NIK: $nik');
+      final response = await _dio.post(
+        'ubhPass',
+        data: {
+          'nik': nik,
+          'password': password,
+          'new_password': newPass,
+          'confirm_password': confPass,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+    Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
+    try {
+      print('NIK: $nik');
+      final response = await _dio.post(
+        'ubhNoHp',
+        data: {
+          'nik': nik,
+          'no_kitap': noHp,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+  Future<dynamic> chgEmail({required String nik, required String email}) async {
+    try {
+      print('NIK: $nik');
+      final response = await _dio.post(
+        'ubhemail',
+        data: {
+          'nik': nik,
+          'email': email,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      return response;
+    } on DioException catch (e) {
+      return e.response;
     }
   }
 }
