@@ -28,11 +28,18 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   }
 
   Future<void> fetchData() async {
+<<<<<<< HEAD
   try {
     final user = await Auth.user();
     final nokk = user['noKK']?.toString();
 
     print("NoKK dari user: $nokk");
+=======
+    try {
+      final user = await Auth.user();
+      var response =
+          await API().getAnggotaKeluarga(nokk: user['noKK'].toString());
+>>>>>>> a33814b6e59f2e02ec9c5fe45c1859522069f71e
 
     if (nokk == null || nokk.isEmpty) {
       print("NoKK tidak ditemukan!");
