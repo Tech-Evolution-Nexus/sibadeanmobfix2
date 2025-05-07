@@ -10,6 +10,8 @@ class GantiEmailPage extends StatefulWidget {
   State<GantiEmailPage> createState() => _GantiEmailPageState();
 }
 
+final emailController = TextEditingController();
+
 void _showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text(message)),
@@ -75,8 +77,6 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController(text: "mnorkholit7@gmail.com");
-
     return Scaffold(
       appBar: AppBar(title: const Text("Ganti Email")),
       body: Padding(
@@ -84,7 +84,8 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Harap masukkan alamat email baru untuk\nmemperbarui informasi Anda"),
+            const Text(
+                "Harap masukkan alamat email baru untuk\nmemperbarui informasi Anda"),
             const SizedBox(height: 20),
             TextField(
               controller: emailController,
@@ -98,7 +99,8 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo[900]),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo[900]),
                 child: const Text("Ubah Email"),
               ),
             )

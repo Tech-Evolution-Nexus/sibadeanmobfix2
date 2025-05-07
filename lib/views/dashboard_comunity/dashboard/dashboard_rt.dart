@@ -275,7 +275,7 @@ class _HomeRTState extends State<HomeRT> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailBerita(),
+                                builder: (context) => DetailBerita(id: item.id.toInt()),
                               ),
                             );
                           },
