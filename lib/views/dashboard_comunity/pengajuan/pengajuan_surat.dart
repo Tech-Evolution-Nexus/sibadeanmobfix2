@@ -54,6 +54,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   Uint8List? kkGambarBytes;
   void initState() {
     super.initState();
+
     fetchSurat();
   }
 
@@ -103,11 +104,17 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           await API().getdatadetailpengajuansurat(idsurat: widget.idsurat);
       ();
       if (response.statusCode == 200) {
-        print(response.data['data']['surat']);
+        // print(response.data['data']['surat']);
         setState(() {
           dataModel =
               SuratLampiranModel.fromJson(response.data['data']['surat']);
           isLoading = false;
+          if (dataModel?.fields != null) {
+            fieldControllers = List.generate(
+              dataModel!.fields.length,
+              (_) => TextEditingController(),
+            );
+          }
         });
       }
     } catch (e) {
@@ -297,19 +304,28 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                   ),
                                 ),
                               ),
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: nextPage,
-                                  child: Text("Selanjutnya"),
-                                ),
-                              ),
+                              dataModel?.fields.isEmpty == true &&
+                                      dataModel?.lampiransurat.isEmpty == true
+                                  ? Center(
+                                      child: ElevatedButton(
+                                        onPressed: _submitPengajuan,
+                                        child: Text("Ajukan Surat"),
+                                      ),
+                                    )
+                                  : Center(
+                                      child: ElevatedButton(
+                                        onPressed: nextPage,
+                                        child: Text("Selanjutnya"),
+                                      ),
+                                    ),
                             ],
                           ),
                           Column(
                             children: [
                               Container(
                                 width: double.infinity,
-                                child: isLoading || dataModel?.fields == null
+                                child: isLoading ||
+                                        dataModel?.fields.isEmpty == true
                                     ? const Center(
                                         child: CircularProgressIndicator())
                                     : Column(
@@ -321,7 +337,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                 bottom: 12.0),
                                             child: CustomTextField(
                                               controller: fieldControllers[i],
-                                              labelText: "Field ${i + 1}",
+                                              labelText:
+                                                  item.namaField ?? "data",
                                               hintText:
                                                   "Masukkan ${item.namaField ?? 'data'}",
                                               keyboardType: TextInputType.text,
@@ -331,25 +348,47 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                       ),
                               ),
                               const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: prevPage,
-                                    child: const Text("Kembali"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: _submitPengajuan,
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 24),
-                                      textStyle: const TextStyle(fontSize: 16),
-                                    ),
-                                    child: const Text("Ajukan Surat"),
-                                  ),
-                                ],
-                              ),
+                              dataModel?.lampiransurat.isEmpty == true
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: prevPage,
+                                          child: const Text("Kembali"),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: _submitPengajuan,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 24),
+                                            textStyle:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          child: const Text("Ajukan Surat"),
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: prevPage,
+                                          child: const Text("Kembali"),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: nextPage,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 24),
+                                            textStyle:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          child: const Text("Selanjutnya"),
+                                        ),
+                                      ],
+                                    )
                             ],
                           ),
                           Column(

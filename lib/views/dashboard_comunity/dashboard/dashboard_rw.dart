@@ -35,9 +35,12 @@ class _DashboardRWState extends State<DashboardRW> {
         selectedItemColor: lightColorScheme.primary,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.history_rounded), label: "Riwayat"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "Profil"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.history_rounded), label: "Riwayat"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded), label: "Profil"),
         ],
       ),
     );
@@ -154,8 +157,14 @@ class _HomeRWState extends State<HomeRW> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(nama, style: TextStyle(color: Colors.white, fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
-            Text(nik, style: TextStyle(color: Colors.white70, fontSize: isSmall ? 11 : 12)),
+            Text(nama,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmall ? 14 : 16,
+                    fontWeight: FontWeight.bold)),
+            Text(nik,
+                style: TextStyle(
+                    color: Colors.white70, fontSize: isSmall ? 11 : 12)),
           ],
         ),
         const Spacer(),
@@ -170,18 +179,23 @@ class _HomeRWState extends State<HomeRW> {
     final isSmall = width < 360;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.04, vertical: height * 0.01),
+      padding: EdgeInsets.symmetric(
+          horizontal: width * 0.04, vertical: height * 0.01),
       decoration: _boxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Pengajuan Surat", style: TextStyle(fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
+          Text("Pengajuan Surat",
+              style: TextStyle(
+                  fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
           SizedBox(height: height * 0.01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(child: _statusItem('Menunggu persetujuan', '17', isSmall)),
-              Container(width: 1, height: height * 0.04, color: Colors.grey[300]),
+              Expanded(
+                  child: _statusItem('Menunggu persetujuan', '17', isSmall)),
+              Container(
+                  width: 1, height: height * 0.04, color: Colors.grey[300]),
               Expanded(child: _statusItem('Selesai', '20', isSmall)),
             ],
           ),
@@ -203,7 +217,10 @@ class _HomeRWState extends State<HomeRW> {
         children: [
           Row(
             children: [
-              Text("Berita & Peristiwa Badean", style: TextStyle(fontSize: isSmall ? 14 : 16, fontWeight: FontWeight.bold)),
+              Text("Berita & Peristiwa Badean",
+                  style: TextStyle(
+                      fontSize: isSmall ? 14 : 16,
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               const Icon(Icons.arrow_forward_ios, size: 14),
             ],
@@ -215,11 +232,20 @@ class _HomeRWState extends State<HomeRW> {
                     return Column(
                       children: [
                         ListTile(
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailBerita())),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetailBerita(id: item.id.toInt()))),
                           dense: true,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-                          leading: Image.asset('assets/images/coba.png', width: 40, height: 40, fit: BoxFit.cover),
-                          title: Text(item.judul, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: isSmall ? 12 : 14)),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 4),
+                          leading: Image.asset('assets/images/coba.png',
+                              width: 40, height: 40, fit: BoxFit.cover),
+                          title: Text(item.judul,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: isSmall ? 12 : 14)),
                           subtitle: const Text('18 April 2025'),
                         ),
                         const Divider(height: 1),
@@ -236,16 +262,25 @@ class _HomeRWState extends State<HomeRW> {
     return BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))],
+      boxShadow: const [
+        BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))
+      ],
     );
   }
 
   Widget _statusItem(String title, String count, bool isSmall) {
     return Column(
       children: [
-        Text(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: isSmall ? 16 : 18, color: lightColorScheme.primary)),
+        Text(count,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isSmall ? 16 : 18,
+                color: lightColorScheme.primary)),
         const SizedBox(height: 4),
-        Text(title, style: TextStyle(color: Colors.black54, fontSize: isSmall ? 11 : 12), textAlign: TextAlign.center),
+        Text(title,
+            style:
+                TextStyle(color: Colors.black54, fontSize: isSmall ? 11 : 12),
+            textAlign: TextAlign.center),
       ],
     );
   }

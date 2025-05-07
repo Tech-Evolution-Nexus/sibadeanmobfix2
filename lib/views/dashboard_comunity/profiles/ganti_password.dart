@@ -16,7 +16,6 @@ void _showSnackBar(BuildContext context, String message) {
   );
 }
 
-
 class _GantiPasswordPageState extends State<GantiPasswordPage> {
   final passwordController = TextEditingController();
   final newPassController = TextEditingController();
@@ -32,7 +31,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
     print(
         'DEBUG: newPass="$newPass" (${newPass.length}), confPass="$confPass" (${confPass.length})');
 
-if (newPass.isEmpty || confPass.isEmpty) {
+    if (newPass.isEmpty || confPass.isEmpty) {
       _showSnackBar(context, 'Kolom tidak boleh kosong.');
       return;
     }
@@ -48,7 +47,6 @@ if (newPass.isEmpty || confPass.isEmpty) {
     }
 
 // Proceed with API call
-
 
     try {
       final response = await API().chgPass(
@@ -72,6 +70,8 @@ if (newPass.isEmpty || confPass.isEmpty) {
         final errorMessage =
             response.data['message'] ?? 'Gagal mengubah password';
         print("Gagal: $errorMessage");
+        print(response.data);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Gagal: $errorMessage')),
         );
