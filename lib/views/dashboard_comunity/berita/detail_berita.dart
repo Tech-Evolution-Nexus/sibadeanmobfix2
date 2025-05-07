@@ -52,10 +52,10 @@ class _DetailBeritaState extends State<DetailBerita>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: lightColorScheme.primary,
-        title: const Text(
-          "List Berita & Peristiwa",
-          style: TextStyle(color: Colors.white),
+        title: const Text('Berita'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(

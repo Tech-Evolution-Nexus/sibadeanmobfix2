@@ -126,7 +126,7 @@ class API {
     try {
       // Ambil token yang ada di SharedPreferences
       String? token = await _getToken();
-    
+
       if (token != null) {
         final response = await _dio.post(
           'logout',
@@ -157,6 +157,24 @@ class API {
   Future<dynamic> getdatasurat() async {
     try {
       final response = await _dio.get('surat');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getdatadetailpengajuansurat({required int idsurat}) async {
+    try {
+      final response = await _dio.get('detail-pengajuan/$idsurat');
+      return response;
+    } catch (e) {
+      print('Error saat logout: $e');
+    }
+  }
+
+  Future<dynamic> getberita() async {
+    try {
+      final response = await _dio.get('berita');
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -220,10 +238,7 @@ class API {
 
       return response;
     } on DioException catch (e) {
-      // Menampilkan error jika ada
-      if (kDebugMode) {
-        debugPrint('Error: ${e.response}');
-      }
+      print('Error: ${e}');
 
       return e;
     }

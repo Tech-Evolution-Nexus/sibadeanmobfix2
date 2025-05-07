@@ -25,6 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
       await preferences.remove('user_id');
       await preferences.remove('nik');
       await preferences.remove('token');
+      await preferences.remove('nama');
+      await preferences.remove('nik');
+      await preferences.remove('noKK');
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -44,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Foto Profil dan Nama
           CircleAvatar(
             radius: 50,
-            backgroundImage: AssetImage('assets/profile.png'),
+            backgroundImage: AssetImage('assets/images/6.jpg'),
           ),
           const SizedBox(height: 10),
           Text(

@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
         // Periksa role dan simpan data ke SharedPreferences hanya jika role valid
         if (userData['role'] == 'rt' ||
             userData['role'] == 'rw' ||
-            userData['role'] == 'warga') {
+            userData['role'] == 'masyarakat') {
           // Simpan data ke SharedPreferences
           SharedPreferences preferences = await SharedPreferences.getInstance();
           await preferences.setInt('user_id', userData['id']);
@@ -58,8 +58,8 @@ class _LoginState extends State<Login> {
           await preferences.setString(
               'nama', userData['masyarakat']['nama_lengkap']);
           await preferences.setString('nik', userData['masyarakat']['nik']);
+          await preferences.setString('noKK', userData['masyarakat']['no_kk']);
           await preferences.setString('token', responData['access_token']);
-
           // Tampilkan pesan berhasil
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -85,9 +85,7 @@ class _LoginState extends State<Login> {
         } else {
           // Jika role tidak valid, tampilkan pesan dan tidak simpan data ke SharedPreferences
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(
-                    'Akses ditolak: Peran Anda tidak dapat mengakses aplikasi ini')),
+            SnackBar(content: Text('Akses ditolak')),
           );
 
           // Kembalikan ke halaman login

@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/pengajuan_surat.dart';
 
 class DaftarAnggotaKeluargaView extends StatefulWidget {
-  const DaftarAnggotaKeluargaView({Key? key}) : super(key: key);
+  final int idsurat;
+  final String namasurat;
+
+  const DaftarAnggotaKeluargaView({Key? key, required this.idsurat,required this.namasurat})
+      : super(key: key);
 
   @override
-  State<DaftarAnggotaKeluargaView> createState() => _DaftarAnggotaKeluargaViewState();
+  State<DaftarAnggotaKeluargaView> createState() =>
+      _DaftarAnggotaKeluargaViewState();
 }
 
 class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
@@ -23,9 +29,12 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   Future<void> fetchData() async {
     try {
       final user = await Auth.user();
-      var response = await API().getAnggotaKeluarga(nokk: user["noKk"]);
+
+      var response =
+          await API().getAnggotaKeluarga(nokk: user['noKK'].toString());
 
       if (response.statusCode == 200) {
+        // print(response.data["data"]);
         setState(() {
           anggotaKeluarga = (response.data["data"] as List)
               .map((item) => MasyarakatModel.fromJson(item))
@@ -75,11 +84,19 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                               child: ListTile(
                                 title: Text(
                                   anggota.namaLengkap,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                subtitle: Text('${anggota.statusKeluarga} - ${anggota.nik}'),
+                                subtitle: Text(
+                                    '${anggota.statusKeluarga} - ${anggota.nik}'),
                                 onTap: () {
-                                  // Aksi saat dipilih
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PengajuanSuratPage(
+                                          idsurat: widget.idsurat,namaSurat: widget.namasurat),
+                                    ),
+                                  );
                                 },
                               ),
                             );
