@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
@@ -10,8 +9,6 @@ import "package:gap/gap.dart";
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
-import '../pengajuan/pengajuan_surat.dart';
-import '../berita/detail_berita.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
@@ -167,7 +164,7 @@ class _DashboardContentState extends State<DashboardContent> {
           radius: width * 0.07,
           backgroundImage: foto.isNotEmpty
               ? NetworkImage(foto)
-              : const AssetImage('assets/images/oled.jpg') as ImageProvider,
+              : const AssetImage('assets/images/6.jpg') as ImageProvider,
         ),
         SizedBox(width: width * 0.03),
         Column(
@@ -406,8 +403,7 @@ class _DashboardContentState extends State<DashboardContent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DaftarAnggotaKeluargaView()),
+                  builder: (context) => DaftarAnggotaKeluargaView()),
             );
           },
           child: Column(

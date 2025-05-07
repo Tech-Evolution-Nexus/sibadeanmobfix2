@@ -12,24 +12,18 @@ class UserModel {
     required this.token,
     required this.masyarakat,
   });
-  
 
- factory UserModel.fromJson(Map<String, dynamic> json) {
-  
-  return UserModel(
-    
-    id: json['user']['id'] ?? 0,
-    name: json['user']['name'] ?? '',
-    email: json['user']['email'] ?? '',
-    token: json['token'] ?? '', // Ambil token langsung
-    masyarakat: json['user']['masyarakat'] != null
-        ? MasyarakatModel.fromJson(json['user']['masyarakat'])
-        : null,
-        
-  );
-}
-
-
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['user']['id'] ?? 0,
+      name: json['user']['name'] ?? '',
+      email: json['user']['email'] ?? '',
+      token: json['token'] ?? '', // Ambil token langsung
+      masyarakat: json['user']['masyarakat'] != null
+          ? MasyarakatModel.fromJson(json['user']['masyarakat'])
+          : null,
+    );
+  }
 }
 
 class MasyarakatModel {
@@ -40,6 +34,9 @@ class MasyarakatModel {
   final String tanggalLahir;
   final String agama;
   final String pekerjaan;
+  final String pendidikan;
+  final String statusPerkawinan;
+  final String kewarganegaraan;
   final String alamat;
   final String phone;
   final String statusAkun;
@@ -53,6 +50,9 @@ class MasyarakatModel {
     required this.tanggalLahir,
     required this.agama,
     required this.pekerjaan,
+    required this.pendidikan,
+    required this.statusPerkawinan,
+    required this.kewarganegaraan,
     required this.alamat,
     required this.phone,
     required this.statusAkun,
@@ -68,6 +68,9 @@ class MasyarakatModel {
       tanggalLahir: json['tanggal_lahir'] ?? '',
       agama: json['agama'] ?? '',
       pekerjaan: json['pekerjaan'] ?? '',
+      pendidikan: json['pendidikan'] ?? '',
+      statusPerkawinan: json['status_perkawinan'] ?? '',
+      kewarganegaraan: json['kewarganegaraan'] ?? '',
       alamat: json['alamat'] ?? '',
       phone: json['phone'] ?? '',
       statusAkun: json['status_akun'] ?? '',

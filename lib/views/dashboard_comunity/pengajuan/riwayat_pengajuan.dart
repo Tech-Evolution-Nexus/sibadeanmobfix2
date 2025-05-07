@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sibadeanmob_v2_fix/helper/constant.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
-import '../../../theme/theme.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/detail_riwayat.dart';
+
 import '/methods/api.dart';
+import '../../../theme/theme.dart';
 
 class PengajuanPage extends StatefulWidget {
   @override
@@ -32,6 +32,142 @@ class _PengajuanPageState extends State<PengajuanPage>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        // backgroundColor: lightColorScheme.primary,
+        backgroundColor: lightColorScheme.primary,
+        title: Text("Pengajuan Surat",
+            style: TextStyle(color: Colors.white, fontSize: 20)),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.white,
+          tabs: [
+            Tab(text: "Menunggu"),
+            Tab(text: "Diproses"),
+            Tab(text: "Download"),
+            Tab(text: "Ditolak"),
+            Tab(text: "Dibatalkan"),
+          ],
+        ),
+      ),
+      body: RefreshIndicator(
+        onRefresh: fetchData, // This is where data will be refreshed
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            statusSurat("Menunggu", pengajuanMenunggu),
+            statusSurat("Diproses", pengajuanProses),
+            statusSurat("Download", pengajuanSelesai),
+            statusSurat("Ditolak", pengajuanTolak),
+            statusSurat("Dibatalkan", pengajuanBatal),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget statusSurat(String tabTitle, List<PengajuanSurat> pengajuan) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    return ListView.builder(
+      itemCount: pengajuan?.length ?? 0,
+      itemBuilder: (context, index) {
+        final surat = pengajuan?[index];
+        Color headerColor = getHeaderColor(surat?.status ?? "");
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: Colors.black26,
+              width: .2,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailRiwayat(
+                          idPengajuan: surat?.id ?? 0,
+                        )),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: width * 0.05,
+                        backgroundColor: headerColor,
+                        child:
+                            const Icon(Icons.mail_rounded, color: Colors.white),
+                      ),
+                      Gap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.surat.nama_surat ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 14),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  formatStatus(surat?.status ?? ""),
+                                  style: TextStyle(
+                                      color: headerColor, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            Gap(6),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    surat?.masyarakat.namaLengkap ?? "",
+                                    style: TextStyle(
+                                        color: Colors.black54, fontSize: 12),
+                                  ),
+                                ),
+                                Text(
+                                  surat?.createdAt ?? "",
+                                  style: TextStyle(
+                                      color: Colors.black54, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> fetchData() async {
@@ -132,133 +268,5 @@ class _PengajuanPageState extends State<PengajuanPage>
       default:
         return "Menunggu";
     }
-  }
-
-  Widget statusSurat(String tabTitle, List<PengajuanSurat> pengajuan) {
-    final mediaQuery = MediaQuery.of(context);
-    final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
-    return ListView.builder(
-      itemCount: pengajuan?.length ?? 0,
-      itemBuilder: (context, index) {
-        final surat = pengajuan?[index];
-        Color headerColor = getHeaderColor(surat?.status ?? "");
-
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          elevation: 0,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Surat ${surat?.surat?.nama_surat} ditekan'),
-                ),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: width * 0.05,
-                        backgroundColor: headerColor,
-                        child:
-                            const Icon(Icons.mail_rounded, color: Colors.white),
-                      ),
-                      Gap(12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    surat?.surat.nama_surat ?? "",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 14),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Text(
-                                  formatStatus(surat?.status ?? ""),
-                                  style: TextStyle(
-                                      color: headerColor, fontSize: 14),
-                                ),
-                              ],
-                            ),
-                            Gap(6),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    surat?.masyarakat.namaLengkap ?? "",
-                                    style: TextStyle(
-                                        color: Colors.black54, fontSize: 12),
-                                  ),
-                                ),
-                                Text(
-                                  surat?.createdAt ?? "",
-                                  style: TextStyle(
-                                      color: Colors.black54, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: lightColorScheme.primary,
-        title: Text("Pengajuan Surat", style: TextStyle(color: Colors.white)),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          indicatorColor: Colors.white,
-          tabs: [
-            Tab(text: "Menunggu"),
-            Tab(text: "Diproses"),
-            Tab(text: "Download"),
-            Tab(text: "Ditolak"),
-            Tab(text: "Dibatalkan"),
-          ],
-        ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: fetchData, // This is where data will be refreshed
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            statusSurat("Menunggu", pengajuanMenunggu),
-            statusSurat("Diproses", pengajuanProses),
-            statusSurat("Download", pengajuanSelesai),
-            statusSurat("Ditolak", pengajuanTolak),
-            statusSurat("Dibatalkan", pengajuanBatal),
-          ],
-        ),
-      ),
-    );
   }
 }
