@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
@@ -11,8 +10,6 @@ import "package:gap/gap.dart";
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 import '../pengajuan/list_surat.dart';
-import '../pengajuan/pengajuan_surat.dart';
-import '../berita/detail_berita.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 

@@ -7,6 +7,8 @@ import '../../methods/api.dart';
 import '../../theme/theme.dart';
 import 'verifikasi.dart';
 import '../dashboard_comunity/dashboard/dashboard_warga.dart';
+import '../dashboard_comunity/dashboard/dashboard_rt.dart';
+import '../dashboard_comunity/dashboard/dashboard_rw.dart';
 import '../../widgets/costum_texfield.dart';
 
 class Login extends StatefulWidget {
@@ -35,7 +37,9 @@ class _LoginState extends State<Login> {
     final nik = nikController.text.trim();
     final pass = passwordController.text.trim();
     if (nik.isEmpty || pass.isEmpty) {
-      SnackBar(content: Text('NIK dan Password tidak boleh kosong'));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('NIK dan Password tidak boleh kosong')),
+      );
       return;
     }
     try {
@@ -94,7 +98,6 @@ class _LoginState extends State<Login> {
           );
         }
       } else {
-        // Jika login gagal
         final errorMessage = response.data['message'] ?? 'Login gagal';
         print("Login gagal: $errorMessage");
         ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +105,6 @@ class _LoginState extends State<Login> {
         );
       }
     } catch (e) {
-      // Tangani error lainnya
       print("Terjadi kesalahan: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),

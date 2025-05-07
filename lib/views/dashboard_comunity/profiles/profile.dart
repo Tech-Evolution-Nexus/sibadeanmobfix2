@@ -6,6 +6,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk
 import 'informasi_diri.dart';
 import 'ganti_email.dart';
 import 'ganti_password.dart';
+import 'ganti_noHp.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -107,6 +108,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => GantiEmailPage()),
+                            );
+                          },
+                        ),
+                        buildDivider(),
+                        buildMenuItem(
+                          icon: Icons.phone_android_outlined,
+                          title: 'Ganti Nomor HP',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GantiNoHpPage()),
                             );
                           },
                         ),
