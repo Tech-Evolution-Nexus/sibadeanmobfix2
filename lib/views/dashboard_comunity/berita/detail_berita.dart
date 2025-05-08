@@ -51,10 +51,12 @@ class _DetailBeritaState extends State<DetailBerita>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Berita'),
+        // title: const Text('Berita'),
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.chevron_left),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -69,23 +71,36 @@ class _DetailBeritaState extends State<DetailBerita>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.asset(
-                            'assets/images/coba.png',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                          Text(
+                            dataModel!.createdAt,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           ),
-                          SizedBox(height: 16),
                           Text(
                             dataModel!.judul,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 16),
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(6), // Sesuaikan radius
+                              child: Image.asset(
+                                'assets/images/berita-sample.jpg',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
                           Text(
                             dataModel!.konten,
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 14),
                           ),
                         ],
                       ),

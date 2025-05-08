@@ -43,10 +43,12 @@ class _PengajuanPageState extends State<PengajuanPage>
         title: Text("Pengajuan Surat",
             style: TextStyle(color: Colors.white, fontSize: 20)),
         bottom: TabBar(
+          isScrollable: true,
           controller: _tabController,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
+          tabAlignment: TabAlignment.start,
           tabs: [
             Tab(text: "Menunggu"),
             Tab(text: "Diproses"),
@@ -263,8 +265,10 @@ class _PengajuanPageState extends State<PengajuanPage>
       case 'dibatalkan':
         return "Dibatalkan";
       case 'di_terima_rw':
-      case 'di_terima_rt':
         return "Diterima Rw";
+      case 'di_terima_rt':
+        return "Diterima Rt";
+
       default:
         return "Menunggu";
     }

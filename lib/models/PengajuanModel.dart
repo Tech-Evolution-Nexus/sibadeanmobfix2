@@ -6,11 +6,11 @@ class PengajuanSurat {
   final int id;
   final String nik;
   final int idSurat;
-  final String? nomorSurat;
+  final String nomorSurat;
   final String status;
-  final String? pengantarRt;
-  final String? keterangan;
-  final String? keteranganDitolak;
+  final String pengantarRt;
+  final String keterangan;
+  final String keteranganDitolak;
   final MasyarakatModel masyarakat;
   final Surat surat;
   final String createdAt;
@@ -19,11 +19,11 @@ class PengajuanSurat {
     required this.id,
     required this.nik,
     required this.idSurat,
-    required this.nomorSurat,
+    this.nomorSurat = "-",
     required this.status,
-    required this.pengantarRt,
-    required this.keterangan,
-    required this.keteranganDitolak,
+    this.pengantarRt = "-",
+    this.keterangan = "-",
+    this.keteranganDitolak = "-",
     required this.masyarakat,
     required this.surat,
     required this.createdAt,
@@ -44,17 +44,17 @@ class PengajuanSurat {
     DateTime date = DateTime.parse(json["created_at"]);
     String dateFormat = DateFormat('dd/MM/yyyy').format(date);
     return PengajuanSurat(
-      id: json['id'] ?? '',
-      nik: json['nik'] ?? '',
-      idSurat: json['id_surat'] ?? '',
-      nomorSurat: json['nomor_surat'] ?? '',
-      status: json['status'] ?? '',
-      pengantarRt: json['pengantar_rt'] ?? '',
-      keterangan: json['keterangan'] ?? '',
-      keteranganDitolak: json['keterangan_ditolak'] ?? '',
+      id: json['id'] ?? 0,
+      nik: json['nik']?.toString() ?? '-',
+      idSurat: json['id_surat'] ?? 0,
+      nomorSurat: json['nomor_surat']?.toString() ?? '-',
+      status: json['status']?.toString() ?? '-',
+      pengantarRt: json['pengantar_rt']?.toString() ?? '-',
+      keterangan: json['keterangan']?.toString() ?? '-',
+      keteranganDitolak: json['keterangan_ditolak']?.toString() ?? '-',
       masyarakat: MasyarakatModel.fromJson(json["masyarakat"]),
       surat: Surat.fromJson(json["surat"]),
-      createdAt: dateFormat ?? '',
+      createdAt: dateFormat ?? '-',
     );
   }
 }
