@@ -1,11 +1,13 @@
 class Surat {
   final int id;
   final String nama_surat;
+  final String singkatanNamaSurat;
   final String gambar;
 
   Surat({
     required this.id,
     required this.nama_surat,
+    required this.singkatanNamaSurat,
     required this.gambar,
   });
 
@@ -14,6 +16,7 @@ class Surat {
       id: json['id'] ?? '',
       nama_surat: json['nama_surat'] ?? '',
       gambar: json['gambar'] ?? '',
+      singkatanNamaSurat: json['singkatan_nama_surat'] ?? '',
     );
   }
   @override
