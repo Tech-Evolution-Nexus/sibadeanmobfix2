@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
@@ -129,24 +130,19 @@ class _DashboardContentState extends State<DashboardContent> {
                   buildBackground(),
                   Padding(
                     padding:
-                        const EdgeInsets.only(left: 24, right: 24, top: 60),
+                        const EdgeInsets.only(left: 16, right: 16, top: 60),
                     child: Column(
                       children: [
                         const Gap(16),
                         buildHeader(),
-                        const Gap(16),
+                        const Gap(32),
                         cardhero(),
                         const Gap(16),
-                        pengajuan(),
+                        berita(),
                       ],
                     ),
                   ),
                 ],
-              ),
-              const Gap(16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: berita(),
               ),
               const Gap(16),
             ],
@@ -157,7 +153,7 @@ class _DashboardContentState extends State<DashboardContent> {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     return Container(
-      height: width * .9,
+      height: width * 1.5,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -238,23 +234,23 @@ class _DashboardContentState extends State<DashboardContent> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment
-                .spaceAround, // bisa dihapus karena Expanded akan mengatur lebar
+                .spaceBetween, // bisa dihapus karena Expanded akan mengatur lebar
             children: [
               Expanded(
+                flex: 5,
                 child: _statusItem('Menunggu persetujuan', '20', isSmall),
               ),
-              Container(
-                width: 1,
-                height: height * 0.04,
-                color: Colors.grey[300],
-              ),
               Expanded(
-                child: _statusItem('Selesai', '20', isSmall),
+                flex: 3,
+                child: _statusItem('Selesai', '0', isSmall),
               ),
             ],
           ),
           SizedBox(
-            height: 20,
+            height: 24,
+          ),
+          Divider(
+            height: 1,
           ),
           MediaQuery.removePadding(
             context: context,
@@ -319,55 +315,24 @@ class _DashboardContentState extends State<DashboardContent> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Spacer(),
-              const Icon(Icons.arrow_forward_ios, size: 14),
             ],
           ),
         ),
-        isLoading || dataModel == null
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: dataModel!.berita.map((item) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailBerita(id: item.id.toInt()),
-                            ),
-                          );
-                        },
-                        dense: true,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-                        leading: Image.asset(
-                          'assets/images/coba.png',
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(Icons.image_not_supported,
-                                size: 40);
-                          },
-                        ),
-                        title: Text(
-                          item.judul,
-                          maxLines: 2, // Set maxLines to 2 for 2-line text
-                          overflow: TextOverflow
-                              .ellipsis, // Add ellipsis for overflow text
-                          style: TextStyle(fontSize: isSmall ? 12 : 14),
-                        ),
-                        subtitle: const Text('18 April 2025'),
-                      ),
-                      const Divider(
-                          height: 1), // Garis pemisah antar berita (opsional)
-                    ],
-                  );
-                }).toList(),
-              ),
+        SizedBox(
+          height: 12,
+        ),
+        MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: ListView.builder(
+            itemCount: dataModel!.berita.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return BeritaItem(berita: dataModel!.berita[index]);
+            },
+          ),
+        )
       ]),
     );
   }
@@ -385,24 +350,41 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Widget _statusItem(String title, String count, bool isSmall) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          count,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: isSmall ? 16 : 18,
-            color: lightColorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(
-            color: Colors.black54,
-            fontSize: isSmall ? 11 : 12,
+            color: Colors.black87,
+            fontSize: 12,
           ),
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              count,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isSmall ? 18 : 20,
+                color: lightColorScheme.primary,
+              ),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              "surat",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14,
+                color: lightColorScheme.primary,
+              ),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -483,7 +465,7 @@ class _DashboardContentState extends State<DashboardContent> {
                     color: Colors.black54,
                   ),
                 ),
-                const SizedBox(height: 0),
+                const SizedBox(height: 1),
                 Text(
                   item.singkatanNamaSurat,
                   textAlign: TextAlign.center,
@@ -503,21 +485,30 @@ class _DashboardContentState extends State<DashboardContent> {
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ListSurat()),
-              );
+              showModalBottomSheet(
+                  enableDrag: true,
+                  showDragHandle: true,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(32))),
+                  context: context,
+                  builder: (BuildContext context) =>
+                      Container(width: double.infinity, child: ListSurat()));
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => ListSurat()),
+              // );
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: width * 0.05,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.grid_view_outlined,
-                      color: lightColorScheme.primary),
+                  backgroundColor: lightColorScheme.primary,
+                  child: Icon(Icons.grid_view_outlined, color: Colors.white),
                 ),
-                const SizedBox(height: 0),
+                const SizedBox(height: 1),
                 Text("Lihat Semua",
                     textAlign: TextAlign.center,
                     style: TextStyle(
