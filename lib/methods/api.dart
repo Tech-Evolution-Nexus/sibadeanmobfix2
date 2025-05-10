@@ -2,31 +2,28 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.1.2:8000/api/"));
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.1.3:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
   }
 
   // === Login User ===
-  Future<dynamic> loginUser(
-      {required String nik, required String password}) async {
+  Future<dynamic> loginUser({
+    required String nik,
+    required String password,
+  }) async {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
         'login',
-        data: {
-          'nik': nik,
-          'password': password,
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        data: {'nik': nik, 'password': password},
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
       return response;
     } on DioException catch (e) {
@@ -67,23 +64,24 @@ class API {
     // Add KK image file
     if (!kIsWeb) {
       if (kkGambar is File && kkGambar.existsSync()) {
-        formData.files.add(MapEntry(
-          "kk_gambar",
-          await MultipartFile.fromFile(
-            kkGambar.path,
-            // filename: basename(kkGambar.path),
+        formData.files.add(
+          MapEntry(
+            "kk_gambar",
+            await MultipartFile.fromFile(
+              kkGambar.path,
+              // filename: basename(kkGambar.path),
+            ),
           ),
-        ));
+        );
       }
     } else {
       if (kkGambar != null) {
-        formData.files.add(MapEntry(
-          "kk_gambar",
-          MultipartFile.fromBytes(
-            kkGambar,
-            filename: "kk_gambar.jpg",
+        formData.files.add(
+          MapEntry(
+            "kk_gambar",
+            MultipartFile.fromBytes(kkGambar, filename: "kk_gambar.jpg"),
           ),
-        ));
+        );
       }
     }
 
@@ -91,18 +89,15 @@ class API {
   }
 
   // === Aktivasi Akun ===
-  Future<dynamic> aktivasiAkun(
-      {required String nik,
-      required String email,
-      required String pass}) async {
+  Future<dynamic> aktivasiAkun({
+    required String nik,
+    required String email,
+    required String pass,
+  }) async {
     try {
       return await _dio.post(
         "aktivasi",
-        data: {
-          "nik": nik,
-          "email": email,
-          "password": pass,
-        },
+        data: {"nik": nik, "email": email, "password": pass},
       );
     } on DioException catch (e) {
       return e.response;
@@ -111,12 +106,7 @@ class API {
 
   Future<dynamic> verifikasiNIK({required String nik}) async {
     try {
-      return await _dio.post(
-        "verifikasi",
-        data: {
-          'nik': nik,
-        },
-      );
+      return await _dio.post("verifikasi", data: {'nik': nik});
     } on DioException catch (e) {
       return e.response;
     }
@@ -130,11 +120,7 @@ class API {
       if (token != null) {
         final response = await _dio.post(
           'logout',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-          ),
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
         );
         return response;
       } else {
@@ -196,9 +182,7 @@ class API {
   Future<dynamic> getRiwayatPengajuan({required String nik}) async {
     try {
       // Mengambil data dari API
-      var response = await _dio.get(
-        "riwayat-pengajuan/$nik",
-      );
+      var response = await _dio.get("riwayat-pengajuan/$nik");
 
       return response;
     } on DioException catch (e) {
@@ -214,9 +198,7 @@ class API {
   Future<dynamic> getRiwayatPengajuanDetail({required int idPengajuan}) async {
     try {
       // Mengambil data dari API
-      var response = await _dio.get(
-        "riwayat-pengajuan-detail/$idPengajuan",
-      );
+      var response = await _dio.get("riwayat-pengajuan-detail/$idPengajuan");
 
       return response;
     } on DioException catch (e) {
@@ -229,12 +211,50 @@ class API {
     }
   }
 
+  Future<dynamic> downloadPengajuan(
+      {required int idPengajuan, String name = "pengajuan surat.pdf"}) async {
+    try {
+      // Tentukan direktori simpan
+      Directory? downloadDir;
+      if (Platform.isAndroid) {
+        downloadDir = Directory(
+          "/storage/emulated/0/Download",
+        ); // folder Downloads umum
+      } else if (Platform.isIOS) {
+        downloadDir = await getApplicationDocumentsDirectory(); // fallback iOS
+      }
+
+      // Nama file (bisa juga dari API)
+      String fileName = name;
+      String savePath = "${downloadDir!.path}/$fileName";
+
+      // Unduh file
+      var response = await _dio.download(
+        "riwayat-pengajuan/$idPengajuan/download",
+        savePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            debugPrint(
+              "Progress: ${(received / total * 100).toStringAsFixed(0)}%",
+            );
+          }
+        },
+      );
+
+      return true;
+    } on DioException catch (e) {
+      debugPrint('Download error: ${e.message}');
+      return 'Gagal mengunduh file.';
+    } catch (e) {
+      debugPrint('Error umum: $e');
+      return 'Terjadi kesalahan.';
+    }
+  }
+
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
       // Mengambil data dari API
-      var response = await _dio.get(
-        "anggota-keluarga/$nokk",
-      );
+      var response = await _dio.get("anggota-keluarga/$nokk");
 
       return response;
     } on DioException catch (e) {
@@ -244,11 +264,12 @@ class API {
     }
   }
 
-  Future<dynamic> chgPass(
-      {required String nik,
-      required String password,
-      required String newPass,
-      required String confPass}) async {
+  Future<dynamic> chgPass({
+    required String nik,
+    required String password,
+    required String newPass,
+    required String confPass,
+  }) async {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
@@ -259,11 +280,7 @@ class API {
           'new_password': newPass,
           'confirm_password': confPass,
         },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
       return response;
     } on DioException catch (e) {
@@ -276,15 +293,8 @@ class API {
       print('NIK: $nik');
       final response = await _dio.post(
         'ubhNoHp',
-        data: {
-          'nik': nik,
-          'no_kitap': noHp,
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        data: {'nik': nik, 'no_kitap': noHp},
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       return response;
@@ -298,15 +308,8 @@ class API {
       print('NIK: $nik');
       final response = await _dio.post(
         'ubhemail',
-        data: {
-          'nik': nik,
-          'email': email,
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        data: {'nik': nik, 'email': email},
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       return response;

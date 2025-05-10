@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 
 import '/methods/api.dart';
@@ -41,6 +42,30 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     }
   }
 
+  Future<void> download() async {
+    try {
+      var status = await Permission.manageExternalStorage.request();
+      if (status.isPermanentlyDenied) {
+        openAppSettings();
+      }
+      final response = await API().downloadPengajuan(
+          idPengajuan: widget.idPengajuan,
+          name: (pengajuanData!.surat.nama_surat +
+              "__" +
+              pengajuanData!.masyarakat.namaLengkap +
+              ".pdf"));
+
+      if (response) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Surat disimpan di /storage/emulated/0/Download')),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +78,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             child: FloatingActionButton(
               backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
               tooltip: 'Unduh Surat',
-              onPressed: () {},
+              onPressed: download,
               shape: const CircleBorder(), // memastikan bentuk lingkaran
               child: const Icon(Icons.download, color: Colors.white, size: 28),
             ),

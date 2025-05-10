@@ -66,15 +66,14 @@ class _BeritaItemState extends State<BeritaItem> {
                             Icon(
                               Icons.calendar_month_outlined, // Ikon jam
                               size: 14, // Ukuran ikon agar cocok dengan teks
-                              color: Colors.grey,
+                              color: Colors.grey.shade900,
                             ),
                             SizedBox(width: 4), // Jarak antara ikon dan teks
                             Text(
                               widget.berita.createdAt,
                               style: TextStyle(
                                 fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
+                                color: Colors.grey.shade900,
                               ),
                             ),
                           ],

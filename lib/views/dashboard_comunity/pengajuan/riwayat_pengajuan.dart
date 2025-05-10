@@ -58,7 +58,8 @@ class _PengajuanPageState extends State<PengajuanPage>
           ],
         ),
       ),
-      body: RefreshIndicator(
+      body: SafeArea(
+          child: RefreshIndicator(
         onRefresh: fetchData, // This is where data will be refreshed
         child: TabBarView(
           controller: _tabController,
@@ -70,7 +71,7 @@ class _PengajuanPageState extends State<PengajuanPage>
             statusSurat("Dibatalkan", pengajuanBatal),
           ],
         ),
-      ),
+      )),
     );
   }
 
