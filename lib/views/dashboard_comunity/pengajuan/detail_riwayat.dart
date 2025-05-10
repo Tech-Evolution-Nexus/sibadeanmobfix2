@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 
 import '/methods/api.dart';
@@ -29,8 +30,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
       if (response.statusCode == 200) {
         setState(() {
-          print(widget.idPengajuan);
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
+          print(pengajuanData);
           isLoading = false;
         });
       } else {
@@ -41,9 +42,34 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     }
   }
 
+  Future<void> download() async {
+    try {
+      var status = await Permission.manageExternalStorage.request();
+      if (status.isPermanentlyDenied) {
+        openAppSettings();
+      }
+      final response = await API().downloadPengajuan(
+          idPengajuan: widget.idPengajuan,
+          name: (pengajuanData!.surat.nama_surat +
+              "__" +
+              pengajuanData!.masyarakat.namaLengkap +
+              ".pdf"));
+
+      if (response) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Surat disimpan di /storage/emulated/0/Download')),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Colors.white,
       floatingActionButton: Visibility(
           visible: pengajuanData?.status == "selesai",
           child: SizedBox(
@@ -52,15 +78,18 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             child: FloatingActionButton(
               backgroundColor: const Color.fromRGBO(82, 170, 94, 1.0),
               tooltip: 'Unduh Surat',
-              onPressed: () {},
+              onPressed: download,
               shape: const CircleBorder(), // memastikan bentuk lingkaran
               child: const Icon(Icons.download, color: Colors.white, size: 28),
             ),
           )),
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
-        title: Text("Detail Pengajuan",
-            style: TextStyle(color: Colors.black, fontSize: 16)),
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: () => Navigator.pop(context),
+        ),
+        // title: Text("Detail Pengajuan",
+        //     style: TextStyle(color: Colors.black, fontSize: 16)),
         backgroundColor: Colors.white,
         shadowColor: Colors.black.withOpacity(0.1),
       ),
@@ -227,23 +256,24 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Text(
               label,
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.normal,
                 color: Colors.grey[700],
               ),
             ),
           ),
+          SizedBox(width: 16),
           Expanded(
             flex: 5,
             child: Text(
               value,
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
                 color: isBold ? Colors.black : Colors.grey[800],
               ),
             ),
@@ -265,9 +295,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
         return "Menunggu disetujui RT";
       case 'dibatalkan':
         return "Dibatalkan";
-      case 'di_terima_rw':
-        return "Diterima RT, menunggu RW";
       case 'di_terima_rt':
+        return "Diterima RT, menunggu RW";
+      case 'di_terima_rw':
         return "Diterima RW, menunggu Kelurahan";
       default:
         return "Menunggu disetujui RT";

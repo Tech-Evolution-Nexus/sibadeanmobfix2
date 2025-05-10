@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
@@ -10,24 +11,35 @@ class ListBerita extends StatefulWidget {
   _ListBeritaState createState() => _ListBeritaState();
 }
 
-class _ListBeritaState extends State<ListBerita>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ListBeritaState extends State<ListBerita> {
   bool isLoading = true;
-  Berita? dataModel;
+  List<Berita> dataModel = [];
+  String searchQuery = '';
+
+  final List<String> judulBerita = [
+    "Program Jumat Bersih di Kelurahan Badean Berjalan Sukses",
+    "Kelurahan Badean Salurkan Bantuan Sosial untuk Warga Terdampak Banjir",
+    "Lurah Baru Kelurahan Badean Resmi Dilantik",
+    "Pelatihan Digital Marketing untuk UMKM Lokal",
+    "Peringatan HUT RI ke-80 di Kelurahan Badean Meriah",
+    "Warga Gotong Royong Bersihkan Saluran Air",
+  ];
+
   @override
   void initState() {
     super.initState();
     fetchBerita();
   }
 
-
   Future<void> fetchBerita() async {
     try {
-      var response = await API().getdatadashboard();
+      var response = await API().getberita();
       if (response.statusCode == 200) {
+        print(response.data['data']);
         setState(() {
-          dataModel = Berita.fromJson(response.data['data']);
+          dataModel = (response.data["data"]["berita"] as List)
+              .map((item) => Berita.fromJson(item))
+              .toList();
           isLoading = false;
         });
       }
@@ -39,87 +51,96 @@ class _ListBeritaState extends State<ListBerita>
 
   @override
   Widget build(BuildContext context) {
+    final filteredBerita = dataModel
+        .where((berita) =>
+            berita.judul.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('List Berita & Peristiwa'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Gambar utama
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 200,
-                    child: Image.asset(
-                      'assets/images/coba.png',
-                      fit: BoxFit.cover,
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: fetchBerita,
+                child: SingleChildScrollView(
+                    child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: "Cari berita...",
+                            prefixIcon: const Icon(Icons.search),
+                            filled: true, // Enables background color
+                            fillColor: Colors
+                                .grey.shade100, // Light gray background color
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(6), // Rounded corners
+                              borderSide:
+                                  BorderSide.none, // Remove border color
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 12.0, horizontal: 16.0),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              searchQuery = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Rekomendasi untukmu",
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        filteredBerita.isEmpty
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 60),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.article_outlined,
+                                        size: 80,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        "Tidak ada berita",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: filteredBerita.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return BeritaItem(
+                                      berita: filteredBerita[index]);
+                                },
+                              ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Kelurahan Badean Gelar Pelatihan UMKM untuk Warga",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  "16 April 2025",
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const Divider(height: 24),
-                // List berita lainnya
-                ListView.builder(
-                  itemCount: 6,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final List<String> judulBerita = [
-                      "Program Jumat Bersih di Kelurahan Badean Berjalan Sukses",
-                      "Kelurahan Badean Salurkan Bantuan Sosial untuk Warga Terdampak Banjir",
-                      "Lurah Baru Kelurahan Badean Resmi Dilantik",
-                      "Lurah Baru Kelurahan Badean Resmi Dilantik",
-                      "Lurah Baru Kelurahan Badean Resmi Dilantik",
-                      "Lurah Baru Kelurahan Badean Resmi Dilantik",
-                    ];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(0),
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.asset(
-                            'assets/images/coba.png',
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(judulBerita[index]),
-                        subtitle: const Text("16 April 2025"),
-                        onTap: () {
-                          // Tambahkan navigasi ke detail berita jika diinginkan
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
+                )),
+              ),
       ),
     );
   }

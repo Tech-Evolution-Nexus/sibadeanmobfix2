@@ -21,7 +21,7 @@ class ListSuratState extends State<ListSurat> {
     fetchSurat();
   }
 
-  List<Surat>? dataModel;
+  List<Surat>? dataModel = [];
   bool isLoading = true;
   Future<void> fetchSurat() async {
     try {
@@ -47,34 +47,31 @@ class ListSuratState extends State<ListSurat> {
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final isSmall = width < 360;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('List Surat'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: height * 0.015),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            dataModel == null
-                ? const Center(child: CircularProgressIndicator())
-                : Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: width * 0.05,
-                    runSpacing: height * 0.02,
-                    children: [
-                      ...dataModel!.map(
-                        (item) =>
-                            _suratButton(context, item, Colors.blue, width),
-                      ),
-                    ],
-                  ),
-            SizedBox(height: height * 0.02),
-          ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: height * 0.015),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
+        child: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 150, // maksimal lebar satu item
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
+              childAspectRatio: 0.8, // sesuaikan tinggi-lebar konten
+            ),
+            itemCount: dataModel!.length,
+            itemBuilder: (context, index) {
+              final item = dataModel![index];
+              // final color = colors[index % colors.length];
+              return _suratButton(context, item, Colors.blue, width);
+            },
+          ),
         ),
       ),
     );
@@ -116,23 +113,32 @@ Widget _suratButton(
                 idsurat: item.id, namasurat: item.nama_surat)),
       );
     },
-    child: Column(
-      children: [
-        CircleAvatar(
-          radius: width * 0.08,
-          backgroundColor: color,
-          child: const Icon(Icons.mail_rounded, color: Colors.white),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: width * 0.2,
-          child: Text(
-            item.nama_surat,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12),
+    child: Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade200, width: .5)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: width * 0.08,
+            backgroundColor: color,
+            child: const Icon(Icons.mail_rounded, color: Colors.white),
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          SizedBox(
+            width: width * 0.2,
+            child: Text(
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+              item.nama_surat,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

@@ -8,7 +8,9 @@ class DaftarAnggotaKeluargaView extends StatefulWidget {
   final int idsurat;
   final String namasurat;
 
-  const DaftarAnggotaKeluargaView({super.key, required this.idsurat,required this.namasurat});
+  const DaftarAnggotaKeluargaView(
+      {Key? key, required this.idsurat, required this.namasurat})
+      : super(key: key);
 
   @override
   State<DaftarAnggotaKeluargaView> createState() =>
@@ -28,7 +30,6 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   Future<void> fetchData() async {
     try {
       final user = await Auth.user();
-
       var response =
           await API().getAnggotaKeluarga(nokk: user['noKK'].toString());
 
@@ -93,7 +94,8 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => PengajuanSuratPage(
-                                          idsurat: widget.idsurat,namaSurat: widget.namasurat,nik:anggota.nik),
+                                          idsurat: widget.idsurat,
+                                          namaSurat: widget.namasurat),
                                     ),
                                   );
                                 },

@@ -221,6 +221,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(dataModel?.fields.isEmpty);
     return Scaffold(
       appBar: AppBar(
         title: Text(

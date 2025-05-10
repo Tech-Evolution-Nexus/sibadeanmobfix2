@@ -7,6 +7,7 @@ import '../../theme/theme.dart';
 import 'verifikasi.dart';
 import '../dashboard_comunity/dashboard/dashboard_warga.dart';
 import '../../widgets/costum_texfield.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -28,6 +29,21 @@ class _LoginState extends State<Login> {
     nikController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Delay 3 detik sebelum berpindah ke Login
+    // () async {
+    //   final user = await Auth.user();
+    //   if (user["user_id"] != null) {
+    //     Navigator.pushReplacement(
+    //       context,
+    //       MaterialPageRoute(builder: (context) => DashboardPage()),
+    //     );
+    //   }
+    // }();
   }
 
   void loginUser() async {
@@ -66,8 +82,6 @@ class _LoginState extends State<Login> {
             SnackBar(
                 content: Text(response.data['message'] ?? 'Login berhasil')),
           );
-
-          print("Navigasi ke Dashboard...");
 
           // Navigasi ke halaman Dashboard berdasarkan role
           if (userData['role'] == 'rt') {
