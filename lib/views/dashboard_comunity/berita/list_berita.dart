@@ -4,6 +4,8 @@ import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
 class ListBerita extends StatefulWidget {
+  const ListBerita({super.key});
+
   @override
   _ListBeritaState createState() => _ListBeritaState();
 }
@@ -19,10 +21,6 @@ class _ListBeritaState extends State<ListBerita>
     fetchBerita();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Future<void> fetchBerita() async {
     try {

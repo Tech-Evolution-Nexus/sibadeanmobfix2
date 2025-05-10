@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://127.0.0.1:8000/api/"));
+  final Dio _dio =
+      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -238,7 +239,7 @@ class API {
 
       return response;
     } on DioException catch (e) {
-      print('Error: ${e}');
+      print('Error: $e');
 
       return e;
     }
@@ -271,7 +272,7 @@ class API {
     }
   }
 
-    Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
+  Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
@@ -312,6 +313,15 @@ class API {
       return response;
     } on DioException catch (e) {
       return e.response;
+    }
+  }
+
+  Future<dynamic> kirimKeDio({required FormData formData}) async {
+    try {
+      final response = await _dio.post("ajukan-surat", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
     }
   }
 }

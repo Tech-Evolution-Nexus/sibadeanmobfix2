@@ -3,7 +3,6 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_
 import 'auth/welcome.dart';
 import '../widgets/costum_color.dart';
 import '../widgets/custom_icon_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
 class Splash extends StatefulWidget {

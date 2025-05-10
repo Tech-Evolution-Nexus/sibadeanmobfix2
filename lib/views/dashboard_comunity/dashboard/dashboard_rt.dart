@@ -10,6 +10,8 @@ import '../riwayatsurat/riwayat_surat_rt.dart';
 
 
 class DashboardRT extends StatefulWidget {
+  const DashboardRT({super.key});
+
   @override
   _DashboardRTState createState() => _DashboardRTState();
 }
@@ -55,6 +57,8 @@ class _DashboardRTState extends State<DashboardRT> {
 }
 
 class HomeRT extends StatefulWidget {
+  const HomeRT({super.key});
+
   @override
   _HomeRTState createState() => _HomeRTState();
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
@@ -7,8 +6,6 @@ import '../../methods/api.dart';
 import '../../theme/theme.dart';
 import 'verifikasi.dart';
 import '../dashboard_comunity/dashboard/dashboard_warga.dart';
-import '../dashboard_comunity/dashboard/dashboard_rt.dart';
-import '../dashboard_comunity/dashboard/dashboard_rw.dart';
 import '../../widgets/costum_texfield.dart';
 
 class Login extends StatefulWidget {

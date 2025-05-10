@@ -9,6 +9,8 @@ import 'ganti_password.dart';
 import 'ganti_noHp.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }

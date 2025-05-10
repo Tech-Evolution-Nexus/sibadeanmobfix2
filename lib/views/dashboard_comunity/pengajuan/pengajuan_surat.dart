@@ -8,16 +8,19 @@ import 'package:sibadeanmob_v2_fix/models/suratlampiranmodel.dart';
 import '../../../services/pengajuan_servis.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/costum_texfield.dart';
+import 'package:dio/dio.dart';
 
 class PengajuanSuratPage extends StatefulWidget {
   final String namaSurat;
   final int idsurat;
+  final String nik;
 
   const PengajuanSuratPage({
-    Key? key,
+    super.key,
     required this.namaSurat,
     required this.idsurat,
-  }) : super(key: key);
+    required this.nik,
+  });
 
   @override
   _PengajuanSuratPageState createState() => _PengajuanSuratPageState();
@@ -25,33 +28,36 @@ class PengajuanSuratPage extends StatefulWidget {
 
 class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   final _formKey = GlobalKey<FormState>();
-  File? _selectedFile;
-  Uint8List? _selectedFileBytes;
-  String? _fileName;
+
   SuratLampiranModel? dataModel;
   bool isLoading = true;
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  TextEditingController fullNameController = TextEditingController();
-  TextEditingController nikController = TextEditingController();
-  TextEditingController noKkController = TextEditingController();
-  TextEditingController tempatLahirController = TextEditingController();
-  TextEditingController tanggalLahirController = TextEditingController();
-  TextEditingController alamatController = TextEditingController();
-  TextEditingController pekerjaanController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController rtController = TextEditingController();
-  TextEditingController rwController = TextEditingController();
+  // TextEditingController fullNameController = TextEditingController();
+  // TextEditingController nikController = TextEditingController();
+  // TextEditingController noKkController = TextEditingController();
+  // TextEditingController tempatLahirController = TextEditingController();
+  // TextEditingController tanggalLahirController = TextEditingController();
+  // TextEditingController alamatController = TextEditingController();
+  // TextEditingController pekerjaanController = TextEditingController();
+  // TextEditingController phoneController = TextEditingController();
+  // TextEditingController emailController = TextEditingController();
+  // TextEditingController passwordController = TextEditingController();
+  // TextEditingController confirmPasswordController = TextEditingController();
+  // TextEditingController rtController = TextEditingController();
+  // TextEditingController rwController = TextEditingController();
   List<TextEditingController> fieldControllers = [];
   String? selectedGender;
   String? selectedAgama;
-
+  Map<String, File> lampiranFiles = {};
   // Image File
-  File? kkGambar;
-  Uint8List? kkGambarBytes;
+  File? _selectedFile;
+  // Uint8List? _selectedFileBytes;
+  String? _fileName;
+  // Uint8List? PengantarRtgambarBytes;
+  File? PengantarRtgambar;
+  // String? kkFileName;
+  @override
   void initState() {
     super.initState();
 
@@ -60,6 +66,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
 
   void nextPage() {
     if (_formKey.currentState!.validate()) {
+      // Validasi file KK wajib di halaman tertentu (misalnya halaman ke-2 / index = 1)
+
       _pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -74,28 +82,6 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       curve: Curves.easeInOut,
     );
     setState(() => _currentPage--);
-  }
-
-  Future<void> _pickFile(int idlampiran) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf'],
-      withData: true,
-    );
-
-    if (result != null) {
-      setState(() {
-        _fileName = result.files.single.name;
-        _selectedFileBytes = result.files.single.bytes;
-        _selectedFile = result.files.single.path != null
-            ? File(result.files.single.path!)
-            : null;
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("File tidak valid atau gagal dipilih")),
-      );
-    }
   }
 
   Future<void> fetchSurat() async {
@@ -123,28 +109,109 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
     }
   }
 
-  void _submitPengajuan() async {
-    if (_formKey.currentState!.validate() &&
-        (_selectedFile != null || _selectedFileBytes != null)) {
-      // var response = await PengajuanService().ajukanSurat(
-      //   nama: _namaController.text,
-      //   nik: _nikController.text,
-      //   alamat: _alamatController.text,
-      //   keterangan: _keteranganController.text,
-      //   fileKK: _selectedFile!,
-      //   jenisSurat: "s",
-      // );
+  Future<void> _pickPengantarFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+      withData: true,
+    );
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      String name = result.files.single.name;
 
-      // if (response.containsKey("error")) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text("Gagal mengajukan: ${response['error']}")),
-      //   );
-      // } else {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text("Pengajuan berhasil!")),
-      //   );
-      //   Navigator.pop(context);
-      // }
+      setState(() {
+        _selectedFile = file;
+        _fileName = name;
+      });
+
+      // Show snack bar to confirm the upload
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File untuk Pengantar telah dipilih')),
+      );
+    }
+  }
+
+  Future<void> _pickLampiranFile(String idLampiran) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+      withData: true,
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+
+      setState(() {
+        lampiranFiles[idLampiran] = file; // Add selected file to the map
+      });
+
+      // Show snack bar to confirm the upload
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('File untuk lampiran ${idLampiran} telah dipilih')),
+      );
+    }
+  }
+
+  void _submitPengajuan() async {
+    if (_formKey.currentState!.validate()) {
+      for (final item in dataModel!.lampiransurat) {
+        if (!lampiranFiles.containsKey(item.idLampiran.toString())) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Mohon upload file untuk lampiran ${item.lampiran.namaLampiran}')),
+          );
+          return; //
+        }
+      }
+
+      FormData formData = FormData();
+      formData = FormData.fromMap({
+        'id_surat': widget.idsurat,
+        'nik': widget.nik,
+      });
+      if (_selectedFile != null) {
+        formData.files.add(
+          MapEntry(
+            'pengantar_rt',
+            await MultipartFile.fromFile(
+              _selectedFile!.path,
+              filename: _fileName,
+            ),
+          ),
+        );
+      }
+      for (int i = 0; i < dataModel!.fields.length; i++) {
+        final value = fieldControllers[i].text;
+        final idField = dataModel!.fields[i].id;
+        formData.fields.add(MapEntry('field_$idField', value));
+      }
+
+      // Tambahkan file dari lampiransurat
+      for (final item in dataModel!.lampiransurat) {
+        if (lampiranFiles.containsKey(item.idLampiran.toString())) {
+          final file = lampiranFiles[item.idLampiran.toString()]!;
+          formData.files.add(
+            MapEntry(
+              'lampiran_${item.idLampiran}',
+              await MultipartFile.fromFile(
+                file.path,
+                filename: file.path.split('/').last,
+              ),
+            ),
+          );
+        }
+      }
+
+      var response = await API().kirimKeDio(formData: formData);
+      print(response);
+      if (response.statusCode == 200) {
+        print("Pengajuan berhasil: ${response.data}");
+        // Bisa tampilkan notifikasi atau redirect
+      } else {
+        print("Gagal mengirim: ${response.statusCode}");
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Mohon lengkapi semua data dan upload KK")),
@@ -226,7 +293,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                               ),
 
                               // CARD 2: UPLOAD FILE DAN TOMBOL
-                              Container(
+                              SizedBox(
                                 width:
                                     double.infinity, // Mengatur lebar Container
                                 child: Card(
@@ -250,8 +317,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                           ),
                                         ),
                                         SizedBox(height: 10),
-                                        if (_selectedFileBytes != null ||
-                                            _selectedFile != null)
+                                        if (_selectedFile != null)
                                           Column(
                                             children: [
                                               Text("File Terpilih: $_fileName",
@@ -265,17 +331,12 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                           .endsWith('.jpg') ||
                                                       _fileName!
                                                           .endsWith('.png')))
-                                                _selectedFileBytes != null
-                                                    ? Image.memory(
-                                                        _selectedFileBytes!,
+                                                _selectedFile != null
+                                                    ? Image.file(
+                                                        _selectedFile!,
                                                         height: 100,
                                                       )
-                                                    : _selectedFile != null
-                                                        ? Image.file(
-                                                            _selectedFile!,
-                                                            height: 100,
-                                                          )
-                                                        : Container(),
+                                                    : Container(),
                                             ],
                                           )
                                         else
@@ -284,17 +345,17 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                   color: Colors.grey)),
                                         SizedBox(height: 10),
                                         ElevatedButton.icon(
-                                          onPressed: () {},
+                                          onPressed: _pickPengantarFile,
                                           icon: Icon(Icons.upload_file),
-                                          label: Text("Upload Foto KK"),
+                                          label:
+                                              Text("Upload Foto Pengantar Rt"),
                                         ),
-                                        if (kkGambar != null ||
-                                            kkGambarBytes != null)
+                                        if (PengantarRtgambar != null)
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 10.0),
                                             child: Text(
-                                              "Gambar KK telah dipilih!",
+                                              "Gambar Pengantar Rt telah dipilih!",
                                               style: TextStyle(
                                                   color: Colors.green),
                                             ),
@@ -322,7 +383,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                           ),
                           Column(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: isLoading ||
                                         dataModel?.fields.isEmpty == true
@@ -342,6 +403,14 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                               hintText:
                                                   "Masukkan ${item.namaField ?? 'data'}",
                                               keyboardType: TextInputType.text,
+                                              validator: (value) {
+                                                // Cek apakah value kosong atau tidak
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Field ini tidak boleh kosong';
+                                                }
+                                                return null; // Validasi lulus
+                                              },
                                             ),
                                           );
                                         }),
@@ -393,10 +462,10 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                           ),
                           Column(
                             children: [
-                              Container(
+                              // Lampiran File Upload Section
+                              SizedBox(
                                 width: double.infinity,
-                                child: isLoading ||
-                                        dataModel!.lampiransurat == null
+                                child: isLoading
                                     ? const Center(
                                         child: CircularProgressIndicator())
                                     : Column(
@@ -404,6 +473,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                             .map((item) {
                                           return Column(
                                             children: [
+                                              // Lampiran Card
                                               Card(
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -416,8 +486,10 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                   trailing: IconButton(
                                                     icon: const Icon(
                                                         Icons.upload),
-                                                    onPressed: () => _pickFile(
-                                                        item.idLampiran),
+                                                    onPressed: () =>
+                                                        _pickLampiranFile(item
+                                                            .idLampiran
+                                                            .toString()),
                                                   ),
                                                 ),
                                               ),
@@ -427,8 +499,12 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                         }).toList(),
                                       ),
                               ),
+
                               const SizedBox(
-                                  height: 16), // Jarak antara daftar dan tombol
+                                  height:
+                                      16), // Spacer between lampiran section and buttons
+
+                              // Button Section
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -449,7 +525,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                 ],
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),

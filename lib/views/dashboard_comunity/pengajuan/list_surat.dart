@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'pengajuan_surat.dart';
 import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
 class ListSurat extends StatefulWidget {
+  const ListSurat({super.key});
+
   @override
   ListSuratState createState() => ListSuratState();
 }
 
 class ListSuratState extends State<ListSurat> {
+  @override
   void initState() {
     super.initState();
     fetchSurat();
@@ -108,8 +112,8 @@ Widget _suratButton(
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => PengajuanSuratPage(
-                idsurat: item.id, namaSurat: item.nama_surat)),
+            builder: (context) => DaftarAnggotaKeluargaView(
+                idsurat: item.id, namasurat: item.nama_surat)),
       );
     },
     child: Column(

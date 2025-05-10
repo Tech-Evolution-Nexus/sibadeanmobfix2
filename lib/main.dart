@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/aktivasi.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/splash.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'providers/auth_provider.dart';
 
 void main() {
@@ -30,6 +26,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: true,
         ),
-        home: Login());
+        home: Splash());
   }
 }

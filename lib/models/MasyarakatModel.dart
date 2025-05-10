@@ -1,4 +1,3 @@
-import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
 class MasyarakatModel {
   final String nik;
