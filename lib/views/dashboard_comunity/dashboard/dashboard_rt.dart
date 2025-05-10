@@ -98,57 +98,68 @@ class _HomeRTState extends State<HomeRT> {
   }
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final isSmall = width < 360;
-
-    return ListView(
-      padding: const EdgeInsets.all(0),
-      children: [
-        Stack(
-          children: [
-            buildBackground(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView(
+            padding: const EdgeInsets.all(0),
+            children: [
+              Stack(
                 children: [
-                  const Gap(16),
-                  buildHeader(),
-                  const Gap(16),
-                  cardHero(),
-                  const Gap(16),
+                  buildBackground(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 24, right: 24, top: 60),
+                    child: Column(
+                      children: [
+                        const Gap(16),
+                        buildHeader(),
+                        const Gap(16),
+                        cardHero(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-        const Gap(16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: berita(),
-        ),
-        const Gap(16),
-      ],
-    );
+              const Gap(16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: berita(),
+              ),
+              const Gap(16),
+            ],
+          );
   }
 
   Widget buildBackground() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     return Container(
-      height: width * 0.5,
+      height: width * .9,
       decoration: BoxDecoration(
-        color: lightColorScheme.primary,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            lightColorScheme.primary,
+            lightColorScheme.primary,
+            lightColorScheme.primary,
+            Colors.white,
+          ],
+          stops: [0.0, 0.3, 0.6, 1.0],
         ),
+        // color: lightColorScheme.primary,
+        // borderRadius: const BorderRadius.only(
+        //   bottomLeft: Radius.circular(12),
+        //   bottomRight: Radius.circular(12),
+        // ),
       ),
     );
   }
-
   Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
