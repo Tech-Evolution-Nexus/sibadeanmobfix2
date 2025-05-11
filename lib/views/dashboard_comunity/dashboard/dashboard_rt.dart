@@ -8,7 +8,6 @@ import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
 import '../riwayatsurat/riwayat_surat_rt.dart';
 
-
 class DashboardRT extends StatefulWidget {
   @override
   _DashboardRTState createState() => _DashboardRTState();
@@ -98,11 +97,12 @@ class _HomeRTState extends State<HomeRT> {
   }
 
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final isSmall = width < 360;
+
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : ListView(
@@ -112,8 +112,7 @@ class _HomeRTState extends State<HomeRT> {
                 children: [
                   buildBackground(),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 24, right: 24, top: 60),
+                    padding: const EdgeInsets.only(left: 24, right: 24, top: 60),
                     child: Column(
                       children: [
                         const Gap(16),
@@ -124,6 +123,12 @@ class _HomeRTState extends State<HomeRT> {
                     ),
                   ),
                 ],
+              ),
+              const Gap(16),
+              // Menambahkan Surat Masuk di atas Berita
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: suratMasuk(),
               ),
               const Gap(16),
               Padding(
@@ -152,14 +157,10 @@ class _HomeRTState extends State<HomeRT> {
           ],
           stops: [0.0, 0.3, 0.6, 1.0],
         ),
-        // color: lightColorScheme.primary,
-        // borderRadius: const BorderRadius.only(
-        //   bottomLeft: Radius.circular(12),
-        //   bottomRight: Radius.circular(12),
-        // ),
       ),
     );
   }
+
   Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
@@ -242,6 +243,46 @@ class _HomeRTState extends State<HomeRT> {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget suratMasuk() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final horizontalPadding = width * 0.04;
+    final verticalPadding = height * 0.02;
+    final isSmall = width < 360;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(width * 0.04),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                "Surat Masuk",
+                style: TextStyle(
+                  fontSize: isSmall ? 14 : 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios, size: 14),
+            ],
+          ),
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    // Anda bisa menambahkan widget untuk menampilkan data surat masuk di sini
+                  ],
+                ),
         ],
       ),
     );
@@ -349,11 +390,7 @@ class _HomeRTState extends State<HomeRT> {
         const SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: isSmall ? 11 : 12,
-          ),
-          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: isSmall ? 12 : 14),
         ),
       ],
     );
