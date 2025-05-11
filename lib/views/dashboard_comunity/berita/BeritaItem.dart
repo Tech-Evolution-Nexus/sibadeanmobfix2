@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
-
 class BeritaItem extends StatefulWidget {
   final Berita berita;
   const BeritaItem({super.key, required this.berita});

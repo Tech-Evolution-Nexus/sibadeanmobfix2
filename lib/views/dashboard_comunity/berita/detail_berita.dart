@@ -29,16 +29,13 @@ class _DetailBeritaState extends State<DetailBerita>
       if (response != null && response.statusCode == 200) {
         setState(() {
           dataModel = Berita.fromJson(response.data['data']['berita']);
-          print("dataModel: $dataModel");
           isLoading = false;
         });
       } else {
         // error handling jika response null atau bukan 200
-        print('Gagal memuat berita: ${response?.statusCode}');
         setState(() => isLoading = false);
       }
     } catch (e) {
-      print("Error: $e");
       setState(() => isLoading = false);
     }
   }
