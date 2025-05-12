@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
-import 'package:sibadeanmob_v2_fix/models/userModel.dart';
+import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 
 class PengajuanSurat {
   final int id;

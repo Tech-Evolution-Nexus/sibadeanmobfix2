@@ -58,7 +58,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          SnackBar( 
               content:
                   Text(response.data['message'] ?? 'Password berhasil diubah')),
         );

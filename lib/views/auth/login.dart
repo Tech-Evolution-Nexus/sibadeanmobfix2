@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
+import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import '../../methods/api.dart';
@@ -49,12 +51,14 @@ class _LoginState extends State<Login> {
   void loginUser() async {
     final nik = nikController.text.trim();
     final pass = passwordController.text.trim();
+
     if (nik.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('NIK dan Password tidak boleh kosong')),
       );
       return;
     }
+
     try {
       final response = await API().loginUser(nik: nik, password: pass);
       print(response.data);
@@ -64,59 +68,53 @@ class _LoginState extends State<Login> {
         final responData = response.data["data"];
         final userData = responData['user'];
 
-        // Periksa role dan simpan data ke SharedPreferences hanya jika role valid
         if (userData['role'] == 'rt' ||
             userData['role'] == 'rw' ||
             userData['role'] == 'masyarakat') {
-          // Simpan data ke SharedPreferences
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.setInt('user_id', userData['id']);
-          await preferences.setString('role', userData['role']);
-          await preferences.setString(
-              'nama', userData['masyarakat']['nama_lengkap']);
-          await preferences.setString('nik', userData['masyarakat']['nik']);
-          await preferences.setString('noKK', userData['masyarakat']['no_kk']);
-          await preferences.setString('token', responData['access_token']);
-          // Tampilkan pesan berhasil
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(response.data['message'] ?? 'Login berhasil')),
+          final user = AuthUserModel(
+            id: userData['id'],
+            role: userData['role'],
+            email: userData['email'],
+            name: userData['masyarakat']['nama_lengkap'],
+            nik: userData['masyarakat']['nik'],
+            noKk: userData['masyarakat']['no_kk'],
+            token: responData['access_token'],
           );
 
-          // Navigasi ke halaman Dashboard berdasarkan role
-          if (userData['role'] == 'rt') {
+          await DatabaseHelper().insertUser(user);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.data['message'] ?? 'Login berhasil'),
+            ),
+          );
+
+          // Navigasi ke dashboard berdasarkan role
+          if (user.role == 'rt') {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => DashboardRT()),
             );
-          } else if (userData['role'] == 'rw') {
+          } else if (user.role == 'rw') {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => DashboardRW()),
             );
-          } else if (userData['role'] == 'masyarakat') {
+          } else {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => DashboardPage()),
             );
           }
         } else {
-          // Jika role tidak valid, tampilkan pesan dan tidak simpan data ke SharedPreferences
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Akses ditolak')),
-          );
-
-          // Kembalikan ke halaman login
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => Login()),
           );
         }
       } else {
         final errorMessage = response.data['message'] ?? 'Login gagal';
-        print("Login gagal: $errorMessage");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login gagal: $errorMessage')),
         );
       }
     } catch (e) {
-      print("Terjadi kesalahan: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );

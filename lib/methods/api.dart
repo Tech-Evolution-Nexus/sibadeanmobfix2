@@ -290,7 +290,6 @@ class API {
   }
 
   Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
-  Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
@@ -323,6 +322,35 @@ class API {
   Future<dynamic> kirimKeDio({required FormData formData}) async {
     try {
       final response = await _dio.post("ajukan-surat", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarktp({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarktp",
+          data:
+              formData); // Ganti dengan endpoint yang sesuai", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarkk({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarkk", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> profiledata({required String nik}) async {
+    try {
+      final response = await _dio.get("profile?nik=$nik");
       return response;
     } catch (e) {
       print("Terjadi error saat mengirim data: $e");

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
@@ -7,6 +8,7 @@ import 'informasi_diri.dart';
 import 'ganti_email.dart';
 import 'ganti_password.dart';
 import 'ganti_noHp.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -22,146 +24,167 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController(text: "327303030982");
 
   void logout() async {
-    final response = await API().logout();
-    if (response.statusCode == 200) {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.remove('user_id');
-      await preferences.remove('nik');
-      await preferences.remove('token');
-      await preferences.remove('nama');
-      await preferences.remove('nik');
-      await preferences.remove('noKK');
+  final response = await API().logout();
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-        (route) => false,
-      );
-    }
+  if (response.statusCode == 200) {
+    // Hapus semua data user dari tabel 'user'
+    await DatabaseHelper().deleteUser();
+
+    // Navigasi ke halaman login
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const Login()),
+      (route) => false,
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade900,
-      body: Column(
+      body: ListView(
         children: [
-          const SizedBox(height: 60),
-          // Foto Profil dan Nama
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/images/6.jpg'),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            _nameController.text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _nikController.text,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 30),
-
-          // Card Menu
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(top: 30),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          Stack(
+            children: [
+              Container(
+                height: 320,
+                decoration: BoxDecoration(
+                  color: Color(0xFF052158),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(12), // Radius hanya bagian bawah
+                  ),
+                ),
               ),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              Column(
                 children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 3,
-                    child: Column(
-                      children: [
-                        buildMenuItem(
-                          icon: Icons.person_outline,
-                          title: 'Informasi Diri',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InformasiDiriPage()),
-                            );
-                          },
+                  Gap(60),
+                  Column(
+                    children: [
+                      Center(
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage('assets/images/6.jpg'),
                         ),
-                        buildDivider(),
-                        buildMenuItem(
-                          icon: Icons.email_outlined,
-                          title: 'Ganti Email',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GantiEmailPage()),
-                            );
-                          },
+                      ),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text(
+                          _nameController.text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        buildDivider(),
-                        buildMenuItem(
-                          icon: Icons.phone_android_outlined,
-                          title: 'Ganti Nomor HP',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GantiNoHpPage()),
-                            );
-                          },
+                      ),
+                      const SizedBox(height: 4),
+                      Center(
+                        child: Text(
+                          _nikController.text,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
                         ),
-                        buildDivider(),
-                        buildMenuItem(
-                          icon: Icons.lock_outline,
-                          title: 'Ganti Password',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GantiPasswordPage()),
-                            );
-                          },
+                      ),
+                    ],
+                  ),
+                  Gap(30),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: Colors.black26,
+                              width: .2,
+                            ),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            children: [
+                              buildMenuItem(
+                                icon: Icons.person_outline,
+                                title: 'Informasi Diri',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InformasiDiriPage(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              buildDivider(),
+                              buildMenuItem(
+                                icon: Icons.email_outlined,
+                                title: 'Ganti Email',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => GantiEmailPage()),
+                                  );
+                                },
+                              ),
+                              buildDivider(),
+                              buildMenuItem(
+                                icon: Icons.phone_android_outlined,
+                                title: 'Ganti Nomor HP',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => GantiNoHpPage()),
+                                  );
+                                },
+                              ),
+                              buildDivider(),
+                              buildMenuItem(
+                                icon: Icons.lock_outline,
+                                title: 'Ganti Password',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            GantiPasswordPage()),
+                                  );
+                                },
+                              ),
+                              buildDivider(),
+                              buildMenuItem(
+                                icon: Icons.info_outline,
+                                title: 'Tentang',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => TentangPage()),
+                                  );
+                                },
+                              ),
+                              buildDivider(),
+                              buildMenuItem(
+                                icon: Icons.logout,
+                                title: 'Keluar',
+                                iconColor: Colors.red,
+                                onTap: logout,
+                              ),
+                            ],
+                          ),
                         ),
-                        buildDivider(),
-                        buildMenuItem(
-                          icon: Icons.info_outline,
-                          title: 'Tentang',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TentangPage()),
-                            );
-                          },
-                        ),
-                        buildDivider(),
-                        buildMenuItem(
-                          icon: Icons.logout,
-                          title: 'Keluar',
-                          iconColor: Colors.red,
-                          onTap: logout,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ],
       ),

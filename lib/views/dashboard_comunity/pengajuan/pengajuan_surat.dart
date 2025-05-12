@@ -4,7 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/models/LampiranSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/suratlampiranmodel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/informasi_diri.dart';
 import '../../../services/pengajuan_servis.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/costum_texfield.dart';
@@ -30,6 +32,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   final _formKey = GlobalKey<FormState>();
 
   SuratLampiranModel? dataModel;
+  MasyarakatModel? dataModelUser;
+
   bool isLoading = true;
   final PageController _pageController = PageController();
   int _currentPage = 0;
@@ -60,14 +64,45 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   @override
   void initState() {
     super.initState();
-
+    fetchUser();
     fetchSurat();
   }
 
   void nextPage() {
-    if (_formKey.currentState!.validate()) {
-      // Validasi file KK wajib di halaman tertentu (misalnya halaman ke-2 / index = 1)
+    final isKtpKosong =
+        dataModelUser?.ktpgambar == null || dataModelUser?.ktpgambar == "";
+    final isKkKosong = dataModelUser?.kartuKeluarga?.kkgambar == null ||
+        dataModelUser?.kartuKeluarga?.kkgambar == "";
 
+    // Validasi file KK dan KTP wajib ada
+    if (isKtpKosong || isKkKosong) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Perhatian"),
+          content: Text(
+              "Harap unggah file KTP dan KK terlebih dahulu sebelum melanjutkan."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Tutup dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InformasiDiriPage(),
+                  ),
+                );
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Jika form valid, lanjut ke halaman berikutnya
+    if (_formKey.currentState!.validate()) {
       _pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -90,7 +125,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           await API().getdatadetailpengajuansurat(idsurat: widget.idsurat);
       ();
       if (response.statusCode == 200) {
-        // print(response.data['data']['surat']);
+        // print(response.data['data']);
         setState(() {
           dataModel =
               SuratLampiranModel.fromJson(response.data['data']['surat']);
@@ -101,6 +136,23 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
               (_) => TextEditingController(),
             );
           }
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> fetchUser() async {
+    try {
+      var response = await API().profiledata(nik: widget.nik);
+      // print(response);
+      if (response.statusCode == 200) {
+        setState(() {
+          dataModelUser = MasyarakatModel.fromJson(response.data['data']);
+          // isLoading = false;
+          // print('DATA MODEL:\n$dataModel');
         });
       }
     } catch (e) {
@@ -154,6 +206,37 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   }
 
   void _submitPengajuan() async {
+    final isKtpKosong =
+        dataModelUser?.ktpgambar == null || dataModelUser?.ktpgambar == "";
+    final isKkKosong = dataModelUser?.kartuKeluarga?.kkgambar == null ||
+        dataModelUser?.kartuKeluarga?.kkgambar == "";
+
+    // Validasi file KK dan KTP wajib ada
+    if (isKtpKosong || isKkKosong) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Perhatian"),
+          content: Text(
+              "Harap unggah file KTP dan KK terlebih dahulu sebelum melanjutkan."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Tutup dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InformasiDiriPage(),
+                  ),
+                );
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       for (final item in dataModel!.lampiransurat) {
         if (!lampiranFiles.containsKey(item.idLampiran.toString())) {
@@ -221,7 +304,6 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(dataModel?.fields.isEmpty);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -233,297 +315,203 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Isi Data Pengajuan:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Isi Data Pengajuan:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Form(
+              key: _formKey,
+              child: Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: NeverScrollableScrollPhysics(),
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context)
-                          .size
-                          .height, // atau MediaQuery.of(context).size.height * 0.8
-                      child: PageView(
-                        controller: _pageController,
-                        physics: NeverScrollableScrollPhysics(),
+                    // Halaman 1
+                    SingleChildScrollView(
+                      child: Column(
                         children: [
-                          Column(
-                            children: [
-                              // CARD 1: BIODATA
-                              Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                margin: EdgeInsets.all(16),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Biodata Warga",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                          _buildBiodataCard(),
+                          _buildImageCard("Dokumen Kartu Keluarga",
+                              "http://192.168.100.205:8000/storage/pengantar_rt/iwCtfv0nhjOZIu7OteDUqiZs5V3nAmUzbWmI5MtE.jpg"),
+                          _buildImageCard("Dokumen KTP",
+                              "http://192.168.100.205:8000/storage/pengantar_rt/iwCtfv0nhjOZIu7OteDUqiZs5V3nAmUzbWmI5MtE.jpg"),
+                          SizedBox(
+                            width: double.infinity, // Mengatur lebar Container
+                            child: Card(
+                              elevation: 0,
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Upload File Pengantar Rt (Opsional):",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    if (_selectedFile != null)
+                                      Column(
+                                        children: [
+                                          Text("File Terpilih: $_fileName",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold)),
+                                          SizedBox(height: 10),
+                                          if (_fileName != null &&
+                                              (_fileName!.endsWith('.jpg') ||
+                                                  _fileName!.endsWith('.png')))
+                                            _selectedFile != null
+                                                ? Image.file(
+                                                    _selectedFile!,
+                                                    height: 100,
+                                                  )
+                                                : Container(),
+                                        ],
+                                      )
+                                    else
+                                      Text("Belum ada file yang dipilih",
+                                          style: TextStyle(color: Colors.grey)),
+                                    SizedBox(height: 10),
+                                    ElevatedButton.icon(
+                                      onPressed: _pickPengantarFile,
+                                      icon: Icon(Icons.upload_file),
+                                      label: Text("Upload Foto Pengantar Rt"),
+                                    ),
+                                    if (PengantarRtgambar != null)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                        child: Text(
+                                          "Gambar Pengantar Rt telah dipilih!",
+                                          style: TextStyle(color: Colors.green),
                                         ),
                                       ),
-                                      SizedBox(height: 16),
-                                      _buildBiodataItem(
-                                          "NIK", "3276011234567890"),
-                                      _buildBiodataItem("Nama", "Budi Santoso"),
-                                      _buildBiodataItem(
-                                          "Jenis Kelamin", "Laki-laki"),
-                                      _buildBiodataItem("Tempat, Tgl Lahir",
-                                          "Bandung, 01 Jan 1990"),
-                                      _buildBiodataItem("Alamat",
-                                          "Jl. Merdeka No. 123, Bandung"),
-                                      _buildBiodataItem(
-                                          "No HP", "081234567890"),
-                                      _buildBiodataItem(
-                                          "Email", "budi@example.com"),
-                                    ],
-                                  ),
+                                  ],
                                 ),
                               ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: (dataModel?.fields.isEmpty == true &&
+                                      dataModel?.lampiransurat.isEmpty == true)
+                                  ? _submitPengajuan
+                                  : nextPage,
+                              child: Text((dataModel?.fields.isEmpty == true &&
+                                      dataModel?.lampiransurat.isEmpty == true)
+                                  ? "Ajukan Surat"
+                                  : "Selanjutnya"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                              // CARD 2: UPLOAD FILE DAN TOMBOL
-                              SizedBox(
-                                width:
-                                    double.infinity, // Mengatur lebar Container
-                                child: Card(
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                    // Halaman 2
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          if (isLoading || dataModel?.fields.isEmpty == true)
+                            Center(child: CircularProgressIndicator())
+                          else
+                            Column(
+                              children:
+                                  List.generate(dataModel!.fields.length, (i) {
+                                final item = dataModel!.fields[i];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: CustomTextField(
+                                    controller: fieldControllers[i],
+                                    labelText: item.namaField ?? "data",
+                                    hintText:
+                                        "Masukkan ${item.namaField ?? 'data'}",
+                                    keyboardType: TextInputType.text,
+                                    validator: (value) =>
+                                        value == null || value.isEmpty
+                                            ? 'Field ini tidak boleh kosong'
+                                            : null,
                                   ),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Upload File Pengantar Rt (Opsional):",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        if (_selectedFile != null)
-                                          Column(
-                                            children: [
-                                              Text("File Terpilih: $_fileName",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              SizedBox(height: 10),
-                                              if (_fileName != null &&
-                                                  (_fileName!
-                                                          .endsWith('.jpg') ||
-                                                      _fileName!
-                                                          .endsWith('.png')))
-                                                _selectedFile != null
-                                                    ? Image.file(
-                                                        _selectedFile!,
-                                                        height: 100,
-                                                      )
-                                                    : Container(),
-                                            ],
-                                          )
-                                        else
-                                          Text("Belum ada file yang dipilih",
-                                              style: TextStyle(
-                                                  color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        ElevatedButton.icon(
-                                          onPressed: _pickPengantarFile,
-                                          icon: Icon(Icons.upload_file),
-                                          label:
-                                              Text("Upload Foto Pengantar Rt"),
-                                        ),
-                                        if (PengantarRtgambar != null)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10.0),
-                                            child: Text(
-                                              "Gambar Pengantar Rt telah dipilih!",
-                                              style: TextStyle(
-                                                  color: Colors.green),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                );
+                              }),
+                            ),
+                          SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: prevPage,
+                                child: const Text("Kembali"),
                               ),
-                              dataModel?.fields.isEmpty == true &&
-                                      dataModel?.lampiransurat.isEmpty == true
-                                  ? Center(
-                                      child: ElevatedButton(
-                                        onPressed: _submitPengajuan,
-                                        child: Text("Ajukan Surat"),
-                                      ),
-                                    )
-                                  : Center(
-                                      child: ElevatedButton(
-                                        onPressed: nextPage,
-                                        child: Text("Selanjutnya"),
-                                      ),
-                                    ),
+                              ElevatedButton(
+                                onPressed:
+                                    (dataModel?.lampiransurat.isEmpty == true)
+                                        ? _submitPengajuan
+                                        : nextPage,
+                                child: Text(
+                                    (dataModel?.lampiransurat.isEmpty == true)
+                                        ? "Ajukan Surat"
+                                        : "Selanjutnya"),
+                              ),
                             ],
                           ),
-                          Column(
-                            children: [
-                              SizedBox(
-                                width: double.infinity,
-                                child: isLoading ||
-                                        dataModel?.fields.isEmpty == true
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
-                                    : Column(
-                                        children: List.generate(
-                                            dataModel!.fields.length, (i) {
-                                          final item = dataModel!.fields[i];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 12.0),
-                                            child: CustomTextField(
-                                              controller: fieldControllers[i],
-                                              labelText:
-                                                  item.namaField ?? "data",
-                                              hintText:
-                                                  "Masukkan ${item.namaField ?? 'data'}",
-                                              keyboardType: TextInputType.text,
-                                              validator: (value) {
-                                                // Cek apakah value kosong atau tidak
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Field ini tidak boleh kosong';
-                                                }
-                                                return null; // Validasi lulus
-                                              },
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                              ),
-                              const SizedBox(height: 16),
-                              dataModel?.lampiransurat.isEmpty == true
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: prevPage,
-                                          child: const Text("Kembali"),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: _submitPengajuan,
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 24),
-                                            textStyle:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          child: const Text("Ajukan Surat"),
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: prevPage,
-                                          child: const Text("Kembali"),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: nextPage,
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 12, horizontal: 24),
-                                            textStyle:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          child: const Text("Selanjutnya"),
-                                        ),
-                                      ],
-                                    )
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              // Lampiran File Upload Section
-                              SizedBox(
-                                width: double.infinity,
-                                child: isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
-                                    : Column(
-                                        children: dataModel!.lampiransurat
-                                            .map((item) {
-                                          return Column(
-                                            children: [
-                                              // Lampiran Card
-                                              Card(
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8),
-                                                child: ListTile(
-                                                  title: Text(item
-                                                      .lampiran.namaLampiran),
-                                                  subtitle:
-                                                      Text("Belum ada gambar"),
-                                                  trailing: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.upload),
-                                                    onPressed: () =>
-                                                        _pickLampiranFile(item
-                                                            .idLampiran
-                                                            .toString()),
-                                                  ),
-                                                ),
-                                              ),
-                                              const Divider(height: 1),
-                                            ],
-                                          );
-                                        }).toList(),
-                                      ),
-                              ),
+                        ],
+                      ),
+                    ),
 
-                              const SizedBox(
-                                  height:
-                                      16), // Spacer between lampiran section and buttons
-
-                              // Button Section
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: prevPage,
-                                    child: const Text("Kembali"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: _submitPengajuan,
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 24),
-                                      textStyle: const TextStyle(fontSize: 16),
+                    // Halaman 3
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          if (isLoading)
+                            Center(child: CircularProgressIndicator())
+                          else
+                            Column(
+                              children: dataModel!.lampiransurat.map((item) {
+                                return Column(
+                                  children: [
+                                    Card(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      child: ListTile(
+                                        title: Text(item.lampiran.namaLampiran),
+                                        subtitle: Text("Belum ada gambar"),
+                                        trailing: IconButton(
+                                          icon: const Icon(Icons.upload),
+                                          onPressed: () => _pickLampiranFile(
+                                              item.idLampiran.toString()),
+                                        ),
+                                      ),
                                     ),
-                                    child: const Text("Ajukan Surat"),
-                                  ),
-                                ],
+                                    const Divider(height: 1),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: prevPage,
+                                child: const Text("Kembali"),
+                              ),
+                              ElevatedButton(
+                                onPressed: _submitPengajuan,
+                                child: const Text("Ajukan Surat"),
                               ),
                             ],
                           ),
@@ -533,6 +521,74 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                   ],
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBiodataCard() {
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: EdgeInsets.all(16),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Biodata Warga",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16),
+            _buildBiodataItem("NIK", dataModelUser?.nik ?? "N/A"),
+            _buildBiodataItem("Nama", dataModelUser?.namaLengkap ?? "N/A"),
+            _buildBiodataItem(
+                "Jenis Kelamin", dataModelUser?.jenisKelamin ?? "N/A"),
+            _buildBiodataItem("Tempat, Tgl Lahir",
+                "${dataModelUser?.tempatLahir ?? 'N/A'}, ${dataModelUser?.tanggalLahir ?? 'N/A'}"),
+            _buildBiodataItem(
+                "Alamat", dataModelUser?.kartuKeluarga?.alamat ?? "N/A"),
+            _buildBiodataItem("No HP", dataModelUser?.user?.nohp ?? "N/A"),
+            _buildBiodataItem("Email", dataModelUser?.user?.email ?? "N/A"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageCard(String title, String img) {
+    return SizedBox(
+      width: double.infinity, // Mengatur lebar Container
+      child: Card(
+        elevation: 0,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Image.network(img, fit: BoxFit.cover)
             ],
           ),
         ),
