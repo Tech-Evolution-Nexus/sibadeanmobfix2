@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/userModel.dart';
+import '../models/AuthUserModel.dart';
 
 class AuthService {
   final String baseUrl = "http://127.0.0.1:8000/api/";
 // 🟢 LOGIN
-  Future<UserModel?> login(String nik, String password) async {
+  Future<AuthUserModel?> login(String nik, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/login"),
@@ -19,7 +19,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey("user")) {
-          return UserModel.fromJson(responseData["user"]);
+          return AuthUserModel.fromJson(responseData["user"]);
         }
       }
       return null;

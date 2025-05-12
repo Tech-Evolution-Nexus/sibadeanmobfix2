@@ -9,6 +9,8 @@ import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }

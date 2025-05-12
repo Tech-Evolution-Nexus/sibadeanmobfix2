@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../models/userModel.dart';
+import '../models/AuthUserModel.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
   String? _errorMessage;
-  UserModel? _user;
+  AuthUserModel? _user;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  UserModel? get user => _user;
+  AuthUserModel? get user => _user;
 
   // 🟢 LOGIN
   Future<bool> login(String nik, String password) async {
@@ -18,7 +18,7 @@ class AuthProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    UserModel? response = await _authService.login(nik, password);
+    AuthUserModel? response = await _authService.login(nik, password);
     
     _isLoading = false;
 

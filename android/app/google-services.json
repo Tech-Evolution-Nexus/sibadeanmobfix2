@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1061037532582",
+    "project_id": "badeanmobflutter",
+    "storage_bucket": "badeanmobflutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061037532582:android:6474aeb179b0a37343db67",
+        "android_client_info": {
+          "package_name": "com.example.sibadeanmob_v2_fix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH56c25FcanR4vhDsG1bMbSxYH0XtN7u4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

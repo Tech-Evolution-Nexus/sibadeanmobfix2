@@ -95,7 +95,8 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                                     MaterialPageRoute(
                                       builder: (context) => PengajuanSuratPage(
                                           idsurat: widget.idsurat,
-                                          namaSurat: widget.namasurat),
+                                          namaSurat: widget.namasurat,
+                                          nik: anggota.nik),
                                     ),
                                   );
                                 },

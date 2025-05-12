@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RiwayatSuratRW extends StatefulWidget {
+  const RiwayatSuratRW({super.key});
+
   @override
   _RiwayatSuratRWState createState() => _RiwayatSuratRWState();
 }
