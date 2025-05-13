@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
+import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import '../../methods/api.dart';
@@ -8,7 +8,6 @@ import '../../theme/theme.dart';
 import 'verifikasi.dart';
 import '../dashboard_comunity/dashboard/dashboard_warga.dart';
 import '../../widgets/costum_texfield.dart';
-import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -50,74 +49,69 @@ class _LoginState extends State<Login> {
   void loginUser() async {
     final nik = nikController.text.trim();
     final pass = passwordController.text.trim();
+
     if (nik.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('NIK dan Password tidak boleh kosong')),
       );
       return;
     }
+
     try {
       final response = await API().loginUser(nik: nik, password: pass);
-      print(response.data);
 
-      if (response.statusCode == 200 &&
-          response.data["data"].containsKey('access_token')) {
-        final responData = response.data["data"];
-        final userData = responData['user'];
+      final data = response.data['data'];
+      final userData = data?['user'];
+      final masyarakat = userData?['masyarakat'];
 
-        // Periksa role dan simpan data ke SharedPreferences hanya jika role valid
-        if (userData['role'] == 'rt' ||
-            userData['role'] == 'rw' ||
-            userData['role'] == 'masyarakat') {
-          // Simpan data ke SharedPreferences
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.setInt('user_id', userData['id']);
-          await preferences.setString('role', userData['role']);
-          await preferences.setString(
-              'nama', userData['masyarakat']['nama_lengkap']);
-          await preferences.setString('nik', userData['masyarakat']['nik']);
-          await preferences.setString('noKK', userData['masyarakat']['no_kk']);
-          await preferences.setString('token', responData['access_token']);
-          // Tampilkan pesan berhasil
+      if (response.statusCode == 200 && data?['access_token'] != null) {
+        if (userData == null || masyarakat == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(response.data['message'] ?? 'Login berhasil')),
+            SnackBar(content: Text('Data user tidak lengkap')),
           );
+          return;
+        }
 
-          // Navigasi ke halaman Dashboard berdasarkan role
-          if (userData['role'] == 'rt') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => DashboardRT()),
-            );
-          } else if (userData['role'] == 'rw') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => DashboardRW()),
-            );
-          } else if (userData['role'] == 'masyarakat') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => DashboardPage()),
-            );
-          }
-        } else {
-          // Jika role tidak valid, tampilkan pesan dan tidak simpan data ke SharedPreferences
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Akses ditolak')),
-          );
+        final user = AuthUserModel(
+          id: userData['id'],
+          role: userData['role'],
+          email: userData['email'],
+          nama_lengkap: masyarakat['nama_lengkap'],
+          nik: masyarakat['nik'],
+          no_kk: masyarakat['no_kk'],
+          access_token: data['access_token'],
+          // Jika ada
+        );
 
-          // Kembalikan ke halaman login
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => Login()),
-          );
+        await DatabaseHelper().insertUser(user);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.data['message'] ?? 'Login berhasil')),
+        );
+
+        // Navigasi sesuai role
+        switch (user.role) {
+          case 'rt':
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => DashboardRT()));
+            break;
+          case 'rw':
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => DashboardRW()));
+            break;
+          default:
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => DashboardPage()));
+            break;
         }
       } else {
         final errorMessage = response.data['message'] ?? 'Login gagal';
-        print("Login gagal: $errorMessage");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login gagal: $errorMessage')),
         );
       }
     } catch (e) {
-      print("Terjadi kesalahan: $e");
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );

@@ -72,7 +72,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
       // backgroundColor: Colors.white,
       floatingActionButton: Visibility(
           visible: pengajuanData?.status == "selesai",
-          child: Container(
+          child: SizedBox(
             width: 60,
             height: 60,
             child: FloatingActionButton(
@@ -97,7 +97,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
           ? Center(child: CircularProgressIndicator())
           : pengajuanData == null
               ? Center(child: Text("Data tidak tersedia."))
-              : Container(
+              : SizedBox(
                   width: double.infinity,
                   child: ListView(
                     children: [

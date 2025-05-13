@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../methods/api.dart';
 import 'login.dart';
@@ -57,7 +56,7 @@ class _AktivasiState extends State<Aktivasi> {
         }
 
         if (response.statusCode == 200) {
-          final data = response.data;
+          
           _showAlertDialog(
             "Aktivasi Berhasil",
             "Akun Anda berhasil diaktivasi. Silakan login.",

@@ -1,105 +1,40 @@
 class UserModel {
   final int id;
-  final String name;
   final String email;
-  final String token;
-  final MasyarakatModel? masyarakat;
+  final String emailVerifiedAt;
+  final String? fcmToken;
+  final int status;
+  final String avatar;
+  final String nohp;
+  final String role;
+  final String createdAt;
+  final String updatedAt;
 
   UserModel({
     required this.id,
-    required this.name,
     required this.email,
-    required this.token,
-    required this.masyarakat,
+    required this.emailVerifiedAt,
+    this.fcmToken,
+    required this.status,
+    required this.nohp,
+    required this.avatar,
+    required this.role,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['user']['id'] ?? 0,
-      name: json['user']['name'] ?? '',
-      email: json['user']['email'] ?? '',
-      token: json['token'] ?? '', // Ambil token langsung
-      masyarakat: json['user']['masyarakat'] != null
-          ? MasyarakatModel.fromJson(json['user']['masyarakat'])
-          : null,
-    );
-  }
-}
-
-class MasyarakatModel {
-  final String nik;
-  final String namaLengkap;
-  final String jenisKelamin;
-  final String tempatLahir;
-  final String tanggalLahir;
-  final String agama;
-  final String pekerjaan;
-  final String pendidikan;
-  final String statusPerkawinan;
-  final String kewarganegaraan;
-  final String alamat;
-  final String phone;
-  final String statusAkun;
-  final KartuKeluargaModel? kartuKeluarga;
-
-  MasyarakatModel({
-    required this.nik,
-    required this.namaLengkap,
-    required this.jenisKelamin,
-    required this.tempatLahir,
-    required this.tanggalLahir,
-    required this.agama,
-    required this.pekerjaan,
-    required this.pendidikan,
-    required this.statusPerkawinan,
-    required this.kewarganegaraan,
-    required this.alamat,
-    required this.phone,
-    required this.statusAkun,
-    required this.kartuKeluarga,
-  });
-
-  factory MasyarakatModel.fromJson(Map<String, dynamic> json) {
-    return MasyarakatModel(
-      nik: json['nik'] ?? '',
-      namaLengkap: json['nama_lengkap'] ?? '',
-      jenisKelamin: json['jenis_kelamin'] ?? '',
-      tempatLahir: json['tempat_lahir'] ?? '',
-      tanggalLahir: json['tanggal_lahir'] ?? '',
-      agama: json['agama'] ?? '',
-      pekerjaan: json['pekerjaan'] ?? '',
-      pendidikan: json['pendidikan'] ?? '',
-      statusPerkawinan: json['status_perkawinan'] ?? '',
-      kewarganegaraan: json['kewarganegaraan'] ?? '',
-      alamat: json['alamat'] ?? '',
-      phone: json['phone'] ?? '',
-      statusAkun: json['status_akun'] ?? '',
-      kartuKeluarga: json['kartu_keluarga'] != null
-          ? KartuKeluargaModel.fromJson(json['kartu_keluarga'])
-          : null,
-    );
-  }
-}
-
-class KartuKeluargaModel {
-  final String noKk;
-  final String alamat;
-  final int rt;
-  final int rw;
-
-  KartuKeluargaModel({
-    required this.noKk,
-    required this.alamat,
-    required this.rt,
-    required this.rw,
-  });
-
-  factory KartuKeluargaModel.fromJson(Map<String, dynamic> json) {
-    return KartuKeluargaModel(
-      noKk: json['no_kk'] ?? '',
-      alamat: json['alamat'] ?? '',
-      rt: json['rt'] ?? 0,
-      rw: json['rw'] ?? 0,
+      id: json['id'] ?? 0,
+      email: json['email'] ?? '',
+      emailVerifiedAt: json['email_verified_at'] ?? '',
+      fcmToken: json['fcm_token'],
+      status: json['status'] ?? 0,
+      avatar: json['avatar'] ?? '',
+      nohp: json['no_hp'] ?? '',
+      role: json['role'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
     );
   }
 }

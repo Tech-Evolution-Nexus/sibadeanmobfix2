@@ -8,6 +8,8 @@ import '/methods/api.dart';
 import '../../../theme/theme.dart';
 
 class PengajuanPage extends StatefulWidget {
+  const PengajuanPage({super.key});
+
   @override
   _PengajuanPageState createState() => _PengajuanPageState();
 }
@@ -80,9 +82,9 @@ class _PengajuanPageState extends State<PengajuanPage>
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     return ListView.builder(
-      itemCount: pengajuan?.length ?? 0,
+      itemCount: pengajuan.length ?? 0,
       itemBuilder: (context, index) {
-        final surat = pengajuan?[index];
+        final surat = pengajuan[index];
         Color headerColor = getHeaderColor(surat?.status ?? "");
 
         return Card(

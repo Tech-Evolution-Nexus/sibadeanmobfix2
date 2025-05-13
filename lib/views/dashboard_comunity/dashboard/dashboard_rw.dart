@@ -9,7 +9,8 @@ import '../profiles/profile.dart';
 import '../riwayatsurat/riwayat_surat_rw.dart'; // pastikan ini tersedia
 
 class DashboardRW extends StatefulWidget {
-  
+  const DashboardRW({super.key});
+
   @override
   _DashboardRWState createState() => _DashboardRWState();
 }
@@ -49,6 +50,8 @@ class _DashboardRWState extends State<DashboardRW> {
 }
 
 class HomeRW extends StatefulWidget {
+  const HomeRW({super.key});
+
   @override
   _HomeRWState createState() => _HomeRWState();
 }

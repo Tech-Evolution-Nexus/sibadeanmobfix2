@@ -2,11 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sibadeanmob_v2_fix/views/splash.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'providers/auth_provider.dart';
 
 void main() async {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Minta izin
+  await messaging.requestPermission();
+
+  // Dapatkan token
+  String? token = await messaging.getToken();
+  print("FCM Token: $token");
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      showDialog(
+        context: navigatorKey.currentContext!, // Pakai navigatorKey global
+        builder: (context) => AlertDialog(
+          title: Text(message.notification!.title ?? 'Notifikasi'),
+          content: Text(message.notification!.body ?? 'Pesan masuk'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Tutup'),
+            ),
+          ],
+        ),
+      );
+    }
+  });
   await initializeDateFormatting('id', null);
   runApp(
     MultiProvider(

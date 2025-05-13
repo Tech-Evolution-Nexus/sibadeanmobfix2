@@ -5,8 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
 class API {
-  // === Login User ===2
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://127.0.0.1:8000/api/"));
+
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -18,7 +19,7 @@ class API {
     required String password,
   }) async {
     try {
-      print('NIK: $nik');
+      // print('NIK: $nik');
       final response = await _dio.post(
         'login',
         data: {'nik': nik, 'password': password},
@@ -181,7 +182,21 @@ class API {
     try {
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan/$nik");
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
 
+      return e;
+    }
+  }
+
+  Future<dynamic> getRiwayatPengajuanMasyarakat({required String nik}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get("riwayat-pengajuan-masyarakat/$nik");
       return response;
     } on DioException catch (e) {
       // Menampilkan error jika ada
@@ -254,12 +269,12 @@ class API {
       // Mengambil data dari API
       var response = await _dio.get(
         "anggota-keluarga/$nokk",
-      );
-
+);
       return response;
     } on DioException catch (e) {
-      print('Dio Error: ${e.response?.statusCode} - ${e.message}');
-      throw e; // ⬅ ini penting, bukan return e
+      print('Error: $e');
+
+      return e;
     }
   }
 
@@ -314,6 +329,44 @@ class API {
       return response;
     } on DioException catch (e) {
       return e.response;
+    }
+  }
+
+  Future<dynamic> kirimKeDio({required FormData formData}) async {
+    try {
+      final response = await _dio.post("ajukan-surat", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarktp({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarktp",
+          data:
+              formData); // Ganti dengan endpoint yang sesuai", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarkk({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarkk", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> profiledata({required String nik}) async {
+    try {
+      final response = await _dio.get("profile?nik=$nik");
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
     }
   }
 }

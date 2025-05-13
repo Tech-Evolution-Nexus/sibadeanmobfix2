@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
 class Auth {
   static Future<Map<String, dynamic>> user() async {

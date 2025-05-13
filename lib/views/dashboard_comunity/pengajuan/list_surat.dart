@@ -8,11 +8,14 @@ import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
 class ListSurat extends StatefulWidget {
+  const ListSurat({super.key});
+
   @override
   ListSuratState createState() => ListSuratState();
 }
 
 class ListSuratState extends State<ListSurat> {
+  @override
   void initState() {
     super.initState();
     fetchSurat();

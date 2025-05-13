@@ -13,8 +13,6 @@ import '../profiles/profile.dart';
 import '../riwayatsurat/riwayat_surat_rt.dart';
 
 class DashboardRT extends StatefulWidget {
-  const DashboardRT({super.key});
-
   @override
   _DashboardRTState createState() => _DashboardRTState();
 }
@@ -65,6 +63,7 @@ class _DashboardRTState extends State<DashboardRT> {
     );
   }
 }
+
 
 class _HomeRTState extends State<HomeRT> {
   String nama = "User";

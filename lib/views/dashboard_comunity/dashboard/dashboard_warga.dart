@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
@@ -14,6 +13,7 @@ import '../../../widgets/BottomBar.dart';
 import '../pengajuan/list_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -91,17 +91,28 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   Future<void> getUserData() async {
-    final user = await Auth.user();
-    setState(() {
-      nama = user['nama'] ?? "User";
-      nik = user['nik'] ?? "NIK tidak ditemukan";
-      foto = user['foto'] ?? "";
-    });
+    final userList = await DatabaseHelper().getUser();
+    //  final userList = await DatabaseHelper().getUser();
+    if (userList.isNotEmpty) {
+      final user = userList.first;
+      setState(() {
+        nama = user.nama_lengkap ?? "User";
+        nik = user.nik ?? "NIK tidak ditemukan";
+        foto = user.avatar ?? ""; // pastikan model punya field `foto`
+      });
+    } else {
+      setState(() {
+        nama = "User";
+        nik = "NIK tidak ditemukan";
+        foto = "";
+      });
+    }
   }
 
   Future<void> fetchDash() async {
     try {
       var response = await API().getdatadashboard();
+      // print(response.data['data']);
       if (response.statusCode == 200) {
         setState(() {
           dataModel = BeritaSuratModel.fromJson(response.data['data']);
