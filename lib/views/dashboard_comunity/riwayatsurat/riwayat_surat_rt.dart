@@ -8,6 +8,8 @@ import '/methods/api.dart';
 import '../../../theme/theme.dart';
 
 class RiwayatSuratRT extends StatefulWidget {
+  const RiwayatSuratRT({super.key});
+
   @override
   _RiwayatSuratRTState createState() => _RiwayatSuratRTState();
 }

@@ -7,7 +7,7 @@ import '/methods/api.dart';
 class DetailBerita extends StatefulWidget {
   final int id;
 
-  DetailBerita({required this.id});
+  const DetailBerita({super.key, required this.id});
 
   @override
   _DetailBeritaState createState() => _DetailBeritaState();
@@ -40,10 +40,6 @@ class _DetailBeritaState extends State<DetailBerita>
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
