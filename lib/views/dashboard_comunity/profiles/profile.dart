@@ -18,27 +18,42 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController _nameController =
-      TextEditingController(text: "Muhammad Nor Kholit");
-  final TextEditingController _nikController =
-      TextEditingController(text: "327303030982");
+  String nik ="";
+  String nama_lengkap ="";
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    final userList = await DatabaseHelper().getUser();
+    
+  if (userList.isNotEmpty) {
+    setState(() {
+      nik = userList.first.nik;
+      nama_lengkap = userList.first.nama_lengkap;
+    });
+  }
+
+  }
+
 
   void logout() async {
-  final response = await API().logout();
+    final response = await API().logout();
 
-  if (response.statusCode == 200) {
-    // Hapus semua data user dari tabel 'user'
-    await DatabaseHelper().deleteUser();
+    if (response.statusCode == 200) {
+      // Hapus semua data user dari tabel 'user'
+      await DatabaseHelper().deleteUser();
 
-    // Navigasi ke halaman login
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Login()),
-      (route) => false,
-    );
+      // Navigasi ke halaman login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false,
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 10),
                       Center(
                         child: Text(
-                          _nameController.text,
+                         nama_lengkap,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
@@ -81,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 4),
                       Center(
                         child: Text(
-                          _nikController.text,
+                          nik,
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,

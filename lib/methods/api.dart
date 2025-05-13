@@ -321,12 +321,12 @@ class API {
       String? token = await _getToken();
 
       final response = await _dio.post(
-        'ubhPass',
+        'chgPass',
         data: {
           'nik': nik,
           'password': password,
-          'new_password': newPass,
-          'confirm_password': confPass,
+          'newPass': newPass,
+          'confPass': confPass,
         },
         options: Options(headers: {
           'Content-Type': 'application/json',
@@ -365,7 +365,7 @@ class API {
 
       print('NIK: $nik');
       final response = await _dio.post(
-        'ubhemail',
+        'chgEmail',
         data: {'nik': nik, 'email': email},
         options: Options(headers: {
           'Content-Type': 'application/json',
