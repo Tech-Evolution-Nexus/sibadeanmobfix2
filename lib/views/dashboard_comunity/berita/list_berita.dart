@@ -35,7 +35,6 @@ class _ListBeritaState extends State<ListBerita> {
     try {
       var response = await API().getberita();
       if (response.statusCode == 200) {
-        print(response.data['data']);
         setState(() {
           dataModel = (response.data["data"]["berita"] as List)
               .map((item) => Berita.fromJson(item))
@@ -44,7 +43,6 @@ class _ListBeritaState extends State<ListBerita> {
         });
       }
     } catch (e) {
-      print("Error: $e");
       setState(() => isLoading = false);
     }
   }
