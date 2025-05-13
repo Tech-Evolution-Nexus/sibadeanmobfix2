@@ -1,6 +1,6 @@
+import 'package:path/path.dart';
 import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -16,10 +16,23 @@ class DatabaseHelper {
     return _database!;
   }
 
+  // Future<Database> _initDatabase() async {
+  //   var databasesPath = await getDatabasesPath();
+  //   String path = join(databasesPath, 'user_data.db');
+  //   return openDatabase(path, version: 1, onCreate: _onCreate);
+  // }
   Future<Database> _initDatabase() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'user_data.db');
-    return openDatabase(path, version: 1, onCreate: _onCreate);
+
+    bool dbExists = await databaseExists(path);
+    print('Database exists: $dbExists'); // Untuk debug, bisa dihapus
+
+    return openDatabase(
+      path,
+      version: 1,
+      onCreate: _onCreate,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {

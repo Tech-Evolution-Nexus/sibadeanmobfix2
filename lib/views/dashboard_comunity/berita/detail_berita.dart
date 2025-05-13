@@ -20,7 +20,7 @@ class _DetailBeritaState extends State<DetailBerita>
   @override
   void initState() {
     super.initState();
-    _getdetailberita();
+    _getdetailberita();     
   }
 
   Future<void> _getdetailberita() async {

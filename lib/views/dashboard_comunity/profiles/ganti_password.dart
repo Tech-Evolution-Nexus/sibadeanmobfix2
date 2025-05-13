@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class GantiPasswordPage extends StatefulWidget {
   const GantiPasswordPage({super.key});
@@ -22,8 +23,8 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
   final confirmController = TextEditingController();
 
   Future<void> chgPass(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final nik = preferences.getString('nik') ?? '';
+    final userList = await DatabaseHelper().getUser();
+    final nik = userList.first.nik;
     final currentPass = passwordController.text.trim();
     final newPass = newPassController.text.trim();
     final confPass = confirmController.text.trim();
@@ -58,7 +59,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar( 
+          SnackBar(
               content:
                   Text(response.data['message'] ?? 'Password berhasil diubah')),
         );
@@ -101,12 +102,20 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
           children: [
             const Text(
                 "Harap masukkan Kata Sandi baru untuk\nmemperbarui informasi Anda"),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Kata Sandi Sekarang",
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 20),
             TextField(
               controller: newPassController,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: "Kata Sandi",
+                labelText: "Kata Sandi Baru",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -115,7 +124,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
               controller: confirmController,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: "Konfirmasi Kata Sandi",
+                labelText: "Konfirmasi Kata Sandi Baru",
                 border: OutlineInputBorder(),
               ),
             ),

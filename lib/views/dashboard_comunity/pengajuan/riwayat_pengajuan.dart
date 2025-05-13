@@ -180,8 +180,7 @@ class _PengajuanPageState extends State<PengajuanPage>
       // print("test");
       final user = await Auth.user();
 
-      var response = await API().getRiwayatPengajuan(nik: user["nik"]);
-
+      var response = await API().getRiwayatPengajuan();
 
       if (response.statusCode == 200) {
         setState(() {

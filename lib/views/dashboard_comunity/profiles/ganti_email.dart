@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
 import '../../../models/userModel.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class GantiEmailPage extends StatefulWidget {
   const GantiEmailPage({super.key});
@@ -23,30 +24,16 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
   final emailController = TextEditingController();
 
   Future<void> chgEmail(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final nik = preferences.getString('nik') ?? '';
+    final userList = await DatabaseHelper().getUser();
+    final nik = userList.first.nik;
     final email = emailController.text.trim();
-
-    if (nik.isEmpty || email.isEmpty) {
-      _showSnackBar(
-        context,
-        'E-mail tidak boleh kosong.',
-      );
-      return;
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-      _showSnackBar(
-        context,
-        'Format E-Mail tidak valid.',
-      );
-      return;
-    }
 
     try {
       final response = await API().chgEmail(nik: nik, email: email);
       print(response.data);
 
       if (response.statusCode == 200) {
-        UserModel updatedUser = UserModel.fromJson(response.data);
+        // UserModel updatedUser = UserModel.fromJson(response.data);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:

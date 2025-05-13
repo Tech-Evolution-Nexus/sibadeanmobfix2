@@ -7,14 +7,14 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/detail_
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 
-class RiwayatSuratRT extends StatefulWidget {
-  const RiwayatSuratRT({super.key});
+class RiwayatSuratRTRW extends StatefulWidget {
+  const RiwayatSuratRTRW({super.key});
 
   @override
-  _RiwayatSuratRTState createState() => _RiwayatSuratRTState();
+  _RiwayatSuratRTRWState createState() => _RiwayatSuratRTRWState();
 }
 
-class _RiwayatSuratRTState extends State<RiwayatSuratRT>
+class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<PengajuanSurat> pengajuanMenunggu = [];
@@ -37,6 +37,7 @@ class _RiwayatSuratRTState extends State<RiwayatSuratRT>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         // backgroundColor: lightColorScheme.primary,
         backgroundColor: lightColorScheme.primary,
         title: Text("Pengajuan Surat",

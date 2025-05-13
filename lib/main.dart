@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,7 @@ void main() async {
 
   // Dapatkan token
   String? token = await messaging.getToken();
-  print("FCM Token: $token");
+
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
       showDialog(
@@ -70,18 +72,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
-  final GoRouter _router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const DashboardPage(),
-      ),
-      GoRoute(
-        path: '/reset-password',
-        builder: (context, state) {
-          final token = state.uri.queryParameters['token'];
-          return ResetPasswordPage(token: token);
-        },
-      ),
-    ],
-  );
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const DashboardPage(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) {
+        final token = state.uri.queryParameters['token'];
+        return ResetPasswordPage(token: token);
+      },
+    ),
+  ],
+);
