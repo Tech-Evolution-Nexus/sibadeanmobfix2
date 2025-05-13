@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 
 import '/methods/api.dart';
 
@@ -38,6 +39,108 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     } catch (e) {
       setState(() => isLoading = false);
     }
+  }
+
+  Future<void> submitTolak() async {
+    try {
+      final response = await API()
+          .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
+          isLoading = false;
+        });
+      } else {
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> showInputTolak() {
+    final _formKey = GlobalKey<FormState>();
+    TextEditingController keteranganController = TextEditingController();
+    return showModalBottomSheet(
+      enableDrag: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      context: context,
+      builder: (BuildContext context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 200),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Text(
+                    "Keterangan Ditolak",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        labelText: "Keterangan Ditolak",
+                        hintText: "Masukkan keterangan penolakan",
+                        controller: keteranganController,
+                        keyboardType: TextInputType.text,
+                        validator: (value) => value!.isEmpty
+                            ? 'Masukkan keterangan penolakan'
+                            : null,
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF052158),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              // loginUser();
+                            }
+                          },
+                          child: const Text(
+                            "Kirim",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -80,7 +183,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   children: [
                                     Expanded(
                                       child: ElevatedButton(
-                                        onPressed: fetchData,
+                                        onPressed: showInputTolak,
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red,
                                           foregroundColor: Colors.white,

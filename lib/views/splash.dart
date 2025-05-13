@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_warga.dart';
-import 'auth/welcome.dart';
+
 import '../widgets/costum_color.dart';
 import '../widgets/custom_icon_button.dart';
-import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'auth/welcome.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -16,22 +17,21 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   @override
+  @override
   void initState() {
     super.initState();
-
-    // Delay 3 detik sebelum berpindah ke halaman yang sesuai
     Future.delayed(Duration(seconds: 4), () async {
-      final user = await Auth.user(); // Ambil data user
+      final userList = await DatabaseHelper().getUser();
+      Widget view;
 
-      Widget view; // Menentukan tampilan berdasarkan role user
+      if (userList.isNotEmpty) {
+        final user = userList.first;
 
-      if (user["user_id"] != null) {
-        // Menentukan tampilan berdasarkan role
-        if (user["role"] == "masyarakat") {
+        if (user.role == "masyarakat") {
           view = DashboardPage();
-        } else if (user["role"] == "rt") {
+        } else if (user.role == "rt") {
           view = DashboardRT();
-        } else if (user["role"] == "rw") {
+        } else if (user.role == "rw") {
           view = DashboardRW();
         } else {
           view = WelcomeScreen();
@@ -40,7 +40,6 @@ class _SplashState extends State<Splash> {
         view = WelcomeScreen();
       }
 
-      // Navigasi ke halaman yang sesuai setelah menentukan 'view'
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => view),

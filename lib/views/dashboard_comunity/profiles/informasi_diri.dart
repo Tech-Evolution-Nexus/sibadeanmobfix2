@@ -1,14 +1,14 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
-import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/theme/theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InformasiDiriPage extends StatefulWidget {
   const InformasiDiriPage({super.key});

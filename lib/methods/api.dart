@@ -4,14 +4,17 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 
 class API {
   // === Login User ===2
   final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+      Dio(BaseOptions(baseUrl: "http://192.168.100.168:8000/api/"));
+
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString('token');
+    final user = await Auth.user();
+    return user["token"];
   }
 
   // === Login User ===
@@ -134,7 +137,9 @@ class API {
 
   Future<dynamic> getdatadashboard() async {
     try {
-      final response = await _dio.get('dash');
+      String? token = await _getToken();
+      final response = await _dio.get('dash',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -143,7 +148,10 @@ class API {
 
   Future<dynamic> getdatasurat() async {
     try {
-      final response = await _dio.get('surat');
+      String? token = await _getToken();
+
+      final response = await _dio.get('surat',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -152,7 +160,10 @@ class API {
 
   Future<dynamic> getdatadetailpengajuansurat({required int idsurat}) async {
     try {
-      final response = await _dio.get('detail-pengajuan/$idsurat');
+      String? token = await _getToken();
+
+      final response = await _dio.get('detail-pengajuan/$idsurat',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -161,7 +172,10 @@ class API {
 
   Future<dynamic> getberita() async {
     try {
-      final response = await _dio.get('berita');
+      String? token = await _getToken();
+
+      final response = await _dio.get('berita',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } catch (e) {
       print('Error saat logout: $e');
@@ -171,7 +185,10 @@ class API {
   Future<dynamic> getdetailbrita({required int id}) async {
     // print(id);
     try {
-      final response = await _dio.get('berita/$id');
+      String? token = await _getToken();
+
+      final response = await _dio.get('berita/$id',
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       print(response.data['data']['berita']);
       return response;
     } catch (e) {
@@ -180,10 +197,13 @@ class API {
   }
 
   // === Aktivasi Akun ===
-  Future<dynamic> getRiwayatPengajuan({required String nik}) async {
+  Future<dynamic> getRiwayatPengajuan() async {
     try {
+      String? token = await _getToken();
+
       // Mengambil data dari API
-      var response = await _dio.get("riwayat-pengajuan/$nik");
+      var response = await _dio.get("riwayat-pengajuan",
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } on DioException catch (e) {
       // Menampilkan error jika ada
@@ -197,8 +217,11 @@ class API {
 
   Future<dynamic> getRiwayatPengajuanMasyarakat({required String nik}) async {
     try {
+      String? token = await _getToken();
+      print(token);
       // Mengambil data dari API
-      var response = await _dio.get("riwayat-pengajuan-masyarakat/$nik");
+      var response = await _dio.get("riwayat-pengajuan-masyarakat",
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
     } on DioException catch (e) {
       // Menampilkan error jika ada
@@ -212,8 +235,11 @@ class API {
 
   Future<dynamic> getRiwayatPengajuanDetail({required int idPengajuan}) async {
     try {
+      String? token = await _getToken();
+
       // Mengambil data dari API
-      var response = await _dio.get("riwayat-pengajuan-detail/$idPengajuan");
+      var response = await _dio.get("riwayat-pengajuan-detail/$idPengajuan",
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
 
       return response;
     } on DioException catch (e) {
@@ -243,9 +269,12 @@ class API {
       String fileName = name;
       String savePath = "${downloadDir!.path}/$fileName";
 
+      String? token = await _getToken();
+
       // Unduh file
       var response = await _dio.download(
         "riwayat-pengajuan/$idPengajuan/download",
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
         savePath,
         onReceiveProgress: (received, total) {
           if (total != -1) {
@@ -268,8 +297,11 @@ class API {
 
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
+      String? token = await _getToken();
+
       // Mengambil data dari API
-      var response = await _dio.get("anggota-keluarga/$nokk");
+      var response = await _dio.get("anggota-keluarga/$nokk",
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
 
       return response;
     } on DioException catch (e) {
@@ -286,7 +318,8 @@ class API {
     required String confPass,
   }) async {
     try {
-      print('NIK: $nik');
+      String? token = await _getToken();
+
       final response = await _dio.post(
         'ubhPass',
         data: {
@@ -295,7 +328,10 @@ class API {
           'new_password': newPass,
           'confirm_password': confPass,
         },
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }),
       );
       return response;
     } on DioException catch (e) {
@@ -305,11 +341,16 @@ class API {
 
   Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
     try {
+      String? token = await _getToken();
+
       print('NIK: $nik');
       final response = await _dio.post(
         'ubhNoHp',
         data: {'nik': nik, 'no_kitap': noHp},
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }),
       );
 
       return response;
@@ -320,14 +361,19 @@ class API {
 
   Future<dynamic> chgEmail({required String nik, required String email}) async {
     try {
+      String? token = await _getToken();
+
       print('NIK: $nik');
       final response = await _dio.post(
         'ubhemail',
         data: {'nik': nik, 'email': email},
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }),
       );
 
-      return response;  
+      return response;
     } on DioException catch (e) {
       return e.response;
     }
@@ -335,7 +381,14 @@ class API {
 
   Future<dynamic> kirimKeDio({required FormData formData}) async {
     try {
-      final response = await _dio.post("ajukan-surat", data: formData);
+      String? token = await _getToken();
+
+      final response = await _dio.post("ajukan-surat",
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
+          data: formData);
       return response;
     } catch (e) {
       print("Terjadi error saat mengirim data: $e");
@@ -344,7 +397,13 @@ class API {
 
   Future<dynamic> updategambarktp({required FormData formData}) async {
     try {
+      String? token = await _getToken();
+
       final response = await _dio.post("updategambarktp",
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
           data:
               formData); // Ganti dengan endpoint yang sesuai", data: formData);
       return response;
@@ -355,7 +414,14 @@ class API {
 
   Future<dynamic> updategambarkk({required FormData formData}) async {
     try {
-      final response = await _dio.post("updategambarkk", data: formData);
+      String? token = await _getToken();
+
+      final response = await _dio.post("updategambarkk",
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
+          data: formData);
       return response;
     } catch (e) {
       print("Terjadi error saat mengirim data: $e");
@@ -364,7 +430,27 @@ class API {
 
   Future<dynamic> profiledata({required String nik}) async {
     try {
-      final response = await _dio.get("profile?nik=$nik");
+      String? token = await _getToken();
+
+      final response = await _dio.get("profile?nik=$nik",
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> pengajuanDitolak(
+      {required String nik,
+      required String idPengajuan,
+      required String keterangan}) async {
+    try {
+      String? token = await _getToken();
+
+      final response = await _dio.post(
+          "riwayat-pengajuan-masyarakat/$idPengajuan",
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          data: {keterangan});
       return response;
     } catch (e) {
       print("Terjadi error saat mengirim data: $e");
