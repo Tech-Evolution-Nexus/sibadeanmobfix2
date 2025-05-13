@@ -7,7 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+  final Dio _dio =
+      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -286,13 +287,17 @@ class API {
   }) async {
     try {
       print('NIK: $nik');
+    print('NIK: $password');
+      print('NIK: $newPass');
+      print('NIK: $confPass');
+
       final response = await _dio.post(
-        'ubhPass',
+        'chgPass',
         data: {
           'nik': nik,
           'password': password,
-          'new_password': newPass,
-          'confirm_password': confPass,
+          'newPass': newPass,
+          'confPass': confPass,
         },
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -306,8 +311,8 @@ class API {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
-        'ubhNoHp',
-        data: {'nik': nik, 'no_kitap': noHp},
+        'chgNoHp',
+        data: {'nik': nik, 'no_hp': noHp},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
@@ -321,12 +326,12 @@ class API {
     try {
       print('NIK: $nik');
       final response = await _dio.post(
-        'ubhemail',
+        'chgEmail',
         data: {'nik': nik, 'email': email},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      return response;  
+      return response;
     } on DioException catch (e) {
       return e.response;
     }

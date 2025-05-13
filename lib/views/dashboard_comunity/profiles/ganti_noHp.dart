@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class GantiNoHpPage extends StatefulWidget {
   const GantiNoHpPage({super.key});
@@ -27,8 +28,8 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
   }
 
   Future<void> chgNoHp(BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final nik = preferences.getString('nik') ?? '';
+    final userList = await DatabaseHelper().getUser();
+    final nik = userList.first.nik;
     final noHp = noHpController.text.trim();
 
 if (nik.isEmpty || noHp.isEmpty) {
