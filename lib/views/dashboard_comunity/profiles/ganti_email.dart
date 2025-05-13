@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
+import '../../../models/userModel.dart';
 
 class GantiEmailPage extends StatefulWidget {
   const GantiEmailPage({super.key});
@@ -45,6 +46,7 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
       print(response.data);
 
       if (response.statusCode == 200) {
+        UserModel updatedUser = UserModel.fromJson(response.data);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
@@ -98,7 +100,9 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  chgEmail(context);
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo[900]),
                 child: const Text("Ubah Email"),
