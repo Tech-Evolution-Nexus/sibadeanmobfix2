@@ -7,8 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.1.6:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
@@ -184,7 +183,21 @@ class API {
     try {
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan/$nik");
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
 
+      return e;
+    }
+  }
+
+  Future<dynamic> getRiwayatPengajuanMasyarakat({required String nik}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get("riwayat-pengajuan-masyarakat/$nik");
       return response;
     } on DioException catch (e) {
       // Menampilkan error jika ada

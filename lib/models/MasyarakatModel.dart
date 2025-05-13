@@ -15,11 +15,11 @@ class MasyarakatModel {
   final String pekerjaan;
   final String golonganDarah;
   final String statusPerkawinan;
-  final String tanggalPerkawinan;
+  String tanggalPerkawinan;
   final String statusKeluarga;
   final String kewarganegaraan;
-  final String noPaspor;
-  final String noKitap;
+  String noPaspor;
+  String noKitap;
   final String namaAyah;
   final String namaIbu;
   final String createdAt;
@@ -40,12 +40,12 @@ class MasyarakatModel {
     required this.pekerjaan,
     required this.golonganDarah,
     required this.statusPerkawinan,
-    required this.tanggalPerkawinan,
+    this.tanggalPerkawinan = "",
     required this.statusKeluarga,
     required this.kewarganegaraan,
     required this.noPaspor,
-    required this.noKitap,
-    required this.namaAyah,
+    this.noKitap = "",
+    this.namaAyah = "",
     required this.namaIbu,
     required this.createdAt,
     required this.ktpgambar,
