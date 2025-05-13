@@ -7,7 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 class API {
   // === Login User ===2
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+  final Dio _dio =
+      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString('token');
