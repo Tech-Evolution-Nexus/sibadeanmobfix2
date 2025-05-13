@@ -5,8 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
 class API {
-
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+  final Dio _dio = Dio(BaseOptions(baseUrl: "http://192.168.100.2:8000/api/"));
 
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -269,7 +268,7 @@ class API {
       // Mengambil data dari API
       var response = await _dio.get(
         "anggota-keluarga/$nokk",
-);
+      );
       return response;
     } on DioException catch (e) {
       print('Error: $e');
