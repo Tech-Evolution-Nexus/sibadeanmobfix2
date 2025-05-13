@@ -3,45 +3,47 @@ import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 class AuthUserModel {
   final int id;
   final String role;
-  final String name;
+  final String nama_lengkap;
   final String email;
-  final String token;
+  final String access_token;
   final String nik;
-  final String noKk;
-  final String foto;
-
+  final String no_kk;
+  final String avatar;
 
   AuthUserModel({
     required this.id,
-    required this.name,
+    required this.nama_lengkap,
     required this.email,
-    required this.token,
+    required this.access_token,
     required this.role,
     required this.nik,
-    required this.noKk,
-    this.foto = '',
+    required this.no_kk,
+    this.avatar = '',
   });
 
   factory AuthUserModel.fromJson(Map<String, dynamic> json) {
     return AuthUserModel(
-      id: json['user']['id'] ?? 0,
-      name: json['user']['name'] ?? '',
-      email: json['user']['email'] ?? '',
-      token: json['token'] ?? '',
-      role: json['user']['role'] ?? '',
-      nik: json['user']['masyarakat']['nik'] ?? '',
-      noKk: json['user']['masyarakat']['no_kk'] ?? '',
+      id: json['id'],
+      role: json['role'],
+      email: json['email'],
+      nama_lengkap: json['masyarakat']['nama_lengkap'],
+      nik: json['masyarakat']['nik'],
+      no_kk: json['masyarakat']['no_kk'],
+      access_token: json['access_token'] ?? '',
+      avatar: json['avatar'],
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'role': role,
       'email': email,
-      'nama_lengkap': name,
+      'nama_lengkap': nama_lengkap,
       'nik': nik,
-      'no_kk': noKk,
-      'token': token,
+      'no_kk': no_kk,
+      'access_token': access_token,
+      'avatar': avatar,
     };
   }
 }
