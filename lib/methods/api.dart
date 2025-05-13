@@ -183,7 +183,21 @@ class API {
     try {
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan/$nik");
+      return response;
+    } on DioException catch (e) {
+      // Menampilkan error jika ada
+      if (kDebugMode) {
+        debugPrint('Error: ${e.response}');
+      }
 
+      return e;
+    }
+  }
+
+  Future<dynamic> getRiwayatPengajuanMasyarakat({required String nik}) async {
+    try {
+      // Mengambil data dari API
+      var response = await _dio.get("riwayat-pengajuan-masyarakat/$nik");
       return response;
     } on DioException catch (e) {
       // Menampilkan error jika ada
@@ -258,7 +272,7 @@ class API {
 
       return response;
     } on DioException catch (e) {
-      print('Error: ${e}');
+      print('Error: $e');
 
       return e;
     }
@@ -315,6 +329,44 @@ class API {
       return response;  
     } on DioException catch (e) {
       return e.response;
+    }
+  }
+
+  Future<dynamic> kirimKeDio({required FormData formData}) async {
+    try {
+      final response = await _dio.post("ajukan-surat", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarktp({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarktp",
+          data:
+              formData); // Ganti dengan endpoint yang sesuai", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> updategambarkk({required FormData formData}) async {
+    try {
+      final response = await _dio.post("updategambarkk", data: formData);
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
+    }
+  }
+
+  Future<dynamic> profiledata({required String nik}) async {
+    try {
+      final response = await _dio.get("profile?nik=$nik");
+      return response;
+    } catch (e) {
+      print("Terjadi error saat mengirim data: $e");
     }
   }
 }

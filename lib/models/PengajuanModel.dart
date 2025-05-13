@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
-import 'package:sibadeanmob_v2_fix/models/userModel.dart';
+import 'package:sibadeanmob_v2_fix/models/FieldValuesModel.dart';
 
 class PengajuanSurat {
   final int id;
@@ -12,6 +13,8 @@ class PengajuanSurat {
   final String keterangan;
   final String keteranganDitolak;
   final MasyarakatModel masyarakat;
+  final List<FieldValuesModel>? fieldValues;
+  final List<LampiranPengajuan>? lampiran;
   final Surat surat;
   final String createdAt;
 
@@ -25,6 +28,8 @@ class PengajuanSurat {
     this.keterangan = "-",
     this.keteranganDitolak = "-",
     required this.masyarakat,
+    required this.lampiran,
+    this.fieldValues,
     required this.surat,
     required this.createdAt,
   });
@@ -41,6 +46,7 @@ class PengajuanSurat {
   }
 
   factory PengajuanSurat.fromJson(Map<String, dynamic> json) {
+    print(json);
     DateTime date = DateTime.parse(json["created_at"]);
     String dateFormat = DateFormat('dd/MM/yyyy').format(date);
     return PengajuanSurat(
@@ -53,8 +59,29 @@ class PengajuanSurat {
       keterangan: json['keterangan']?.toString() ?? '-',
       keteranganDitolak: json['keterangan_ditolak']?.toString() ?? '-',
       masyarakat: MasyarakatModel.fromJson(json["masyarakat"]),
+      lampiran: (json['lampiran'] as List<dynamic>)
+          .map((item) => LampiranPengajuan.fromJson(item))
+          .toList(),
+      fieldValues: (json['fieldValues'] as List<dynamic>)
+          .map((item) => FieldValuesModel.fromJson(item))
+          .toList(),
       surat: Surat.fromJson(json["surat"]),
       createdAt: dateFormat ?? '-',
     );
+  }
+}
+
+class LampiranPengajuan {
+  final String namaLampiran;
+  final String value;
+
+  LampiranPengajuan({
+    required this.namaLampiran,
+    required this.value,
+  });
+
+  factory LampiranPengajuan.fromJson(Map<String, dynamic> json) {
+    return LampiranPengajuan(
+        namaLampiran: json["nama_lampiran"], value: json["value"]);
   }
 }
