@@ -10,9 +10,11 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../riwayatsurat/riwayat_surat_rt.dart';
+import '../riwayatsurat/riwayat_surat_rt_rw.dart';
 
 class DashboardRT extends StatefulWidget {
+  final int initialIndex;
+  const DashboardRT({super.key, this.initialIndex = 0});
   @override
   _DashboardRTState createState() => _DashboardRTState();
 }
@@ -28,9 +30,16 @@ class _DashboardRTState extends State<DashboardRT> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     HomeRT(),
-    RiwayatSuratRT(),
+    RiwayatSuratRTRW(),
     ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

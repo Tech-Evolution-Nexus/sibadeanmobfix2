@@ -46,7 +46,6 @@ class PengajuanSurat {
   }
 
   factory PengajuanSurat.fromJson(Map<String, dynamic> json) {
-    print(json);
     DateTime date = DateTime.parse(json["created_at"]);
     String dateFormat = DateFormat('dd/MM/yyyy').format(date);
     return PengajuanSurat(

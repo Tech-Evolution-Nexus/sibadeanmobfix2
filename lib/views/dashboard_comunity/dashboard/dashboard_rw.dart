@@ -6,10 +6,11 @@ import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../riwayatsurat/riwayat_surat_rw.dart'; // pastikan ini tersedia
+import '../riwayatsurat/riwayat_surat_rt_rw.dart';
 
 class DashboardRW extends StatefulWidget {
-  const DashboardRW({super.key});
+  final int initialIndex;
+  const DashboardRW({super.key, this.initialIndex = 0});
 
   @override
   _DashboardRWState createState() => _DashboardRWState();
@@ -19,9 +20,16 @@ class _DashboardRWState extends State<DashboardRW> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     HomeRW(),
-    RiwayatSuratRW(),
+    RiwayatSuratRTRW(),
     ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/riwayat_surat_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 
 import '/methods/api.dart';
@@ -16,7 +20,9 @@ class DetailRiwayat extends StatefulWidget {
 class _DetailRiwayatState extends State<DetailRiwayat> {
   PengajuanSurat? pengajuanData;
   bool isLoading = true;
-
+  bool canEdit = false;
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController keteranganController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -25,12 +31,21 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Future<void> fetchData() async {
     try {
+      final user = await Auth.user();
       final response = await API()
           .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
 
       if (response.statusCode == 200) {
         setState(() {
+          print(user["role"]);
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
+          if (user["role"] == "rt" && pengajuanData!.status == "pending") {
+            canEdit = true;
+          } else if (user["role"] == "rw" &&
+              pengajuanData!.status == "di_terima_rt") {
+            canEdit = true;
+          }
+          print(canEdit);
           isLoading = false;
         });
       } else {
@@ -41,27 +56,44 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     }
   }
 
-  Future<void> submitTolak() async {
+  Future<void> submit(String status) async {
     try {
-      final response = await API()
-          .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
-
+      final user = await Auth.user();
+      final response = await API().updateStatusPengajuan(
+          idPengajuan: widget.idPengajuan,
+          status: status,
+          keterangan: keteranganController.text.trim());
+      print(status);
       if (response.statusCode == 200) {
         setState(() {
-          pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
-          isLoading = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pengajuan berhasil $status')),
+          );
+          Widget view;
+          if (user["role"] == "rw") {
+            view = DashboardRW(
+              initialIndex: 1,
+            );
+          } else {
+            view = DashboardRT(
+              initialIndex: 1,
+            );
+          }
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (_) => view));
+          // isLoading = false;
         });
       } else {
         setState(() => isLoading = false);
       }
     } catch (e) {
+      print(e);
+
       setState(() => isLoading = false);
     }
   }
 
   Future<void> showInputTolak() {
-    final _formKey = GlobalKey<FormState>();
-    TextEditingController keteranganController = TextEditingController();
     return showModalBottomSheet(
       enableDrag: true,
       showDragHandle: true,
@@ -118,7 +150,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // loginUser();
+                              submit("ditolak");
                             }
                           },
                           child: const Text(
@@ -177,41 +209,46 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                 SizedBox(
                                   height: 3,
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: showInputTolak,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
+                                Visibility(
+                                    visible: canEdit,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: showInputTolak,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                            ),
+                                            child: Text("Tolak"),
                                           ),
                                         ),
-                                        child: Text("Tolak"),
-                                      ),
-                                    ),
-                                    SizedBox(width: 16), // Jarak antar tombol
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: fetchData,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
+                                        SizedBox(
+                                            width: 16), // Jarak antar tombol
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              submit("disetujui");
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                            ),
+                                            child: Text("Setujui"),
                                           ),
                                         ),
-                                        child: Text("Setujui"),
-                                      ),
-                                    ),
-                                  ],
-                                )
+                                      ],
+                                    ))
                               ],
                             )),
                       ],

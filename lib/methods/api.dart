@@ -440,17 +440,19 @@ class API {
     }
   }
 
-  Future<dynamic> pengajuanDitolak(
-      {required String nik,
-      required String idPengajuan,
-      required String keterangan}) async {
+  Future<dynamic> updateStatusPengajuan(
+      {required int idPengajuan,
+      String? keterangan,
+      required String status}) async {
     try {
       String? token = await _getToken();
-
       final response = await _dio.post(
           "riwayat-pengajuan-masyarakat/$idPengajuan",
           options: Options(headers: {'Authorization': 'Bearer $token'}),
-          data: {keterangan});
+          data: {
+            'keterangan': keterangan ?? "",
+            'status': status,
+          });
       return response;
     } catch (e) {
       print("Terjadi error saat mengirim data: $e");
