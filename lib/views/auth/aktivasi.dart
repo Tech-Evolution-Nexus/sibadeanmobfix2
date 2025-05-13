@@ -56,7 +56,7 @@ class _AktivasiState extends State<Aktivasi> {
         }
 
         if (response.statusCode == 200) {
-          final data = response.data;
+          
           _showAlertDialog(
             "Aktivasi Berhasil",
             "Akun Anda berhasil diaktivasi. Silakan login.",

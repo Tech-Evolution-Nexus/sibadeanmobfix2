@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
@@ -34,9 +35,9 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
   File? _kkFile;
   String? _kkFileName;
   Future<void> getUserData() async {
-    final user = await Auth.user();
+     final userList = await DatabaseHelper().getUser();
     setState(() {
-      nik = user['nik'] ?? "NIK tidak ditemukan";
+      nik = userList.first.nik ?? "NIK tidak ditemukan";
     });
     var response = await API().profiledata(nik: nik);
     // print(response);
