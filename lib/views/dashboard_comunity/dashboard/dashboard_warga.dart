@@ -92,12 +92,13 @@ class _DashboardContentState extends State<DashboardContent> {
 
   Future<void> getUserData() async {
     final userList = await DatabaseHelper().getUser();
+    //  final userList = await DatabaseHelper().getUser();
     if (userList.isNotEmpty) {
       final user = userList.first;
       setState(() {
-        nama = user.name ?? "User";
+        nama = user.nama_lengkap ?? "User";
         nik = user.nik ?? "NIK tidak ditemukan";
-        foto = user.foto ?? ""; // pastikan model punya field `foto`
+        foto = user.avatar ?? ""; // pastikan model punya field `foto`
       });
     } else {
       setState(() {
@@ -111,7 +112,7 @@ class _DashboardContentState extends State<DashboardContent> {
   Future<void> fetchDash() async {
     try {
       var response = await API().getdatadashboard();
-      print(response.data['data']);
+      // print(response.data['data']);
       if (response.statusCode == 200) {
         setState(() {
           dataModel = BeritaSuratModel.fromJson(response.data['data']);
