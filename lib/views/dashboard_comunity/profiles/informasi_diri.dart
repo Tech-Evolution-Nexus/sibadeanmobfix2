@@ -236,7 +236,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
                         });
                       },
                       selectedFileName:
-                          isEditingktp ? _ktpFileName : dataModel?.ktpgambar,
+                          isEditingktp ? _ktpFileName : "http://192.168.100.205:8000/api/getimage/1747041416.jpg",
                       onFilePick: () => pickFile('ktp'),
                       showSaveButton: isEditingktp,
                       onSave: () async {
