@@ -59,11 +59,11 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   Future<void> submit(String status) async {
     try {
       final user = await Auth.user();
+      print(keteranganController.text.trim());
       final response = await API().updateStatusPengajuan(
           idPengajuan: widget.idPengajuan,
           status: status,
           keterangan: keteranganController.text.trim());
-      print(status);
       if (response.statusCode == 200) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(

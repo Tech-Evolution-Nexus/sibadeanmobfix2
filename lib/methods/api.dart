@@ -9,7 +9,7 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://192.168.100.168:8000/api/"));
+      Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
 
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
