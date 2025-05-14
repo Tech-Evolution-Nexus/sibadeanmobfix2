@@ -169,7 +169,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                           _infoItem("Nama Surat",
                                               pengajuanData!.surat.nama_surat),
                                           _infoItem("Nomor Surat",
-                                              pengajuanData!.nomorSurat),
+                                              pengajuanData!.nomorSurat ?? ""),
                                           // SizedBox(height: 8),
                                           _infoItem(
                                             "Tanggal Pengajuan",

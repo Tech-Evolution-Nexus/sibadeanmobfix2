@@ -3,6 +3,7 @@ import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/ForgotPasswordPage.dart';
 import '../../methods/api.dart';
 import '../../theme/theme.dart';
 import 'verifikasi.dart';
@@ -208,13 +209,24 @@ class _LoginState extends State<Login> {
                               ],
                             ),
                             GestureDetector(
+                              onTap: () {
+                                // Mengarahkan ke halaman ForgotPasswordPage
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ForgotPasswordPage()),
+                                );
+                              },
                               child: Text(
                                 'Lupa Password?',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: lightColorScheme.primary),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors
+                                      .blue, // Sesuaikan dengan warna Anda
+                                ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                         const SizedBox(height: 16),

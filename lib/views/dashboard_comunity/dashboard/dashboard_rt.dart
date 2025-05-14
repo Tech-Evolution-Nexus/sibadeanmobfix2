@@ -7,6 +7,8 @@ import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/pengajuan_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/verivikasi_rt.dart';
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
@@ -32,6 +34,8 @@ class _DashboardRTState extends State<DashboardRT> {
     HomeRT(),
     RiwayatSuratRTRW(),
     ProfilePage(),
+    Verivikasi(),
+    PengajuanRT(),
   ];
 
   @override
@@ -61,7 +65,15 @@ class _DashboardRTState extends State<DashboardRT> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history_rounded),
-            label: "Riwayat",
+            label: "Penyetujuan",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: "Verivikasi",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_rounded),
+            label: "Pengajuan",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_rounded),
@@ -166,6 +178,16 @@ class _HomeRTState extends State<HomeRT> {
                     ),
                   ),
                 ],
+              ),
+              const Gap(16),
+              // Menambahkan Surat Masuk di atas Berita
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                // child: suratMasuk(),
+              ),
+              const Gap(16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
               ),
               const Gap(16),
             ],
@@ -446,11 +468,7 @@ class _HomeRTState extends State<HomeRT> {
         const SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: isSmall ? 11 : 12,
-          ),
-          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: isSmall ? 12 : 14),
         ),
       ],
     );

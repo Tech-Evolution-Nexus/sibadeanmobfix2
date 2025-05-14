@@ -458,4 +458,38 @@ class API {
       print("Terjadi error saat mengirim data: $e");
     }
   }
+
+  Future<dynamic> forgotPassword({required String email}) async {
+    try {
+      final response = await _dio.post(
+        'forgot-password', // Ganti dengan endpoint sesuai backend Laravel Anda
+        data: {'email': email},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+  Future<dynamic> resetPassword({
+    required String token,
+    required String email,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'reset-password', // Ganti dengan endpoint sesuai backend Laravel Anda
+        data: {
+          'token': token,
+          'email': email,
+          'password': newPassword,
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
 }
