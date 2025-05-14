@@ -215,10 +215,9 @@ class API {
     }
   }
 
-  Future<dynamic> getRiwayatPengajuanMasyarakat({required String nik}) async {
+  Future<dynamic> getRiwayatPengajuanMasyarakat() async {
     try {
       String? token = await _getToken();
-      print(token);
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan-masyarakat",
           options: Options(headers: {'Authorization': 'Bearer $token'}));

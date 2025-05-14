@@ -33,9 +33,9 @@ class _DashboardRTState extends State<DashboardRT> {
   final List<Widget> _pages = [
     HomeRT(),
     RiwayatSuratRTRW(),
-    ProfilePage(),
     Verivikasi(),
     PengajuanRT(),
+    ProfilePage(),
   ];
 
   @override

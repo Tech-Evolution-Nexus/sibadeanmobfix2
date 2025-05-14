@@ -88,7 +88,8 @@ class _PengajuanPageState extends State<PengajuanPage>
         Color headerColor = getHeaderColor(surat?.status ?? "");
 
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          margin: EdgeInsets.only(
+              top: index == 0 ? 10 : 4, bottom: 4, left: 16, right: 16),
           elevation: 0,
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -128,13 +129,18 @@ class _PengajuanPageState extends State<PengajuanPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Expanded(
                                   child: Text(
                                     surat?.surat.nama_surat ?? "",
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 14),
-                                    overflow: TextOverflow.ellipsis,
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.clip,
                                   ),
                                 ),
                                 Text(
@@ -176,12 +182,12 @@ class _PengajuanPageState extends State<PengajuanPage>
   }
 
   Future<void> fetchData() async {
+    print("res");
     try {
       // print("test");
       final user = await Auth.user();
 
       var response = await API().getRiwayatPengajuan();
-
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =

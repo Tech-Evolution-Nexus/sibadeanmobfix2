@@ -79,7 +79,8 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
         Color headerColor = getHeaderColor(surat?.status ?? "");
 
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          margin: EdgeInsets.only(
+              top: index == 0 ? 10 : 4, bottom: 4, left: 16, right: 16),
           elevation: 0,
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -171,8 +172,8 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
       // print("test");
       final user = await Auth.user();
 
-      var response =
-          await API().getRiwayatPengajuanMasyarakat(nik: user["nik"]);
+      var response = await API().getRiwayatPengajuanMasyarakat();
+      print(response);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
