@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 
-
 class DetailMasyarakatPage extends StatelessWidget {
   final MasyarakatModel masyarakat;
 
-  const DetailMasyarakatPage({Key? key, required this.masyarakat}) : super(key: key);
+  const DetailMasyarakatPage({Key? key, required this.masyarakat})
+      : super(key: key);
 
   void _verifikasi(BuildContext context) {
     // Simulasi aksi verifikasi
@@ -50,7 +50,7 @@ class DetailMasyarakatPage extends StatelessWidget {
             Text("Pekerjaan: ${masyarakat.pekerjaan}"),
             Text("Golongan Darah: ${masyarakat.golonganDarah}"),
             Text("Status Perkawinan: ${masyarakat.statusPerkawinan}"),
-            if (masyarakat.tanggalPerkawinan.isNotEmpty)
+            if (masyarakat.tanggalPerkawinan!.isNotEmpty)
               Text("Tanggal Perkawinan: ${masyarakat.tanggalPerkawinan}"),
             Text("Status Keluarga: ${masyarakat.statusKeluarga}"),
             Text("Kewarganegaraan: ${masyarakat.kewarganegaraan}"),
@@ -60,8 +60,8 @@ class DetailMasyarakatPage extends StatelessWidget {
             Text("Nama Ibu: ${masyarakat.namaIbu}"),
             Text("Tanggal Pendaftaran: ${masyarakat.createdAt}"),
             const SizedBox(height: 16),
-            masyarakat.ktpgambar.isNotEmpty
-                ? Image.network(masyarakat.ktpgambar)
+            masyarakat!.ktpgambar!.isEmpty
+                ? Image.network(masyarakat!.ktpgambar ?? "")
                 : const Text("Tidak ada gambar KTP."),
             const SizedBox(height: 20),
             if (masyarakat.user?.status == "pending")

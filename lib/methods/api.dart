@@ -36,60 +36,7 @@ class API {
     }
   }
 
-  Future<dynamic> registerUser({
-    required String fullName,
-    required String nik,
-    required String noKk,
-    required String tempatLahir,
-    required String tanggalLahir,
-    required String jenisKelamin,
-    required String alamat,
-    required String pekerjaan,
-    required String agama,
-    required String phone,
-    required String email,
-    required String password,
-    required dynamic kkGambar, // File (Android/iOS) atau Uint8List (Web)
-  }) async {
-    FormData formData = FormData.fromMap({
-      "nama_lengkap": fullName,
-      "nik": nik,
-      "no_kk": noKk,
-      "tempat_lahir": tempatLahir,
-      "tanggal_lahir": tanggalLahir,
-      "jenis_kelamin": jenisKelamin,
-      "alamat": alamat,
-      "pekerjaan": pekerjaan,
-      "agama": agama,
-      "phone": phone,
-      "email": email,
-      "password": password,
-    });
-
-    // Add KK image file
-    if (!kIsWeb) {
-      if (kkGambar is File && kkGambar.existsSync()) {
-        formData.files.add(
-          MapEntry(
-            "kk_gambar",
-            await MultipartFile.fromFile(
-              kkGambar.path,
-              // filename: basename(kkGambar.path),
-            ),
-          ),
-        );
-      }
-    } else {
-      if (kkGambar != null) {
-        formData.files.add(
-          MapEntry(
-            "kk_gambar",
-            MultipartFile.fromBytes(kkGambar, filename: "kk_gambar.jpg"),
-          ),
-        );
-      }
-    }
-
+  Future<dynamic> registerUser({required FormData formData}) async {
     return await _dio.post('register', data: formData);
   }
 
@@ -150,6 +97,7 @@ class API {
   Future<dynamic> getdatadashboard() async {
     try {
       String? token = await _getToken();
+      print(token);
       final response = await _dio.get('dash',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
@@ -200,7 +148,11 @@ class API {
       String? token = await _getToken();
 
       final response = await _dio.get('berita/$id',
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }));
       print(response.data['data']['berita']);
       return response;
     } catch (e) {
@@ -230,6 +182,8 @@ class API {
   Future<dynamic> getRiwayatPengajuanMasyarakat() async {
     try {
       String? token = await _getToken();
+      print(token);
+
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan-masyarakat",
           options: Options(headers: {'Authorization': 'Bearer $token'}));
@@ -413,6 +367,7 @@ class API {
       final response = await _dio.post("updategambarktp",
           options: Options(headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer $token'
           }),
           data:
@@ -430,6 +385,7 @@ class API {
       final response = await _dio.post("updategambarkk",
           options: Options(headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer $token'
           }),
           data: formData);
@@ -453,15 +409,16 @@ class API {
 
   Future<dynamic> updateStatusPengajuan(
       {required int idPengajuan,
-      String? keterangan,
+      required String keterangan,
       required String status}) async {
     try {
       String? token = await _getToken();
+      print("keterangan $keterangan");
       final response = await _dio.post(
           "riwayat-pengajuan-masyarakat/$idPengajuan",
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: {
-            'keterangan': keterangan ?? "",
+            'keterangan': keterangan,
             'status': status,
           });
       return response;
@@ -507,6 +464,7 @@ class API {
   Future<dynamic> verifikasiMasyarakat() async {
     try {
       String? token = await _getToken();
+      print("token $token");
       final response = await _dio.get(
         '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -547,8 +505,7 @@ class API {
     }
   }
 
-
-   Future<List<SuratKeluar>> getSuratKeluar() async {
+  Future<List<SuratKeluar>> getSuratKeluar() async {
     try {
       final response = await _dio.get('/suratkeluar');
       if (response.statusCode == 200) {

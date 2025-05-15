@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/pengajuan_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 
 import '../../../theme/theme.dart';
-import '../profiles/profile.dart';
 import '../formRt/riwayat_surat_rt_rw.dart';
+import '../profiles/profile.dart';
 
 class DashboardRT extends StatefulWidget {
   final int initialIndex;
@@ -29,6 +32,9 @@ class HomeRT extends StatefulWidget {
 }
 
 class _DashboardRTState extends State<DashboardRT> {
+  String nama = "User";
+  String nik = "";
+  String foto = "";
   int _currentIndex = 0;
   final List<Widget> _pages = [
     HomeRT(),
@@ -43,6 +49,7 @@ class _DashboardRTState extends State<DashboardRT> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getUserData();
     _currentIndex = widget.initialIndex;
   }
 
@@ -50,70 +57,154 @@ class _DashboardRTState extends State<DashboardRT> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard RT'),
-        backgroundColor: Colors.white,
-      ),
+          title: Text(
+            'SIBADEAN',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: lightColorScheme.primary),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: lightColorScheme.primary,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+        child: Container(
+          // color: lightColorScheme.primary,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: lightColorScheme.primary,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: foto.isNotEmpty
+                          ? NetworkImage(foto)
+                          : const AssetImage('assets/images/6.jpg')
+                              as ImageProvider,
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      nama,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      nik,
+                      style: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.home_rounded),
-              title: Text('Home'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 0;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.assignment_turned_in_rounded),
-              title: Text('Penyetujuan'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 1;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.verified_user_rounded),
-              title: Text('Verifikasi'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 2;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person_rounded),
-              title: Text('Profil'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 3;
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              _buildDrawerItem(
+                icon: Icons.person_4_outlined,
+                title: 'Profil',
+                onTap: () {
+                  setState(() => _currentIndex = 3);
+                  Navigator.pop(context);
+                },
+              ),
+              Divider(
+                thickness: 1,
+                color: Colors.grey.shade300,
+              ),
+              _buildDrawerItem(
+                icon: Icons.mark_email_read_outlined,
+                title: 'Penyetujuan Surat',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                icon: Icons.history,
+                title: 'Riwayat Pengajuan',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => PengajuanPage()),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                icon: Icons.verified_user_outlined,
+                title: 'Verifikasi Masyarakat',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => Verifikasi()),
+                  );
+                },
+              ),
+              Divider(
+                thickness: 1,
+                color: Colors.grey.shade300,
+              ),
+              _buildDrawerItem(
+                icon: Icons.logout_outlined,
+                title: 'Logout',
+                onTap: logout,
+              ),
+            ],
+          ),
         ),
       ),
       body: _pages[_currentIndex],
     );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.grey),
+      title: Text(
+        title,
+        style: TextStyle(
+            color: Colors.grey.shade800,
+            fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+      onTap: onTap,
+    );
+  }
+
+  void logout() async {
+    final response = await API().logout();
+
+    if (response.statusCode == 200) {
+      // Hapus semua data user dari tabel 'user'
+      await DatabaseHelper().deleteUser();
+
+      // Navigasi ke halaman login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (route) => false,
+      );
+    }
+  }
+
+  Future<void> getUserData() async {
+    final user = await Auth.user();
+    setState(() {
+      nama = user['nama'] ?? "User";
+      nik = user['nik'] ?? "NIK tidak ditemukan";
+      foto = user['foto'] ?? "";
+    });
   }
 }
 
@@ -140,8 +231,7 @@ class _HomeRTState extends State<HomeRT> {
                 children: [
                   buildBackground(),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 30),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
                     child: Column(
                       children: [
                         const Gap(16),
@@ -337,7 +427,7 @@ class _HomeRTState extends State<HomeRT> {
                 mainAxisSpacing: height * 0,
                 childAspectRatio: 1.0,
               ),
-              itemCount: dataModel?.surat?.length ?? 0 + 1,
+              itemCount: (dataModel?.surat?.length ?? 0) + 1,
               itemBuilder: (context, index) {
                 if (index < dataModel!.surat.length) {
                   final item = dataModel!.surat[index];
@@ -455,17 +545,16 @@ class _HomeRTState extends State<HomeRT> {
               showModalBottomSheet(
                   enableDrag: true,
                   showDragHandle: true,
-                  isScrollControlled: true,
+                  //   isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(32))),
                   context: context,
-                  builder: (BuildContext context) =>
-                      SizedBox(width: double.infinity, child: ListSurat()));
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ListSurat()),
-              // );
+                  builder: (BuildContext context) => Container(
+                      constraints:
+                          BoxConstraints(minHeight: 500, maxHeight: 600),
+                      child: SizedBox(
+                          width: double.infinity, child: ListSurat())));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
