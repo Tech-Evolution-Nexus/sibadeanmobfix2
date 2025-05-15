@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
+import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -40,10 +42,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // Image File
   File? kkGambar;
   Uint8List? kkGambarBytes;
+  File? ktpGambar;
+  Uint8List? ktpGambarBytes;
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(
+        source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear);
 
     if (image == null) {
       debugPrint("Tidak ada gambar yang dipilih.");
@@ -58,7 +63,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       debugPrint("Gambar berhasil dipilih (Mobile)");
     }
 
-    setState(() {});
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        ktpGambar = File(image.path);
+        ktpGambarBytes = bytes;
+      });
+    }
   }
 
   void nextPage() {
@@ -98,24 +109,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
+    FormData formData = FormData();
+
+    formData = FormData.fromMap({
+      "full_name": fullNameController.text,
+      "nik": nikController.text,
+      "tempat_lahir": tempatLahirController.text,
+      "tanggal_lahir": tanggalLahirController.text,
+      "jenis_kelamin": selectedGender,
+      "agama": selectedAgama,
+      "pekerjaan": pekerjaanController.text,
+      "email": emailController.text,
+      "no_hp": phoneController.text,
+      "password": passwordController.text,
+      "no_kk": noKkController.text,
+      "alamat": alamatController.text,
+      "rt": rtController.text,
+      "rw": rwController.text,
+      "foto_kk": kkGambar,
+      "foto_ktp": ktpGambar, // bisa null, tergantung validasi kamu
+    });
 
     try {
-      var response = await API().registerUser(
-        fullName: fullNameController.text,
-        nik: nikController.text,
-        noKk: noKkController.text,
-        tempatLahir: tempatLahirController.text,
-        tanggalLahir: tanggalLahirController.text,
-        jenisKelamin: selectedGender!,
-        alamat: alamatController.text,
-        pekerjaan: pekerjaanController.text,
-        agama: selectedAgama!,
-        phone: phoneController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        kkGambar: kIsWeb ? kkGambarBytes : kkGambar,
-      );
-
+      var response = await API().registerUser(formData: formData);
       // Kalau mau cek response dari API:
       debugPrint("Response dari API: ${response.body}");
 
@@ -177,130 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           controller: _pageController,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            Column(
-                              children: [
-                                CustomTextField(
-                                  controller: emailController,
-                                  labelText: "Email",
-                                  hintText: "Masukkan email",
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) => !value!.contains('@')
-                                      ? "Email tidak valid"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: phoneController,
-                                  labelText: "No HP",
-                                  hintText: "Masukkan nomor HP",
-                                  keyboardType: TextInputType.phone,
-                                  validator: (value) => value!.length < 10
-                                      ? "Nomor HP tidak valid"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: passwordController,
-                                  labelText: "Password",
-                                  hintText: "Masukkan password",
-                                  obscureText: true,
-                                  validator: (value) => value!.length < 6
-                                      ? "Password minimal 6 karakter"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: confirmPasswordController,
-                                  labelText: "Konfirmasi Password",
-                                  hintText: "Masukkan ulang password",
-                                  obscureText: true,
-                                  validator: (value) =>
-                                      value != passwordController.text
-                                          ? "Password tidak cocok"
-                                          : null,
-                                ),
-                                SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: nextPage,
-                                  child: Text("Selanjutnya"),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                CustomTextField(
-                                  controller: noKkController,
-                                  labelText: "No KK",
-                                  hintText: "Masukkan No KK",
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) => value!.length != 16
-                                      ? "No KK harus 16 digit"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: alamatController,
-                                  labelText: "Alamat",
-                                  hintText: "Masukkan alamat lengkap",
-                                  validator: (value) => value!.isEmpty
-                                      ? "Alamat wajib diisi"
-                                      : null,
-                                ),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: CustomTextField(
-                                              controller: rtController,
-                                              labelText: "RT",
-                                              hintText: "Rt",
-                                              validator: (value) =>
-                                                  value!.isEmpty
-                                                      ? "Rt wajib diisi"
-                                                      : null,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              width:
-                                                  10), // kasih jarak antara RT dan RW
-                                          Expanded(
-                                            child: CustomTextField(
-                                              controller: rwController,
-                                              labelText: "Rw",
-                                              hintText: "Masukkan Rw",
-                                              validator: (value) =>
-                                                  value!.isEmpty
-                                                      ? "Rw wajib diisi"
-                                                      : null,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]),
-                                SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: pickImage,
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text("Upload Foto KK"),
-                                ),
-                                if (kkGambar != null || kkGambarBytes != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(
-                                      "Gambar KK telah dipilih!",
-                                      style: TextStyle(color: Colors.green),
-                                    ),
-                                  ),
-                                SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: _register,
-                                  child: Text("Daftar"),
-                                ),
-                                TextButton(
-                                  onPressed: prevPage,
-                                  child: Text("Kembali"),
-                                ),
-                              ],
-                            ),
+                            // STEP 1: Identitas Diri
                             Column(
                               children: [
                                 CustomTextField(
@@ -402,6 +295,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       : null,
                                 ),
                                 SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: nextPage,
+                                  child: Text("Selanjutnya"),
+                                ),
+                              ],
+                            ),
+
+                            // STEP 2: Akun
+                            Column(
+                              children: [
+                                CustomTextField(
+                                  controller: emailController,
+                                  labelText: "Email",
+                                  hintText: "Masukkan email",
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) => !value!.contains('@')
+                                      ? "Email tidak valid"
+                                      : null,
+                                ),
+                                CustomTextField(
+                                  controller: phoneController,
+                                  labelText: "No HP",
+                                  hintText: "Masukkan nomor HP",
+                                  keyboardType: TextInputType.phone,
+                                  validator: (value) => value!.length < 10
+                                      ? "Nomor HP tidak valid"
+                                      : null,
+                                ),
+                                CustomTextField(
+                                  controller: passwordController,
+                                  labelText: "Password",
+                                  hintText: "Masukkan password",
+                                  obscureText: true,
+                                  validator: (value) => value!.length < 6
+                                      ? "Password minimal 6 karakter"
+                                      : null,
+                                ),
+                                CustomTextField(
+                                  controller: confirmPasswordController,
+                                  labelText: "Konfirmasi Password",
+                                  hintText: "Masukkan ulang password",
+                                  obscureText: true,
+                                  validator: (value) =>
+                                      value != passwordController.text
+                                          ? "Password tidak cocok"
+                                          : null,
+                                ),
+                                SizedBox(height: 10),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -415,6 +356,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       child: Text("Selanjutnya"),
                                     ),
                                   ],
+                                ),
+                              ],
+                            ),
+
+                            // STEP 3: Alamat dan Upload KK
+                            Column(
+                              children: [
+                                CustomTextField(
+                                  controller: noKkController,
+                                  labelText: "No KK",
+                                  hintText: "Masukkan No KK",
+                                  keyboardType: TextInputType.number,
+                                  validator: (value) => value!.length != 16
+                                      ? "No KK harus 16 digit"
+                                      : null,
+                                ),
+                                CustomTextField(
+                                  controller: alamatController,
+                                  labelText: "Alamat",
+                                  hintText: "Masukkan alamat lengkap",
+                                  validator: (value) => value!.isEmpty
+                                      ? "Alamat wajib diisi"
+                                      : null,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        controller: rtController,
+                                        labelText: "RT",
+                                        hintText: "Rt",
+                                        validator: (value) => value!.isEmpty
+                                            ? "RT wajib diisi"
+                                            : null,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        controller: rwController,
+                                        labelText: "RW",
+                                        hintText: "Rw",
+                                        validator: (value) => value!.isEmpty
+                                            ? "RW wajib diisi"
+                                            : null,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                                ElevatedButton.icon(
+                                  onPressed: pickImage,
+                                  icon: Icon(Icons.upload_file),
+                                  label: Text("Upload Foto KK"),
+                                ),
+                                if (kkGambar != null || kkGambarBytes != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text(
+                                      "Gambar KK telah dipilih!",
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  ),
+                                SizedBox(height: 10),
+                                ElevatedButton.icon(
+                                  onPressed: pickImage,
+                                  icon: Icon(Icons.upload_file),
+                                  label: Text("Upload Foto KTP"),
+                                ),
+                                if (ktpGambar != null || ktpGambarBytes != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text(
+                                      "Gambar KTP telah dipilih!",
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  ),
+                                SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _register,
+                                  child: Text("Daftar"),
+                                ),
+                                TextButton(
+                                  onPressed: prevPage,
+                                  child: Text("Kembali"),
                                 ),
                               ],
                             ),
