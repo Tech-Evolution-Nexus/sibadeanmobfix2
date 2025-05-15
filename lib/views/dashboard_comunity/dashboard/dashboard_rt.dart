@@ -8,6 +8,7 @@ import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
@@ -77,7 +78,14 @@ class _DashboardRTState extends State<DashboardRT> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     CircleAvatar(
-                      child: Image.network(foto),
+                      radius: 30,
+                      backgroundImage: foto.isNotEmpty
+                          ? NetworkImage(foto)
+                          : const AssetImage('assets/images/6.jpg')
+                              as ImageProvider,
+                    ),
+                    SizedBox(
+                      height: 4,
                     ),
                     Text(
                       nama,
@@ -90,8 +98,8 @@ class _DashboardRTState extends State<DashboardRT> {
                     Text(
                       nik,
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
+                        color: Colors.grey.shade200,
+                        fontSize: 12,
                       ),
                     )
                   ],
@@ -125,7 +133,7 @@ class _DashboardRTState extends State<DashboardRT> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+                    MaterialPageRoute(builder: (_) => PengajuanPage()),
                   );
                 },
               ),
