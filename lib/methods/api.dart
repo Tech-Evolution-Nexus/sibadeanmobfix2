@@ -507,7 +507,7 @@ class API {
     try {
       String? token = await _getToken();
       final response = await _dio.post(
-    
+
         '/verifikasi/$idUser',data:{'status':status}, // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -520,8 +520,8 @@ Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
     try {
       String? token = await _getToken();
       final response = await _dio.get(
-    
-        '/verifikasi/$id',// Ganti dengan endpoint sesuai backend Laravel Anda
+
+        '/verifikasi/$idUser',// Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response;
