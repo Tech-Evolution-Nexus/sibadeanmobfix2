@@ -39,6 +39,7 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
           // MasyarakatModel.fromJson(response.data["data"]);
           print(pengajuanData);
           isLoading = false;
+          canEdit = true;
         });
       } else {
         setState(() => isLoading = false);
@@ -61,8 +62,10 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
             SnackBar(content: Text('Verifikasi berhasil')),
           );
 
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (_) => Verifikasi()));
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => Verifikasi()),
+            (Route<dynamic> route) => route.isFirst,
+          );
           // isLoading = false;
         });
       } else {

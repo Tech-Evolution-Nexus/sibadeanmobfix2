@@ -56,6 +56,14 @@ class MasyarakatModel {
   factory MasyarakatModel.fromJson(Map<String, dynamic> json) {
     String formattedDate = DateFormat('dd/MM/yyyy').format(
         DateTime.parse(json['created_at'] ?? DateTime.now().toString()));
+    String tanggalLahir = json['tanggal_lahir'] != null
+        ? DateFormat('d MMMM yyyy', 'id')
+            .format(DateTime.parse(json['tanggal_lahir']))
+        : "-";
+    String tanggalPerkawinan = json['tanggal_perkawinan'] != null
+        ? DateFormat('d MMMM yyyy', 'id')
+            .format(DateTime.parse(json['tanggal_perkawinan']))
+        : "-";
 
     return MasyarakatModel(
       nik: json['nik'] ?? '',
@@ -64,13 +72,13 @@ class MasyarakatModel {
       namaLengkap: json['nama_lengkap'] ?? '',
       jenisKelamin: json['jenis_kelamin'] ?? '',
       tempatLahir: json['tempat_lahir'] ?? '',
-      tanggalLahir: json['tanggal_lahir'] ?? '',
+      tanggalLahir: tanggalLahir ?? '',
       agama: json['agama'] ?? '',
       pendidikan: json['pendidikan'] ?? '',
       pekerjaan: json['pekerjaan'] ?? '',
       golonganDarah: json['golongan_darah'] ?? '',
       statusPerkawinan: json['status_perkawinan'] ?? '',
-      tanggalPerkawinan: json['tanggal_perkawinan'],
+      tanggalPerkawinan: tanggalPerkawinan,
       statusKeluarga: json['status_keluarga'] ?? '',
       kewarganegaraan: json['kewarganegaraan'] ?? '',
       noPaspor: json['no_paspor'] ?? '',

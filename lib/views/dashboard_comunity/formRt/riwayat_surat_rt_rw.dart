@@ -37,6 +37,13 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         automaticallyImplyLeading: false,
         // backgroundColor: lightColorScheme.primary,
         backgroundColor: lightColorScheme.primary,
@@ -173,7 +180,6 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
       final user = await Auth.user();
 
       var response = await API().getRiwayatPengajuanMasyarakat();
-      print(response);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =

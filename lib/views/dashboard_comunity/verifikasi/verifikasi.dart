@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
-import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/detail_riwayat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/detail.dart';
 
 import '/methods/api.dart';
@@ -39,6 +37,13 @@ class _VerifikasiState extends State<Verifikasi>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         automaticallyImplyLeading: false,
         // backgroundColor: lightColorScheme.primary,
         backgroundColor: lightColorScheme.primary,

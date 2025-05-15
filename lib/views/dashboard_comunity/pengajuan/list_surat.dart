@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
-import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'pengajuan_surat.dart';
-import '../../../theme/theme.dart';
+
 import '/methods/api.dart';
+import '../../../theme/theme.dart';
 
 class ListSurat extends StatefulWidget {
   const ListSurat({super.key});
@@ -27,11 +25,11 @@ class ListSuratState extends State<ListSurat> {
     try {
       var response = await API().getdatasurat();
       if (response.statusCode == 200) {
+        print(response);
         setState(() {
           dataModel = (response.data['data']['surat'] as List)
               .map((item) => Surat.fromJson(item))
               .toList();
-          print(response.data['data']['surat']);
           isLoading = false;
         });
       }
@@ -47,34 +45,37 @@ class ListSuratState extends State<ListSurat> {
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final isSmall = width < 360;
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: height * 0.015),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16), topRight: Radius.circular(16))),
-        child: MediaQuery.removePadding(
-          context: context,
-          removeTop: true,
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 150, // maksimal lebar satu item
-              mainAxisSpacing: 0,
-              crossAxisSpacing: 0,
-              childAspectRatio: 0.8, // sesuaikan tinggi-lebar konten
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: EdgeInsets.symmetric(vertical: height * 0.015),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 150, // maksimal lebar satu item
+                    mainAxisSpacing: 0,
+                    crossAxisSpacing: 0,
+                    childAspectRatio: 0.8, // sesuaikan tinggi-lebar konten
+                  ),
+                  itemCount: dataModel!.length,
+                  itemBuilder: (context, index) {
+                    final item = dataModel![index];
+                    // final color = colors[index % colors.length];
+                    return _suratButton(context, item, Colors.blue, width);
+                  },
+                ),
+              ),
             ),
-            itemCount: dataModel!.length,
-            itemBuilder: (context, index) {
-              final item = dataModel![index];
-              // final color = colors[index % colors.length];
-              return _suratButton(context, item, Colors.blue, width);
-            },
-          ),
-        ),
-      ),
-    );
+          );
   }
 }
 

@@ -34,7 +34,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
       final user = await Auth.user();
       final response = await API()
           .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
-
       if (response.statusCode == 200) {
         setState(() {
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
@@ -44,7 +43,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               pengajuanData!.status == "di_terima_rt") {
             canEdit = true;
           }
-          print(pengajuanData);
           isLoading = false;
         });
       } else {
@@ -58,28 +56,20 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   Future<void> submit(String status) async {
     try {
       final user = await Auth.user();
-      print(keteranganController.text.trim());
       final response = await API().updateStatusPengajuan(
           idPengajuan: widget.idPengajuan,
           status: status,
-          keterangan: keteranganController.text.trim());
+          keterangan: keteranganController.text.trim() ?? "");
       if (response.statusCode == 200) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Pengajuan berhasil $status')),
           );
-          Widget view;
-          if (user["role"] == "rw") {
-            view = DashboardRW(
-              initialIndex: 1,
-            );
-          } else {
-            view = DashboardRT(
-              initialIndex: 1,
-            );
-          }
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (_) => view));
+
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+            (Route<dynamic> route) => route.isFirst,
+          );
           // isLoading = false;
         });
       } else {

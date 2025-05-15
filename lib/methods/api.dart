@@ -189,7 +189,11 @@ class API {
       String? token = await _getToken();
 
       final response = await _dio.get('berita/$id',
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }));
       print(response.data['data']['berita']);
       return response;
     } catch (e) {
@@ -422,6 +426,7 @@ class API {
       final response = await _dio.post("updategambarkk",
           options: Options(headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer $token'
           }),
           data: formData);
@@ -445,15 +450,16 @@ class API {
 
   Future<dynamic> updateStatusPengajuan(
       {required int idPengajuan,
-      String? keterangan,
+      required String keterangan,
       required String status}) async {
     try {
       String? token = await _getToken();
+      print("keterangan $keterangan");
       final response = await _dio.post(
           "riwayat-pengajuan-masyarakat/$idPengajuan",
           options: Options(headers: {'Authorization': 'Bearer $token'}),
           data: {
-            'keterangan': keterangan ?? "",
+            'keterangan': keterangan,
             'status': status,
           });
       return response;
