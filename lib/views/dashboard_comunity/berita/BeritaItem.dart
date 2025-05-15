@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
+
 class BeritaItem extends StatefulWidget {
   final Berita berita;
   const BeritaItem({super.key, required this.berita});
@@ -31,14 +32,19 @@ class _BeritaItemState extends State<BeritaItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(6), // Image border
+                  borderRadius: BorderRadius.circular(6), // Border image
                   child: SizedBox.fromSize(
                     size: Size.fromRadius(40), // Image radius
-                    child: Image.asset(
-                      'assets/images/berita-sample.jpg',
-                      // width: 100,
-                      // height: 100,
+                    child: Image.network(
+                      widget.berita.gambar ?? '', // URL gambar dari data
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Jika gagal load gambar, tampilkan gambar alternatif online
+                        return Image.network(
+                          'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
                   ),
                 ),

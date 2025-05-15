@@ -491,4 +491,42 @@ class API {
       return e.response;
     }
   }
+   Future<dynamic> verifikasiMasyarakat() async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get(
+        '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
+ Future<dynamic> updateVerifikasi({required int status, required int idUser}) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.post(
+
+        '/verifikasi/$idUser',data:{'status':status}, // Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
+Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get(
+
+        '/verifikasi/$idUser',// Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
 }

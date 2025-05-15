@@ -37,7 +37,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
       if (response.statusCode == 200) {
         setState(() {
-          print(user["role"]);
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
           if (user["role"] == "rt" && pengajuanData!.status == "pending") {
             canEdit = true;
@@ -45,7 +44,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               pengajuanData!.status == "di_terima_rt") {
             canEdit = true;
           }
-          print(canEdit);
+          print(pengajuanData);
           isLoading = false;
         });
       } else {

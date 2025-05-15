@@ -307,7 +307,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Pengajuan ${widget.namaSurat}",
+          "Pengajuan ${widget.namaSurat ?? ''}",
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
         backgroundColor: lightColorScheme.primary,
@@ -335,12 +335,16 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                       child: Column(
                         children: [
                           _buildBiodataCard(),
-                          _buildImageCard("Dokumen Kartu Keluarga",
-                              "http://192.168.100.205:8000/storage/pengantar_rt/iwCtfv0nhjOZIu7OteDUqiZs5V3nAmUzbWmI5MtE.jpg"),
-                          _buildImageCard("Dokumen KTP",
-                              "http://192.168.100.205:8000/storage/pengantar_rt/iwCtfv0nhjOZIu7OteDUqiZs5V3nAmUzbWmI5MtE.jpg"),
+                          _buildImageCard(
+                            "Dokumen Kartu Keluarga",
+                            dataModelUser?.kartuKeluarga?.kkgambar ?? '',
+                          ),
+                          _buildImageCard(
+                            "Dokumen KTP",
+                            dataModelUser?.ktpgambar ?? '',
+                          ),
                           SizedBox(
-                            width: double.infinity, // Mengatur lebar Container
+                            width: double.infinity,
                             child: Card(
                               elevation: 0,
                               color: Colors.white,
@@ -365,25 +369,27 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                     if (_selectedFile != null)
                                       Column(
                                         children: [
-                                          Text("File Terpilih: $_fileName",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold)),
+                                          Text(
+                                            "File Terpilih: ${_fileName ?? ''}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                           SizedBox(height: 10),
                                           if (_fileName != null &&
                                               (_fileName!.endsWith('.jpg') ||
                                                   _fileName!.endsWith('.png')))
-                                            _selectedFile != null
-                                                ? Image.file(
-                                                    _selectedFile!,
-                                                    height: 100,
-                                                  )
-                                                : Container(),
+                                            Image.file(
+                                              _selectedFile!,
+                                              height: 100,
+                                            ),
                                         ],
                                       )
                                     else
-                                      Text("Belum ada file yang dipilih",
-                                          style: TextStyle(color: Colors.grey)),
+                                      Text(
+                                        "Belum ada file yang dipilih",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
                                     SizedBox(height: 10),
                                     ElevatedButton.icon(
                                       onPressed: _pickPengantarFile,
@@ -407,14 +413,33 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                           SizedBox(height: 16),
                           Center(
                             child: ElevatedButton(
-                              onPressed: (dataModel?.fields.isEmpty == true &&
-                                      dataModel?.lampiransurat.isEmpty == true)
+                              onPressed: (dataModel?.fields?.isEmpty ?? true) &&
+                                      (dataModel?.lampiransurat?.isEmpty ??
+                                          true)
                                   ? _submitPengajuan
                                   : nextPage,
-                              child: Text((dataModel?.fields.isEmpty == true &&
-                                      dataModel?.lampiransurat.isEmpty == true)
-                                  ? "Ajukan Surat"
-                                  : "Selanjutnya"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: lightColorScheme.primary,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 16),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 6,
+                                shadowColor: Colors.black45,
+                                textStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: Text(
+                                (dataModel?.fields?.isEmpty ?? true) &&
+                                        (dataModel?.lampiransurat?.isEmpty ??
+                                            true)
+                                    ? "Ajukan Surat"
+                                    : "Selanjutnya",
+                              ),
                             ),
                           ),
                         ],
@@ -425,7 +450,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                     SingleChildScrollView(
                       child: Column(
                         children: [
-                          if (isLoading || dataModel?.fields.isEmpty == true)
+                          if (isLoading || (dataModel?.fields?.isEmpty ?? true))
                             Center(child: CircularProgressIndicator())
                           else
                             Column(
@@ -435,7 +460,9 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 12.0),
                                   child: CustomTextField(
-                                    controller: fieldControllers[i],
+                                    controller: fieldControllers.length > i
+                                        ? fieldControllers[i]
+                                        : TextEditingController(),
                                     labelText: item.namaField ?? "data",
                                     hintText:
                                         "Masukkan ${item.namaField ?? 'data'}",
@@ -458,13 +485,14 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                               ),
                               ElevatedButton(
                                 onPressed:
-                                    (dataModel?.lampiransurat.isEmpty == true)
+                                    (dataModel?.lampiransurat?.isEmpty ?? true)
                                         ? _submitPengajuan
                                         : nextPage,
                                 child: Text(
-                                    (dataModel?.lampiransurat.isEmpty == true)
-                                        ? "Ajukan Surat"
-                                        : "Selanjutnya"),
+                                  (dataModel?.lampiransurat?.isEmpty ?? true)
+                                      ? "Ajukan Surat"
+                                      : "Selanjutnya",
+                                ),
                               ),
                             ],
                           ),
@@ -480,19 +508,22 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                             Center(child: CircularProgressIndicator())
                           else
                             Column(
-                              children: dataModel!.lampiransurat.map((item) {
+                              children:
+                                  (dataModel?.lampiransurat ?? []).map((item) {
                                 return Column(
                                   children: [
                                     Card(
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 8),
                                       child: ListTile(
-                                        title: Text(item.lampiran.namaLampiran),
+                                        title: Text(
+                                            item.lampiran.namaLampiran ?? ''),
                                         subtitle: Text("Belum ada gambar"),
                                         trailing: IconButton(
                                           icon: const Icon(Icons.upload),
                                           onPressed: () => _pickLampiranFile(
-                                              item.idLampiran.toString()),
+                                              item.idLampiran?.toString() ??
+                                                  ''),
                                         ),
                                       ),
                                     ),
@@ -588,7 +619,18 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                 ),
               ),
               SizedBox(height: 10),
-              Image.network(img, fit: BoxFit.cover)
+              Image.network(
+                (img != null && img.isNotEmpty)
+                    ? img
+                    : 'https://dummyimage.com/500x200/f2f2f2/555555&text=No+Image',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.network(
+                    'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                    fit: BoxFit.cover,
+                  );
+                },
+              )
             ],
           ),
         ),
