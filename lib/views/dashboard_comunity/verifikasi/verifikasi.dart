@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
-import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/detail_riwayat.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/detail.dart';
 
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 
-class RiwayatSuratRTRW extends StatefulWidget {
-  const RiwayatSuratRTRW({super.key});
+class Verifikasi extends StatefulWidget {
+  const Verifikasi({super.key});
 
   @override
-  _RiwayatSuratRTRWState createState() => _RiwayatSuratRTRWState();
+  _VerifikasiState createState() => _VerifikasiState();
 }
 
-class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
+class _VerifikasiState extends State<Verifikasi>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  List<PengajuanSurat> pengajuanMenunggu = [];
-  List<PengajuanSurat> pengajuanSelesai = [];
+  List<MasyarakatModel> verifikasiMasyarakatMenunggu = [];
+  List<MasyarakatModel> verifikasiMasyarakatSelesai = [];
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
         automaticallyImplyLeading: false,
         // backgroundColor: lightColorScheme.primary,
         backgroundColor: lightColorScheme.primary,
-        title: Text("Pengajuan Surat",
+        title: Text("Verifikasi Masyarakat",
             style: TextStyle(color: Colors.white, fontSize: 20)),
         bottom: TabBar(
           controller: _tabController,
@@ -67,15 +67,15 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
         child: TabBarView(
           controller: _tabController,
           children: [
-            statusSurat("Menunggu", pengajuanMenunggu),
-            statusSurat("Selesai", pengajuanSelesai),
+            statusSurat("Menunggu", verifikasiMasyarakatMenunggu),
+            statusSurat("Selesai", verifikasiMasyarakatSelesai),
           ],
         ),
       )),
     );
   }
 
-  Widget statusSurat(String tabTitle, List<PengajuanSurat> pengajuan) {
+  Widget statusSurat(String tabTitle, List<MasyarakatModel> pengajuan) {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
@@ -83,7 +83,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
       itemCount: pengajuan?.length ?? 0,
       itemBuilder: (context, index) {
         final surat = pengajuan?[index];
-        Color headerColor = getHeaderColor(surat?.status ?? "");
+        // Color headerColor = getHeaderColor(surat?.user.status ?? "");
 
         return Card(
           margin: EdgeInsets.only(
@@ -103,8 +103,8 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DetailRiwayat(
-                          idPengajuan: surat?.id ?? 0,
+                    builder: (context) => DetailVerifikasi(
+                          idUser: surat!.idUser,
                         )),
               );
             },
@@ -117,7 +117,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
                     children: [
                       CircleAvatar(
                         radius: width * 0.05,
-                        backgroundColor: headerColor,
+                        backgroundColor: Colors.blue,
                         child:
                             const Icon(Icons.mail_rounded, color: Colors.white),
                       ),
@@ -130,16 +130,16 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
                               children: [
                                 Expanded(
                                   child: Text(
-                                    surat?.surat.nama_surat ?? "",
+                                    surat?.namaLengkap ?? "",
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 14),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Text(
-                                  formatStatus(surat?.status ?? ""),
+                                  "Menunggu",
                                   style: TextStyle(
-                                      color: headerColor, fontSize: 14),
+                                      color: Colors.grey, fontSize: 14),
                                 ),
                               ],
                             ),
@@ -148,7 +148,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
                               children: [
                                 Expanded(
                                   child: Text(
-                                    surat?.masyarakat.namaLengkap ?? "",
+                                    surat?.nik ?? "",
                                     style: TextStyle(
                                         color: Colors.black54, fontSize: 12),
                                   ),
@@ -179,16 +179,19 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
       // print("test");
       final user = await Auth.user();
 
-      var response = await API().getRiwayatPengajuanMasyarakat();
+      var response = await API().verifikasiMasyarakat();
       if (response.statusCode == 200) {
         setState(() {
-          pengajuanMenunggu =
-              (response.data["data"]["pengajuanMenunggu"] as List)
-                  .map((item) => PengajuanSurat.fromJson(item))
-                  .toList();
-          pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
-              .map((item) => PengajuanSurat.fromJson(item))
+          verifikasiMasyarakatMenunggu = (response.data["data"] as List)
+              .map((item) => MasyarakatModel.fromJson(item))
               .toList();
+          // pengajuanMenunggu =
+          //     (response.data["data"]["pengajuanMenunggu"] as List)
+          //         .map((item) => PengajuanSurat.fromJson(item))
+          //         .toList();
+          // pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
+          //     .map((item) => PengajuanSurat.fromJson(item))
+          //     .toList();
           // isLoading = false;
         });
       }

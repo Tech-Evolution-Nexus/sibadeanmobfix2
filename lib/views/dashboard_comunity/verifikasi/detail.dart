@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/riwayat_surat_rt_rw.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 
 import '/methods/api.dart';
 
-class DetailRiwayat extends StatefulWidget {
-  final int idPengajuan;
-  const DetailRiwayat({super.key, required this.idPengajuan});
+class DetailVerifikasi extends StatefulWidget {
+  final int idUser;
+  const DetailVerifikasi({super.key, required this.idUser});
 
   @override
-  State<DetailRiwayat> createState() => _DetailRiwayatState();
+  State<DetailVerifikasi> createState() => _DetailVerifikasiState();
 }
 
-class _DetailRiwayatState extends State<DetailRiwayat> {
-  PengajuanSurat? pengajuanData;
+class _DetailVerifikasiState extends State<DetailVerifikasi> {
+  MasyarakatModel? pengajuanData;
   bool isLoading = true;
   bool canEdit = false;
   final _formKey = GlobalKey<FormState>();
@@ -31,43 +30,40 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Future<void> fetchData() async {
     try {
-      final user = await Auth.user();
-      final response = await API()
-          .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
+      final response =
+          await API().verifikasiDetailMasyarakat(idUser: widget.idUser);
+      //   print(response.data);
       if (response.statusCode == 200) {
         setState(() {
-          pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
-          if (user["role"] == "rt" && pengajuanData!.status == "pending") {
-            canEdit = true;
-          } else if (user["role"] == "rw" &&
-              pengajuanData!.status == "di_terima_rt") {
-            canEdit = true;
-          }
+          pengajuanData = MasyarakatModel.fromJson(response.data["data"]);
+          // MasyarakatModel.fromJson(response.data["data"]);
+          print(pengajuanData);
           isLoading = false;
+          canEdit = true;
         });
       } else {
         setState(() => isLoading = false);
       }
     } catch (e) {
+      print(e);
       setState(() => isLoading = false);
     }
   }
 
-  Future<void> submit(String status) async {
+  Future<void> submit(int status) async {
     try {
       final user = await Auth.user();
-      final response = await API().updateStatusPengajuan(
-          idPengajuan: widget.idPengajuan,
-          status: status,
-          keterangan: keteranganController.text.trim() ?? "");
+      print(keteranganController.text.trim());
+      final response =
+          await API().updateVerifikasi(idUser: widget.idUser, status: status);
       if (response.statusCode == 200) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Pengajuan berhasil $status')),
+            SnackBar(content: Text('Verifikasi berhasil')),
           );
 
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+            MaterialPageRoute(builder: (_) => Verifikasi()),
             (Route<dynamic> route) => route.isFirst,
           );
           // isLoading = false;
@@ -139,7 +135,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              submit("ditolak");
+                              submit(0);
                             }
                           },
                           child: const Text(
@@ -191,8 +187,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               children: [
-                                _pengajuan(),
-                                Gap(12),
                                 _masyarakat(),
                                 _lampiran(),
                                 SizedBox(
@@ -223,7 +217,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              submit("disetujui");
+                                              submit(1);
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.green,
@@ -247,84 +241,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     );
   }
 
-  Widget _pengajuan() {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: Colors.black26,
-          width: 0.2,
-        ),
-      ),
-      elevation: 0,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: _warnaStatus(pengajuanData!.status),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Icon(
-                  _iconStatus(pengajuanData!.status),
-                  color: Colors.white,
-                  size: 18,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    formatStatus(pengajuanData!.status),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Informasi Pengajuan",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 16),
-                _infoItem("Nama Surat", pengajuanData!.surat.nama_surat),
-                _infoItem("Nomor Surat", pengajuanData!.nomorSurat),
-                _infoItem("Keterangan", pengajuanData!.keterangan),
-                _infoItem(
-                    "Keterangan Ditolak", pengajuanData!.keteranganDitolak),
-                ...pengajuanData!.fieldValues!.map((item) {
-                  return _infoItem(item.namaField, item.value);
-                }),
-                _infoItem(
-                  "Tanggal Pengajuan",
-                  formatTanggal(pengajuanData!.createdAt),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _masyarakat() {
     return Card(
       shape: RoundedRectangleBorder(
@@ -345,19 +261,17 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             Text("Data Masyarakat",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             SizedBox(height: 16),
-            _infoItem("Nama Lengkap", pengajuanData!.masyarakat.namaLengkap),
-            _infoItem("NIK", pengajuanData!.masyarakat.nik),
-            _infoItem("Jenis Kelamin", pengajuanData!.masyarakat.jenisKelamin),
-            _infoItem("Tempat Lahir", pengajuanData!.masyarakat.tempatLahir),
-            _infoItem("Tanggal Lahir",
-                formatTanggal(pengajuanData!.masyarakat.tanggalLahir)),
-            _infoItem("Agama", pengajuanData!.masyarakat.agama),
-            _infoItem("Pendidikan", pengajuanData!.masyarakat.pendidikan),
-            _infoItem("Pekerjaan", pengajuanData!.masyarakat.pekerjaan),
-            _infoItem("Status Perkawinan",
-                pengajuanData!.masyarakat.statusPerkawinan),
+            _infoItem("Nama Lengkap", pengajuanData!.namaLengkap),
+            _infoItem("NIK", pengajuanData!.nik),
+            _infoItem("Jenis Kelamin", pengajuanData!.jenisKelamin),
+            _infoItem("Tempat Lahir", pengajuanData!.tempatLahir),
             _infoItem(
-                "Kewarganegaraan", pengajuanData!.masyarakat.kewarganegaraan),
+                "Tanggal Lahir", formatTanggal(pengajuanData!.tanggalLahir)),
+            _infoItem("Agama", pengajuanData!.agama),
+            _infoItem("Pendidikan", pengajuanData!.pendidikan),
+            _infoItem("Pekerjaan", pengajuanData!.pekerjaan),
+            _infoItem("Status Perkawinan", pengajuanData!.statusPerkawinan),
+            _infoItem("Kewarganegaraan", pengajuanData!.kewarganegaraan),
           ],
         ),
       ),
@@ -384,56 +298,54 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
             Text("Data Lampiran",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             SizedBox(height: 16),
-            ...pengajuanData!.lampiran!.map((lampiran) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    lampiran.namaLampiran,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                          backgroundColor: Colors.transparent,
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: InteractiveViewer(
-                              child: Image.network(
-                                lampiran.value,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: Colors.black26,
-                          width: .2,
-                        ),
-                      ),
-                      // clipBehavior: Clip.antiAlias,
-                      child: Image.network(
-                        lampiran.value,
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                ],
-              );
-            }).toList(),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Text(
+            //       pengajuanData!.kartuKeluarga!.kkgambar,
+            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            //     ),
+            //     SizedBox(height: 8),
+            //     GestureDetector(
+            //       onTap: () {
+            //         showDialog(
+            //           context: context,
+            //           builder: (_) => Dialog(
+            //             backgroundColor: Colors.transparent,
+            //             child: GestureDetector(
+            //               onTap: () => Navigator.pop(context),
+            //               child: InteractiveViewer(
+            //                 child: Image.network(
+            //                   pengajuanData!.kartuKeluarga!.kkgambar,
+            //                   fit: BoxFit.contain,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         );
+            //       },
+            //       child: Card(
+            //         elevation: 0,
+            //         color: Colors.white,
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(12),
+            //           side: BorderSide(
+            //             color: Colors.black26,
+            //             width: .2,
+            //           ),
+            //         ),
+            //         // clipBehavior: Clip.antiAlias,
+            //         child: Image.network(
+            //           pengajuanData!.kartuKeluarga!.kkgambar,
+            //           height: 150,
+            //           width: double.infinity,
+            //           fit: BoxFit.contain,
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(height: 20),
+            //   ],
+            // )
           ],
         ),
       ),
@@ -511,20 +423,12 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     }
   }
 
-  Color _warnaStatus(String status) {
+  Color _warnaStatus(int status) {
     switch (status) {
-      case 'selesai':
+      case 1:
         return Colors.green;
-      case 'di_tolak_rt':
-      case 'di_tolak_rw':
-      case 'di_tolak_lurah':
-      case 'dibatalkan':
-        return Colors.red;
-      case 'pending':
-      case 'di_terima_rw':
-      case 'di_terima_rt':
-      case 'di_terima_lurah':
-        return Colors.orange;
+      case 0:
+        return Colors.blueGrey;
       default:
         return Colors.blueGrey;
     }

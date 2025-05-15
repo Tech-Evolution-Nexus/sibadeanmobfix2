@@ -11,16 +11,16 @@ class UserModel {
   final String updatedAt;
 
   UserModel({
-    required this.id,
-    required this.email,
-    required this.emailVerifiedAt,
-    this.fcmToken,
-    required this.status,
-    required this.nohp,
-    required this.avatar,
-    required this.role,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id = 0,
+    this.email = "",
+    this.emailVerifiedAt = "",
+    this.fcmToken = "",
+    this.status = 0,
+    this.nohp = "",
+    this.avatar = "",
+    this.role = "",
+    this.createdAt = "",
+    this.updatedAt = "",
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {

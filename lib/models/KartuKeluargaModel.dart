@@ -10,16 +10,16 @@ class KartuKeluargaModel {
     required this.alamat,
     required this.rt,
     required this.rw,
-    required this.kkgambar,
+    this.kkgambar = "",
   });
 
   factory KartuKeluargaModel.fromJson(Map<String, dynamic> json) {
     return KartuKeluargaModel(
-      noKk: json['no_kk'],
-      alamat: json['alamat'],
-      rt: json['rt'],
-      rw: json['rw'],
-      kkgambar: json['kk_gambar'],
+      noKk: json['no_kk']??'',
+      alamat: json['alamat']??'',
+      rt: json['rt']??'',
+      rw: json['rw']??'',
+      kkgambar: json['kk_gambar']??'',
     );
   }
 
@@ -28,4 +28,3 @@ class KartuKeluargaModel {
     return 'KartuKeluargaModel(noKk: $noKk, alamat: $alamat, rt: $rt, rw: $rw, kkgambar: $kkgambar)';
   }
 }
-    
