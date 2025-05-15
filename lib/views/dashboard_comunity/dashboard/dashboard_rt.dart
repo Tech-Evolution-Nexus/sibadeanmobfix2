@@ -7,12 +7,12 @@ import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/pengajuan_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/verivikasi_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/pengajuan_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../riwayatsurat/riwayat_surat_rt_rw.dart';
+import '../formRt/riwayat_surat_rt_rw.dart';
 
 class DashboardRT extends StatefulWidget {
   final int initialIndex;
@@ -33,8 +33,9 @@ class _DashboardRTState extends State<DashboardRT> {
   final List<Widget> _pages = [
     HomeRT(),
     RiwayatSuratRTRW(),
-    Verivikasi(),
-    PengajuanRT(),
+    VerifikasiPage(
+      semuaWarga: [],
+    ),
     ProfilePage(),
   ];
 
@@ -48,39 +49,70 @@ class _DashboardRTState extends State<DashboardRT> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: lightColorScheme.primary,
-        unselectedItemColor: Colors.grey,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history_rounded),
-            label: "Penyetujuan",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: "Verivikasi",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: "Pengajuan",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded),
-            label: "Profil",
-          ),
-        ],
+      appBar: AppBar(
+        title: Text('Dashboard RT'),
+        backgroundColor: Colors.white,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: lightColorScheme.primary,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home_rounded),
+              title: Text('Home'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 0;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.assignment_turned_in_rounded),
+              title: Text('Penyetujuan'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 1;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.verified_user_rounded),
+              title: Text('Verifikasi'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 2;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person_rounded),
+              title: Text('Profil'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 3;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      body: _pages[_currentIndex],
     );
   }
 }
@@ -91,6 +123,53 @@ class _HomeRTState extends State<HomeRT> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final isSmall = width < 360;
+
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView(
+            padding: const EdgeInsets.all(0),
+            children: [
+              Stack(
+                children: [
+                  buildBackground(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 30),
+                    child: Column(
+                      children: [
+                        const Gap(16),
+                        buildHeader(),
+                        const Gap(16),
+                        cardHero(),
+                        const Gap(16),
+                        berita(),
+                        const Gap(16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(16),
+              // Menambahkan Surat Masuk di atas Berita
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                // child: suratMasuk(),
+              ),
+              const Gap(16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+              const Gap(16),
+            ],
+          );
+  }
 
   Widget berita() {
     final mediaQuery = MediaQuery.of(context);
@@ -135,7 +214,7 @@ class _HomeRTState extends State<HomeRT> {
           context: context,
           removeTop: true,
           child: ListView.builder(
-            itemCount: dataModel!.berita.length,
+            itemCount: dataModel?.berita?.length ?? 0,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
@@ -145,53 +224,6 @@ class _HomeRTState extends State<HomeRT> {
         )
       ]),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
-    final isSmall = width < 360;
-
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(0),
-            children: [
-              Stack(
-                children: [
-                  buildBackground(),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 60),
-                    child: Column(
-                      children: [
-                        const Gap(16),
-                        buildHeader(),
-                        const Gap(16),
-                        cardHero(),
-                        const Gap(16),
-                        berita(),
-                        const Gap(16),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(16),
-              // Menambahkan Surat Masuk di atas Berita
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                // child: suratMasuk(),
-              ),
-              const Gap(16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-              ),
-              const Gap(16),
-            ],
-          );
   }
 
   Widget buildBackground() {
@@ -305,7 +337,7 @@ class _HomeRTState extends State<HomeRT> {
                 mainAxisSpacing: height * 0,
                 childAspectRatio: 1.0,
               ),
-              itemCount: dataModel!.surat.length + 1,
+              itemCount: dataModel?.surat?.length ?? 0 + 1,
               itemBuilder: (context, index) {
                 if (index < dataModel!.surat.length) {
                   final item = dataModel!.surat[index];
