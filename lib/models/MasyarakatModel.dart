@@ -1,6 +1,6 @@
+import 'package:intl/intl.dart';
 import 'package:sibadeanmob_v2_fix/models/KartuKeluargaModel.dart';
-import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
-import 'package:sibadeanmob_v2_fix/models/UserModel.dart';
+import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
 class MasyarakatModel {
   final String nik;
@@ -15,15 +15,15 @@ class MasyarakatModel {
   final String pekerjaan;
   final String golonganDarah;
   final String statusPerkawinan;
-  String tanggalPerkawinan;
+  final String? tanggalPerkawinan;
   final String statusKeluarga;
   final String kewarganegaraan;
-  String noPaspor;
-  String noKitap;
+  final String? noPaspor;
+  final String? noKitap;
   final String namaAyah;
   final String namaIbu;
   final String createdAt;
-  final String ktpgambar;
+  final String? ktpgambar;
   final KartuKeluargaModel? kartuKeluarga;
   final UserModel? user;
 
@@ -40,20 +40,23 @@ class MasyarakatModel {
     required this.pekerjaan,
     required this.golonganDarah,
     required this.statusPerkawinan,
-    this.tanggalPerkawinan = "",
+    this.tanggalPerkawinan,
     required this.statusKeluarga,
     required this.kewarganegaraan,
-    required this.noPaspor,
-    this.noKitap = "",
-    this.namaAyah = "",
+    this.noPaspor,
+    this.noKitap,
+    required this.namaAyah,
     required this.namaIbu,
     required this.createdAt,
-    required this.ktpgambar,
+    this.ktpgambar,
     required this.kartuKeluarga,
     required this.user,
   });
 
   factory MasyarakatModel.fromJson(Map<String, dynamic> json) {
+    String formattedDate = DateFormat('dd/MM/yyyy').format(
+        DateTime.parse(json['created_at'] ?? DateTime.now().toString()));
+
     return MasyarakatModel(
       nik: json['nik'] ?? '',
       idUser: int.tryParse(json['id_user']?.toString() ?? '') ?? 0,
@@ -67,21 +70,22 @@ class MasyarakatModel {
       pekerjaan: json['pekerjaan'] ?? '',
       golonganDarah: json['golongan_darah'] ?? '',
       statusPerkawinan: json['status_perkawinan'] ?? '',
-      tanggalPerkawinan: json['tanggal_perkawinan'] ?? '',
+      tanggalPerkawinan: json['tanggal_perkawinan'],
       statusKeluarga: json['status_keluarga'] ?? '',
       kewarganegaraan: json['kewarganegaraan'] ?? '',
       noPaspor: json['no_paspor'] ?? '',
       noKitap: json['no_kitap'] ?? '',
       namaAyah: json['nama_ayah'] ?? '',
       namaIbu: json['nama_ibu'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      ktpgambar: json['ktp_gambar'] ?? '',
+      createdAt: formattedDate,
+      ktpgambar: json['ktp_gambar'],
       kartuKeluarga: json['kartu_keluarga'] != null
           ? KartuKeluargaModel.fromJson(json['kartu_keluarga'])
           : null,
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
     );
   }
+
   @override
   String toString() {
     return '''

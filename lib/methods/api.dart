@@ -138,6 +138,7 @@ class API {
   Future<dynamic> getdatadashboard() async {
     try {
       String? token = await _getToken();
+      print(token);
       final response = await _dio.get('dash',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
@@ -218,6 +219,8 @@ class API {
   Future<dynamic> getRiwayatPengajuanMasyarakat() async {
     try {
       String? token = await _getToken();
+      print(token);
+
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan-masyarakat",
           options: Options(headers: {'Authorization': 'Bearer $token'}));
@@ -401,6 +404,7 @@ class API {
       final response = await _dio.post("updategambarktp",
           options: Options(headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer $token'
           }),
           data:
@@ -491,9 +495,11 @@ class API {
       return e.response;
     }
   }
-   Future<dynamic> verifikasiMasyarakat() async {
+
+  Future<dynamic> verifikasiMasyarakat() async {
     try {
       String? token = await _getToken();
+      print("token $token");
       final response = await _dio.get(
         '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -502,31 +508,35 @@ class API {
     } on DioException catch (e) {
       return e.response;
     }
-}
- Future<dynamic> updateVerifikasi({required int status, required int idUser}) async {
+  }
+
+  Future<dynamic> updateVerifikasi(
+      {required int status, required int idUser}) async {
     try {
       String? token = await _getToken();
       final response = await _dio.post(
-
-        '/verifikasi/$idUser',data:{'status':status}, // Ganti dengan endpoint sesuai backend Laravel Anda
+        '/verifikasi/$idUser',
+        data: {
+          'status': status
+        }, // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response;
     } on DioException catch (e) {
       return e.response;
     }
-}
-Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
+  }
+
+  Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
     try {
       String? token = await _getToken();
       final response = await _dio.get(
-
-        '/verifikasi/$idUser',// Ganti dengan endpoint sesuai backend Laravel Anda
+        '/verifikasi/$idUser', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response;
     } on DioException catch (e) {
       return e.response;
     }
-}
+  }
 }

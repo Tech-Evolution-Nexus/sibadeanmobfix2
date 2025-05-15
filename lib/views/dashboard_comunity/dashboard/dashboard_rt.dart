@@ -8,7 +8,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.da
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/pengajuan_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/verivikasi_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/verifikasi.dart';
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
@@ -33,7 +33,7 @@ class _DashboardRTState extends State<DashboardRT> {
   final List<Widget> _pages = [
     HomeRT(),
     RiwayatSuratRTRW(),
-    Verivikasi(),
+    Verifikasi(),
     PengajuanRT(),
     ProfilePage(),
   ];
