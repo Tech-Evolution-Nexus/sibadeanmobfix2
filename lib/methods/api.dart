@@ -9,7 +9,7 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
-      Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
+      Dio(BaseOptions(baseUrl: "http://192.168.0.104:8000/api/"));
 
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -491,4 +491,42 @@ class API {
       return e.response;
     }
   }
+   Future<dynamic> verifikasiMasyarakat() async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get(
+        '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
+ Future<dynamic> updateVerifikasi({required int status, required int idUser}) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.post(
+    
+        '/verifikasi/$idUser',data:{'status':status}, // Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
+Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get(
+    
+        '/verifikasi/$idUser',// Ganti dengan endpoint sesuai backend Laravel Anda
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+}
 }
