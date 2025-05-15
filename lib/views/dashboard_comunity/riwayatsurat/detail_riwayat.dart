@@ -4,7 +4,7 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/riwayat_surat_rt_rw.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/riwayat_surat_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 
 import '/methods/api.dart';

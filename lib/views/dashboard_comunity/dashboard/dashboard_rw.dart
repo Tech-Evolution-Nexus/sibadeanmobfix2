@@ -10,7 +10,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../riwayatsurat/riwayat_surat_rt_rw.dart';
+import '../formRt/riwayat_surat_rt_rw.dart';
 
 class DashboardRW extends StatefulWidget {
   final int initialIndex;
