@@ -35,7 +35,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
   File? _kkFile;
   String? _kkFileName;
   Future<void> getUserData() async {
-     final userList = await DatabaseHelper().getUser();
+    final userList = await DatabaseHelper().getUser();
     setState(() {
       nik = userList.first.nik ?? "NIK tidak ditemukan";
     });
@@ -45,7 +45,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
       setState(() {
         dataModel = MasyarakatModel.fromJson(response.data['data']);
         // isLoading = false;
-        print('DATA MODEL:\n$dataModel');
+        // print('DATA MODEL:\n$dataModel');
       });
     }
   }
@@ -78,6 +78,15 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
   }
 
   Future<void> _updateDatagambar(String data, File file) async {
+    // Cek apakah file-nya ada
+    bool fileExists = await file.exists();
+    if (!fileExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File tidak ditemukan')),
+      );
+      return;
+    }
+
     final fileName = file.path.split('/').last;
     final prefs = await SharedPreferences.getInstance();
 
@@ -89,7 +98,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
     };
 
     if (data == "ktp" && nik != null) {
-      formMap['nik'] = nik; // Ini aman, karena FormData menerima String juga
+      formMap['nik'] = nik;
     } else if (data == "kk" && noKK != null) {
       formMap['no_kk'] = noKK;
     }
@@ -99,18 +108,25 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
       print('$key: $value');
     });
 
-    if (data == "ktp") {
-      var response = await API().updategambarktp(formData: formData);
-      print(response);
-      setState(() {
-        isEditingktp = false;
-      });
-    } else if (data == "kk") {
-      var response = await API().updategambarkk(formData: formData);
-      print(response);
-      setState(() {
-        isEditingkk = false;
-      });
+    try {
+      if (data == "ktp") {
+        var response = await API().updategambarktp(formData: formData);
+        print(response);
+        setState(() {
+          isEditingktp = false;
+        });
+      } else if (data == "kk") {
+        var response = await API().updategambarkk(formData: formData);
+        print(response);
+        setState(() {
+          isEditingkk = false;
+        });
+      }
+    } catch (e) {
+      print("Gagal mengirim data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengirim data: $e')),
+      );
     }
   }
 
@@ -237,7 +253,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
                         });
                       },
                       selectedFileName:
-                          isEditingktp ? _ktpFileName : "http://192.168.100.205:8000/api/getimage/1747041416.jpg",
+                          isEditingktp ? _ktpFileName : dataModel?.ktpgambar,
                       onFilePick: () => pickFile('ktp'),
                       showSaveButton: isEditingktp,
                       onSave: () async {
@@ -252,6 +268,7 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
                         }
                       },
                     ),
+                    Gap(10),
                   ],
                 ),
               ),
@@ -339,18 +356,35 @@ class UploadDokumenWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     color: Colors.grey.shade100,
                   ),
-                  child: selectedFileName != null
+                  child: selectedFileName != null &&
+                          selectedFileName!.isNotEmpty &&
+                          selectedFileName!.startsWith('http')
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: AspectRatio(
-                            aspectRatio:
-                                4 / 2, // ubah sesuai rasio yang diinginkan
-                            child: selectedFileName!.startsWith('http')
-                                ? Image.network(selectedFileName!,
-                                    fit: BoxFit.cover)
-                                : Image.file(File(selectedFileName!),
-                                    fit: BoxFit.cover),
-                          ),
+                          // ubah sesuai rasio yang diinginkan
+                          child: (selectedFileName != null &&
+                                  selectedFileName!.isNotEmpty &&
+                                  selectedFileName!.startsWith('http'))
+                              ? Image.network(
+                                  selectedFileName!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.network(
+                                      'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                )
+                              : (selectedFileName != null &&
+                                      selectedFileName!.isNotEmpty)
+                                  ? Image.file(
+                                      File(selectedFileName!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.network(
+                                      'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                                      fit: BoxFit.cover,
+                                    ),
                         )
                       : Row(
                           children: const [

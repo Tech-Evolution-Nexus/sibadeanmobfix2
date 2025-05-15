@@ -10,6 +10,7 @@ class API {
   // === Login User ===2
   final Dio _dio =
       Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
+  // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
 
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -138,6 +139,7 @@ class API {
   Future<dynamic> getdatadashboard() async {
     try {
       String? token = await _getToken();
+      print(token);
       final response = await _dio.get('dash',
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
@@ -397,12 +399,17 @@ class API {
   Future<dynamic> updategambarktp({required FormData formData}) async {
     try {
       String? token = await _getToken();
+      print('NIK: $token');
 
       final response = await _dio.post("updategambarktp",
-          options: Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+            followRedirects: false,
+            validateStatus: (status) => status != null && status < 500,
+          ),
           data:
               formData); // Ganti dengan endpoint yang sesuai", data: formData);
       return response;
@@ -416,10 +423,14 @@ class API {
       String? token = await _getToken();
 
       final response = await _dio.post("updategambarkk",
-          options: Options(headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
-          }),
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+            followRedirects: false,
+            validateStatus: (status) => status != null && status < 500,
+          ),
           data: formData);
       return response;
     } catch (e) {
