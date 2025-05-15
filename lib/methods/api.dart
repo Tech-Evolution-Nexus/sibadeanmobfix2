@@ -36,59 +36,8 @@ class API {
   }
 
   Future<dynamic> registerUser({
-    required String fullName,
-    required String nik,
-    required String noKk,
-    required String tempatLahir,
-    required String tanggalLahir,
-    required String jenisKelamin,
-    required String alamat,
-    required String pekerjaan,
-    required String agama,
-    required String phone,
-    required String email,
-    required String password,
-    required dynamic kkGambar, // File (Android/iOS) atau Uint8List (Web)
+    required FormData formData
   }) async {
-    FormData formData = FormData.fromMap({
-      "nama_lengkap": fullName,
-      "nik": nik,
-      "no_kk": noKk,
-      "tempat_lahir": tempatLahir,
-      "tanggal_lahir": tanggalLahir,
-      "jenis_kelamin": jenisKelamin,
-      "alamat": alamat,
-      "pekerjaan": pekerjaan,
-      "agama": agama,
-      "phone": phone,
-      "email": email,
-      "password": password,
-    });
-
-    // Add KK image file
-    if (!kIsWeb) {
-      if (kkGambar is File && kkGambar.existsSync()) {
-        formData.files.add(
-          MapEntry(
-            "kk_gambar",
-            await MultipartFile.fromFile(
-              kkGambar.path,
-              // filename: basename(kkGambar.path),
-            ),
-          ),
-        );
-      }
-    } else {
-      if (kkGambar != null) {
-        formData.files.add(
-          MapEntry(
-            "kk_gambar",
-            MultipartFile.fromBytes(kkGambar, filename: "kk_gambar.jpg"),
-          ),
-        );
-      }
-    }
-
     return await _dio.post('register', data: formData);
   }
 
