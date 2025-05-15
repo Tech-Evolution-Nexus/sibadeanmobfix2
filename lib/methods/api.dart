@@ -9,7 +9,7 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://192.168.0.104:8000/api/"));
+      Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
 
   Future<String?> _getToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -521,7 +521,7 @@ Future<dynamic> verifikasiDetailMasyarakat({required int idUser}) async {
       String? token = await _getToken();
       final response = await _dio.get(
     
-        '/verifikasi/$idUser',// Ganti dengan endpoint sesuai backend Laravel Anda
+        '/verifikasi/$id',// Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response;
