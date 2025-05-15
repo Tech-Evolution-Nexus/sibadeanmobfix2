@@ -3,6 +3,7 @@ import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import '../../../theme/theme.dart';
 import '/methods/api.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class DetailBerita extends StatefulWidget {
   final int id;
@@ -20,7 +21,7 @@ class _DetailBeritaState extends State<DetailBerita>
   @override
   void initState() {
     super.initState();
-    _getdetailberita();     
+    _getdetailberita();
   }
 
   Future<void> _getdetailberita() async {
@@ -39,7 +40,6 @@ class _DetailBeritaState extends State<DetailBerita>
       setState(() => isLoading = false);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,18 +83,83 @@ class _DetailBeritaState extends State<DetailBerita>
                             child: ClipRRect(
                               borderRadius:
                                   BorderRadius.circular(6), // Sesuaikan radius
-                              child: Image.asset(
-                                'assets/images/berita-sample.jpg',
+                              child: Image.network(
+                                dataModel!.gambar ?? '', // URL gambar dari data
                                 fit: BoxFit.cover,
-                                width: double.infinity,
+                                errorBuilder: (context, error, stackTrace) {
+                                  // Jika gagal load gambar, tampilkan gambar alternatif online
+                                  return Image.network(
+                                    'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
                               ),
                             ),
                           ),
                           SizedBox(height: 20),
-                          Text(
-                            dataModel!.konten,
-                            style: TextStyle(fontSize: 14),
-                          ),
+                          Html(
+                            data: dataModel!.konten,
+                            style: {
+                              "body": Style(
+                                fontSize: FontSize(14),
+                                color: Colors.black87,
+                              ),
+                              "p": Style(
+                                fontSize: FontSize(14),
+                                margin: Margins.zero,
+                              ),
+                              "b": Style(fontWeight: FontWeight.bold),
+                              "strong": Style(fontWeight: FontWeight.bold),
+                              "i": Style(fontStyle: FontStyle.italic),
+                              "em": Style(fontStyle: FontStyle.italic),
+                              "u": Style(
+                                  textDecoration: TextDecoration.underline),
+                              "a": Style(
+                                color: Colors.blue,
+                                textDecoration: TextDecoration.underline,
+                              ),
+                              "h1": Style(
+                                  fontSize: FontSize(24),
+                                  fontWeight: FontWeight.bold),
+                              "h2": Style(
+                                  fontSize: FontSize(22),
+                                  fontWeight: FontWeight.bold),
+                              "h3": Style(
+                                  fontSize: FontSize(20),
+                                  fontWeight: FontWeight.bold),
+                              "h4": Style(
+                                  fontSize: FontSize(18),
+                                  fontWeight: FontWeight.bold),
+                              "h5": Style(
+                                  fontSize: FontSize(16),
+                                  fontWeight: FontWeight.bold),
+                              "h6": Style(
+                                  fontSize: FontSize(14),
+                                  fontWeight: FontWeight.bold),
+                              "ul": Style(
+                                  margin: Margins.zero,
+                                  padding: HtmlPaddings.only(left: 20)),
+                              "ol": Style(
+                                  margin: Margins.zero,
+                                  padding: HtmlPaddings.only(left: 20)),
+                              "li": Style(margin: Margins.only(bottom: 6)),
+                              "img": Style(margin: Margins.only(bottom: 12)),
+                              "table": Style(
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              "th": Style(
+                                padding: HtmlPaddings.all(6),
+                                backgroundColor: Colors.grey.shade200,
+                              ),
+                              "td": Style(
+                                padding: HtmlPaddings.all(6),
+                              ),
+                            },
+                            onLinkTap: (url, attributes, element) {
+                              print("Diklik: $url");
+                              // Bisa pakai launchUrl atau Navigator jika mau buka sesuatu
+                            },
+                          )
                         ],
                       ),
                     ),
