@@ -507,7 +507,7 @@ class API {
 
   Future<List<SuratKeluar>> getSuratKeluar() async {
     try {
-      final response = await _dio.get('/suratkeluar');
+      final response = await _dio.get('/surat-keluar');
       if (response.statusCode == 200) {
         final List data = response.data['suratkeluar'];
         return data.map((json) => SuratKeluar.fromJson(json)).toList();

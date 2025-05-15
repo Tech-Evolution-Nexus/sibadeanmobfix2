@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  syncfusion_flutter_pdfviewer: ^29.2.4
   hexcolor: ^3.0.1
   file_picker: ^9.2.0
   dio: ^5.0.0

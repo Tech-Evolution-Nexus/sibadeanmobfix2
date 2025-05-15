@@ -7,6 +7,7 @@ import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
@@ -227,7 +228,15 @@ class _HomeRWState extends State<HomeRW> {
           ],
         ),
         const Spacer(),
-        const Icon(Icons.notifications, color: Colors.white),
+        IconButton(
+          icon: const Icon(Icons.notifications, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+            );
+          },
+        ),
       ],
     );
   }
