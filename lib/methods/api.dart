@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 
 class API {
   // === Login User ===2
@@ -72,7 +73,18 @@ class API {
       if (token != null) {
         final response = await _dio.post(
           'logout',
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            followRedirects: false, // mencegah Dio mengikuti redirect
+            validateStatus: (status) {
+              return status != null &&
+                  status < 500; // jangan anggap 3xx sebagai error
+            },
+          ),
         );
         return response;
       } else {
@@ -493,6 +505,7 @@ class API {
     }
   }
 
+
   Future<dynamic> cekuser() async {
     try {
       String? token = await _getToken();
@@ -506,6 +519,19 @@ class API {
       return response;
     } on DioException catch (e) {
       return e.response;
+
+  Future<List<SuratKeluar>> getSuratKeluar() async {
+    try {
+      final response = await _dio.get('/surat-keluar');
+      if (response.statusCode == 200) {
+        final List data = response.data['suratkeluar'];
+        return data.map((json) => SuratKeluar.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load surat keluar');
+      }
+    } catch (e) {
+      throw Exception('Error fetching surat keluar: $e');
+
     }
   }
 }

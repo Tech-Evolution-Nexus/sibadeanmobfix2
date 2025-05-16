@@ -18,8 +18,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String nik ="";
-  String nama_lengkap ="";
+  String nik = "";
+  String nama_lengkap = "";
   @override
   void initState() {
     super.initState();
@@ -28,30 +28,65 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> getUserData() async {
     final userList = await DatabaseHelper().getUser();
-    
-  if (userList.isNotEmpty) {
-    setState(() {
-      nik = userList.first.nik;
-      nama_lengkap = userList.first.nama_lengkap;
-    });
-  }
 
+    if (userList.isNotEmpty) {
+      setState(() {
+        nik = userList.first.nik;
+        nama_lengkap = userList.first.nama_lengkap;
+      });
+    }
   }
-
 
   void logout() async {
-    final response = await API().logout();
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi'),
+        content: Text('Apakah Anda yakin ingin keluar?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Keluar'),
+          ),
+        ],
+      ),
+    );
 
-    if (response.statusCode == 200) {
-      // Hapus semua data user dari tabel 'user'
-      await DatabaseHelper().deleteUser();
+    if (shouldLogout ?? false) {
+      try {
+        final response = await API().logout();
 
-      // Navigasi ke halaman login
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-        (route) => false,
-      );
+        print("Response Logout: $response");
+
+        if (response != null && response.statusCode == 200) {
+          print("Logout berhasil, hapus user...");
+          await DatabaseHelper().deleteUser();
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+            (route) => false,
+          );
+        } else {
+          final code = response?.statusCode;
+          final message = response?.statusMessage ?? 'Tidak diketahui';
+          print("Logout gagal. Status: $code, Pesan: $message");
+          print("Body: ${response?.data}");
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Logout gagal: $message')),
+          );
+        }
+      } catch (e) {
+        print("Error saat logout: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Terjadi kesalahan saat logout')),
+        );
+      }
     }
   }
 
@@ -85,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 10),
                       Center(
                         child: Text(
-                         nama_lengkap,
+                          nama_lengkap,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
