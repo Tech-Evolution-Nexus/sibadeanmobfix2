@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/forgotpasswort.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -8,22 +10,21 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
-  final Dio _dio = Dio(); // Dio instance
-
   void _sendResetLink() async {
     try {
-      Response response = await _dio.post(
-        'https://your-api-url.com/api/forgot-password',
-        data: {'email': _emailController.text},
-      );
+      var response = await API().forgotPassword(email: _emailController.text);
+      print(response);
       if (response.statusCode == 200) {
         // Success, handle response
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Link reset password telah dikirim!')),
         );
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (_) => Login()));
       }
     } catch (e) {
       // Error handling
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan. Coba lagi!')),
       );
