@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/ForgotPasswordPage.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/ForgotPasswordPage.dart';
 import '../../methods/api.dart';
 import '../../theme/theme.dart';
 import 'verifikasi.dart';
@@ -81,7 +82,6 @@ class _LoginState extends State<Login> {
           nik: masyarakat['nik'],
           no_kk: masyarakat['no_kk'],
           access_token: data['access_token'],
-          // Jika ada
         );
 
         await DatabaseHelper().insertUser(user);
@@ -93,16 +93,13 @@ class _LoginState extends State<Login> {
         // Navigasi sesuai role
         switch (user.role) {
           case 'rt':
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => DashboardRT()));
+            context.go("/dashboard_rt");
             break;
           case 'rw':
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => DashboardRW()));
+            context.go("/dashboard_rw");
             break;
           default:
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => DashboardPage()));
+            context.go("/dashboard_warga");
             break;
         }
       } else {
