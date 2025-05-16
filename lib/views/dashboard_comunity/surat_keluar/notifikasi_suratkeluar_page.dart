@@ -5,7 +5,8 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/pdf_vie
 
 class NotifikasiSuratKeluarPage extends StatefulWidget {
   @override
-  _NotifikasiSuratKeluarPageState createState() => _NotifikasiSuratKeluarPageState();
+  _NotifikasiSuratKeluarPageState createState() =>
+      _NotifikasiSuratKeluarPageState();
 }
 
 class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
@@ -44,10 +45,18 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                 title: Text(surat.title),
                 subtitle: Text('Expired: ${surat.expDate}'),
                 onTap: () {
+                  final baseUrl =
+                      'https://sibadean.kholzt.com'; // Ganti dengan domain/server kamu
+                  final fileUrl =
+                      '$baseUrl/storage/surat-keluar/${surat.namaFile}';
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PDFViewerPage(url: surat.namaFile, title: surat.title),
+                      builder: (_) => PDFViewerPage(
+                        url: fileUrl,
+                        title: surat.title,
+                      ),
                     ),
                   );
                 },
