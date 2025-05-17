@@ -252,6 +252,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   decoration: InputDecoration(
                                     labelText: "Tanggal Lahir",
                                     hintText: "Pilih tanggal lahir",
+                                    border:
+                                        OutlineInputBorder(), // Border default
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors
+                                              .grey), // Border saat tidak aktif
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.blue,
+                                          width: 2.0), // Border saat aktif
+                                    ),
+                                    suffixIcon: Icon(Icons
+                                        .calendar_today), // Ikon tambahan opsional
                                   ),
                                   readOnly: true,
                                   onTap: () async {
@@ -434,7 +448,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ElevatedButton.icon(
                                   onPressed: () => pickImage('KTP'),
                                   icon: Icon(Icons.upload_file),
-                                  label: Text('Upload Foto KK (Kamera)'),
+                                  label: Text('Upload Foto KK (File)'),
                                 ),
                                 if (kkGambar != null || kkGambarBytes != null)
                                   Padding(
