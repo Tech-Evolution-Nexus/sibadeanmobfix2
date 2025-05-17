@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/riwayatsurat/detail_riwayat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/detail_riwayat.dart';
 
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
@@ -65,6 +65,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
           child: RefreshIndicator(
         onRefresh: fetchData, // This is where data will be refreshed
         child: TabBarView(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: _tabController,
           children: [
             statusSurat("Menunggu", pengajuanMenunggu),
@@ -79,99 +80,102 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
-    return ListView.builder(
-      itemCount: pengajuan?.length ?? 0,
-      itemBuilder: (context, index) {
-        final surat = pengajuan?[index];
-        Color headerColor = getHeaderColor(surat?.status ?? "");
+    return RefreshIndicator(
+        onRefresh: fetchData,
+        child: ListView.builder(
+          itemCount: pengajuan?.length ?? 0,
+          itemBuilder: (context, index) {
+            final surat = pengajuan?[index];
+            Color headerColor = getHeaderColor(surat?.status ?? "");
 
-        return Card(
-          margin: EdgeInsets.only(
-              top: index == 0 ? 10 : 4, bottom: 4, left: 16, right: 16),
-          elevation: 0,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: Colors.black26,
-              width: .2,
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DetailRiwayat(
-                          idPengajuan: surat?.id ?? 0,
-                        )),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: width * 0.05,
-                        backgroundColor: headerColor,
-                        child:
-                            const Icon(Icons.mail_rounded, color: Colors.white),
-                      ),
-                      Gap(12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    surat?.surat.nama_surat ?? "",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 14),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                Text(
-                                  formatStatus(surat?.status ?? ""),
-                                  style: TextStyle(
-                                      color: headerColor, fontSize: 14),
-                                ),
-                              ],
-                            ),
-                            Gap(6),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    surat?.masyarakat.namaLengkap ?? "",
-                                    style: TextStyle(
-                                        color: Colors.black54, fontSize: 12),
-                                  ),
-                                ),
-                                Text(
-                                  surat?.createdAt ?? "",
-                                  style: TextStyle(
-                                      color: Colors.black54, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+            return Card(
+              margin: EdgeInsets.only(
+                  top: index == 0 ? 10 : 4, bottom: 4, left: 16, right: 16),
+              elevation: 0,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Colors.black26,
+                  width: .2,
                 ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailRiwayat(
+                              idPengajuan: surat?.id ?? 0,
+                            )),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: width * 0.05,
+                            backgroundColor: headerColor,
+                            child: const Icon(Icons.mail_rounded,
+                                color: Colors.white),
+                          ),
+                          Gap(12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        surat?.surat.nama_surat ?? "",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      formatStatus(surat?.status ?? ""),
+                                      style: TextStyle(
+                                          color: headerColor, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Gap(6),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        surat?.masyarakat.namaLengkap ?? "",
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Text(
+                                      surat?.createdAt ?? "",
+                                      style: TextStyle(
+                                          color: Colors.black54, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ));
   }
 
   Future<void> fetchData() async {

@@ -3,19 +3,21 @@ import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi/verifikasi.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 
 import '../../../theme/theme.dart';
-import '../formRt/riwayat_surat_rt_rw.dart';
+import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
 
 class DashboardRT extends StatefulWidget {
@@ -175,16 +177,16 @@ class _DashboardRTState extends State<DashboardRT> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-        leading: Icon(icon, color: Colors.grey),
-        title: Text(
-          title,
-          style: TextStyle(
-              color: Colors.grey.shade800,
-              fontWeight: FontWeight.w600,
-              fontSize: 14),
-        ),
-        onTap: onTap,
-      );
+      leading: Icon(icon, color: Colors.grey),
+      title: Text(
+        title,
+        style: TextStyle(
+            color: Colors.grey.shade800,
+            fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+      onTap: onTap,
+    );
   }
 
   void logout() async {
@@ -291,12 +293,32 @@ class _HomeRTState extends State<HomeRT> {
             });
           },
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Berita & Peristiwa Badean",
                 style: TextStyle(
                   fontSize: isSmall ? 14 : 16,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => ListBerita()),
+                  );
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("Lihat Semua"),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Icon(Icons.chevron_right_outlined)
+                  ],
                 ),
               ),
             ],
@@ -422,7 +444,28 @@ class _HomeRTState extends State<HomeRT> {
             ],
           ),
           SizedBox(
-            height: 24,
+            height: 16,
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+              );
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("Lihat Semua"),
+                SizedBox(
+                  width: 2,
+                ),
+                Icon(Icons.chevron_right_outlined)
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 4,
           ),
           Divider(
             height: 1,
@@ -590,20 +633,41 @@ class _HomeRTState extends State<HomeRT> {
 
   Widget _statusItem(String title, String count, bool isSmall) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          count,
+          title,
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: isSmall ? 16 : 18,
-            color: lightColorScheme.primary,
+            color: Colors.black87,
+            fontSize: 12,
           ),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
-        Text(
-          title,
-          style: TextStyle(fontSize: isSmall ? 12 : 14),
-        ),
+        Row(
+          children: [
+            Text(
+              count,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isSmall ? 18 : 20,
+                color: lightColorScheme.primary,
+              ),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              "surat",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14,
+                color: lightColorScheme.primary,
+              ),
+            ),
+          ],
+        )
       ],
     );
   }

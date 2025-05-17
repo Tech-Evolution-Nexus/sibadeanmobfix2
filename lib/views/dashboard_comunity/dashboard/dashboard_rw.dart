@@ -6,12 +6,12 @@ import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/list_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 
 import '../../../theme/theme.dart';
 import '../profiles/profile.dart';
-import '../formRt/riwayat_surat_rt_rw.dart';
+import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 
 class DashboardRW extends StatefulWidget {
   final int initialIndex;
