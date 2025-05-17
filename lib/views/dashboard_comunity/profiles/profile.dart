@@ -19,8 +19,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String nik ="";
-  String nama_lengkap ="";
+  String nik = "";
+  String nama_lengkap = "";
   @override
   void initState() {
     super.initState();
@@ -29,19 +29,37 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> getUserData() async {
     final userList = await DatabaseHelper().getUser();
-    
-  if (userList.isNotEmpty) {
-    setState(() {
-      nik = userList.first.nik;
-      nama_lengkap = userList.first.nama_lengkap;
-    });
-  }
 
+    if (userList.isNotEmpty) {
+      setState(() {
+        nik = userList.first.nik;
+        nama_lengkap = userList.first.nama_lengkap;
+      });
+    }
   }
-
 
   void logout() async {
-    final response = await API().logout();
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi'),
+        content: Text('Apakah Anda yakin ingin keluar?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Keluar'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout ?? false) {
+      try {
+        final response = await API().logout();
 
     if (response.statusCode == 200) {
       // Hapus semua data user dari tabel 'user'
@@ -80,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 10),
                       Center(
                         child: Text(
-                         nama_lengkap,
+                          nama_lengkap,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,

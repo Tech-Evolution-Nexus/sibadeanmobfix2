@@ -5,12 +5,13 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.da
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import "package:gap/gap.dart";
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import '/methods/api.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/BottomBar.dart';
-import '../pengajuan/list_surat.dart';
+import '../pengajuan_surat/list_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
@@ -220,7 +221,15 @@ class _DashboardContentState extends State<DashboardContent> {
           ],
         ),
         const Spacer(),
-        const Icon(Icons.notifications, color: Colors.white),
+        IconButton(
+          icon: const Icon(Icons.notifications, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+            );
+          },
+        ),
       ],
     );
   }
