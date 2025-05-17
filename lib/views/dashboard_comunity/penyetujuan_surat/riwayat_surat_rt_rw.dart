@@ -185,6 +185,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
 
       var response = await API().getRiwayatPengajuanMasyarakat();
       if (response.statusCode == 200) {
+        print(response);
         setState(() {
           pengajuanMenunggu =
               (response.data["data"]["pengajuanMenunggu"] as List)
