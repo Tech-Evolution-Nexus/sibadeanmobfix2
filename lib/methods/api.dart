@@ -10,11 +10,13 @@ import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
+      // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
       Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
 
   Future<String?> _getToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
     final user = await Auth.user();
+    print(user["token"]);
     return user["token"];
   }
 
@@ -366,15 +368,14 @@ class API {
 
       final response = await _dio.post("updategambarktp",
           options: Options(headers: {
-            'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $token'
           }),
           data:
               formData); // Ganti dengan endpoint yang sesuai", data: formData);
       return response;
-    } catch (e) {
-      print("Terjadi error saat mengirim data: $e");
+    } on DioException catch (e) {
+      print("Terjadi error saat mengirim data:${e.response?.data}");
     }
   }
 
@@ -390,7 +391,7 @@ class API {
           }),
           data: formData);
       return response;
-    } catch (e) {
+    } on DioException catch (e) {
       print("Terjadi error saat mengirim data: $e");
     }
   }
@@ -402,7 +403,7 @@ class API {
       final response = await _dio.get("profile?nik=$nik",
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       return response;
-    } catch (e) {
+    } on DioException catch (e) {
       print("Terjadi error saat mengirim data: $e");
     }
   }
@@ -499,6 +500,22 @@ class API {
         '/verifikasi/$idUser', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+  Future<dynamic> cekuser() async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get('cekuser',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ));
       return response;
     } on DioException catch (e) {
       return e.response;

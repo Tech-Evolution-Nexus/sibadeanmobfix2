@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class UbahPasswordPage extends StatefulWidget {
   final String? token; // nullable untuk safety
 
-  const ResetPasswordPage({super.key, this.token});
+  const UbahPasswordPage({super.key, this.token});
 
   @override
-  _ResetPasswordPageState createState() => _ResetPasswordPageState();
+  _UbahPasswordPageState createState() => _UbahPasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class _UbahPasswordPageState extends State<UbahPasswordPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();

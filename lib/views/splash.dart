@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_warga.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/ResetPassword.dart';
 
 import '../widgets/costum_color.dart';
 import '../widgets/custom_icon_button.dart';
@@ -17,34 +21,42 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   @override
-  @override
   void initState() {
     super.initState();
+
     Future.delayed(Duration(seconds: 4), () async {
-      final userList = await DatabaseHelper().getUser();
-      Widget view;
+      _checkTokenAndNavigate();
+    });
+  }
 
-      if (userList.isNotEmpty) {
-        final user = userList.first;
+  Future<void> _checkTokenAndNavigate() async {
+    final user = await Auth.user();
+    String view;
 
-        if (user.role == "masyarakat") {
-          view = DashboardPage();
-        } else if (user.role == "rt") {
-          view = DashboardRT();
-        } else if (user.role == "rw") {
-          view = DashboardRW();
+    if (user != null && user['access_token'] != "") {
+      final role = user['role'];
+
+      var response = await API().cekuser();
+      if (response.statusCode == 200) {
+        // Token valid
+        if (role == 'masyarakat') {
+          view = "/dashboard_warga";
+        } else if (role == 'rt') {
+          view = "/dashboard_rt";
+        } else if (role == 'rw') {
+          view = "/dashboard_rw";
         } else {
-          view = WelcomeScreen();
+          view = "/welcome";
         }
       } else {
-        view = WelcomeScreen();
+        await DatabaseHelper().deleteUser();
+        view = "/welcome";
       }
+    } else {
+      view = "/welcome";
+    }
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => view),
-      );
-    });
+    context.go(view);
   }
 
   @override

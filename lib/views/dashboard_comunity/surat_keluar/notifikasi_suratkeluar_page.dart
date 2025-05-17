@@ -5,7 +5,8 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/pdf_vie
 
 class NotifikasiSuratKeluarPage extends StatefulWidget {
   @override
-  _NotifikasiSuratKeluarPageState createState() => _NotifikasiSuratKeluarPageState();
+  _NotifikasiSuratKeluarPageState createState() =>
+      _NotifikasiSuratKeluarPageState();
 }
 
 class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
@@ -47,7 +48,8 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PDFViewerPage(url: surat.namaFile, title: surat.title),
+                      builder: (_) => PDFViewerPage(
+                          url: surat.namaFile, title: surat.title),
                     ),
                   );
                 },
