@@ -1,75 +1,82 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class PDFViewerPage extends StatelessWidget {
+class PDFViewerPage extends StatefulWidget {
   final String url;
   final String title;
 
-  PDFViewerPage({required this.url, required this.title});
+  const PDFViewerPage({Key? key, required this.url, required this.title}) : super(key: key);
 
-  Future<void> downloadFile(BuildContext context) async {
+  @override
+  State<PDFViewerPage> createState() => _PDFViewerPageState();
+}
+
+class _PDFViewerPageState extends State<PDFViewerPage> {
+  String? localFilePath;
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    downloadPdf();
+  }
+
+  Future<void> downloadPdf() async {
     try {
-      var status = await Permission.storage.request();
-      if (!status.isGranted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Izin penyimpanan ditolak")),
-        );
-        return;
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName = widget.url.split('/').last.split('?').first;
+      final filePath = "${dir.path}/$fileName";
+
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        await file.delete();
       }
 
-      String fileName = url.split('/').last;
+      final response = await Dio().download(widget.url, filePath);
 
-      Directory? directory;
-      if (Platform.isAndroid) {
-        directory = Directory('/storage/emulated/0/Download');
+      if (response.statusCode == 200) {
+        setState(() {
+          localFilePath = filePath;
+          isLoading = false;
+        });
       } else {
-        directory = await getApplicationDocumentsDirectory();
+        setState(() {
+          errorMessage = "Gagal mengunduh file PDF (Status: ${response.statusCode})";
+          isLoading = false;
+        });
       }
-
-      if (!(await directory.exists())) {
-        await directory.create(recursive: true);
-      }
-
-      String savePath = '${directory.path}/$fileName';
-
-      await Dio().download(url, savePath);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Berhasil diunduh ke: $savePath")),
-      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Gagal mengunduh file: $e")),
-      );
+      setState(() {
+        errorMessage = "Terjadi kesalahan: $e";
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('URL PDF: $url'); // Debug
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Memuat ${widget.title}...")),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (errorMessage != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Error")),
+        body: Center(child: Text(errorMessage!)),
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.download),
-            onPressed: () => downloadFile(context),
-          ),
-        ],
-      ),
-      body: SfPdfViewer.network(
-        url,
-        onDocumentLoadFailed: (details) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal memuat PDF: ${details.description}')),
-          );
-        },
-      ),
+      appBar: AppBar(title: Text(widget.title)),
+      body: SfPdfViewer.file(File(localFilePath!)),
     );
   }
 }
