@@ -258,11 +258,17 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem('Menunggu persetujuan', '20', isSmall),
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModel!.dash.totalMenungguPersetujuan.toString(),
+                    isSmall),
               ),
               Expanded(
                 flex: 3,
-                child: _statusItem('Selesai', '0', isSmall),
+                child: _statusItem(
+                    'Selesai',
+                    dataModel!.dash.totalPersetujuanSelesai.toString(),
+                    isSmall),
               ),
             ],
           ),

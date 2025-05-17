@@ -4,22 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
-import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/detail_riwayat.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 
 import '../../../theme/theme.dart';
-import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
+import '../formRt/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
 
 class DashboardRT extends StatefulWidget {
@@ -74,44 +71,40 @@ class _DashboardRTState extends State<DashboardRT> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              SizedBox(
-                height: 195,
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: lightColorScheme.primary,
-                  ),
-                  padding: EdgeInsets.only(left: 20, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: foto.isNotEmpty
-                            ? NetworkImage(foto)
-                            : const AssetImage('assets/images/6.jpg')
-                                as ImageProvider,
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: lightColorScheme.primary,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: foto.isNotEmpty
+                          ? NetworkImage(foto)
+                          : const AssetImage('assets/images/6.jpg')
+                              as ImageProvider,
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      nama,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      SizedBox(
-                        height: 4,
+                    ),
+                    Text(
+                      nik,
+                      style: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 12,
                       ),
-                      Text(
-                        nama,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        nik,
-                        style: TextStyle(
-                          color: Colors.grey.shade200,
-                          fontSize: 12,
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
               _buildDrawerItem(
@@ -228,6 +221,14 @@ class _HomeRTState extends State<HomeRT> {
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+    fetchBerita();
+    fetchData();
+  }
+
   Future<void> fetchBerita() async {
     try {
       var response = await API().getdatadashboard();
@@ -243,22 +244,13 @@ class _HomeRTState extends State<HomeRT> {
     }
   }
 
-  Future<void> getUserData() async {
-    final user = await Auth.user();
-    setState(() {
-      nama = user['nama'] ?? "User";
-      nik = user['nik'] ?? "NIK tidak ditemukan";
-      foto = user['foto'] ?? "";
-    });
-  }
-
   Future<void> fetchData() async {
     try {
       // print("test");
       final user = await Auth.user();
 
       var response = await API().getRiwayatPengajuanMasyarakat();
-      // print(response.data["data"]);
+      print(response.data["data"]);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
@@ -274,12 +266,13 @@ class _HomeRTState extends State<HomeRT> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchBerita();
-    fetchData();
+  Future<void> getUserData() async {
+    final user = await Auth.user();
+    setState(() {
+      nama = user['nama'] ?? "User";
+      nik = user['nik'] ?? "NIK tidak ditemukan";
+      foto = user['foto'] ?? "";
+    });
   }
 
   @override
@@ -306,7 +299,7 @@ class _HomeRTState extends State<HomeRT> {
                         const Gap(16),
                         cardHero(),
                         const Gap(16),
-                        cardshhortcutpengajuan(),
+                        // cardshhortcutpengajuan(),
                         const Gap(16),
                         berita(),
                         const Gap(16),
@@ -355,32 +348,12 @@ class _HomeRTState extends State<HomeRT> {
             });
           },
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Berita & Peristiwa Badean",
                 style: TextStyle(
                   fontSize: isSmall ? 14 : 16,
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ListBerita()),
-                  );
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("Lihat Semua"),
-                    SizedBox(
-                      width: 2,
-                    ),
-                    Icon(Icons.chevron_right_outlined)
-                  ],
                 ),
               ),
             ],
@@ -460,15 +433,7 @@ class _HomeRTState extends State<HomeRT> {
           ],
         ),
         const Spacer(),
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
-            );
-          },
-        ),
+        const Icon(Icons.notifications, color: Colors.white),
       ],
     );
   }
@@ -512,28 +477,7 @@ class _HomeRTState extends State<HomeRT> {
             ],
           ),
           SizedBox(
-            height: 16,
-          ),
-          // GestureDetector(
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
-          //     );
-          //   },
-          //   child: Row(
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     mainAxisAlignment: MainAxisAlignment.end,
-          //     children: [
-          //       Text("Lihat Semua"),
-          //       SizedBox(
-          //         width: 2,
-          //       ),
-          //       Icon(Icons.chevron_right_outlined)
-          //     ],
-          //   ),
-          // ),
-          SizedBox(
-            height: 4,
+            height: 24,
           ),
           Divider(
             height: 1,
@@ -579,143 +523,96 @@ class _HomeRTState extends State<HomeRT> {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 2,
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
       ),
       decoration: _boxDecoration(),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Persetujuan Surat",
-                style: TextStyle(
-                  fontSize: isSmall ? 14 : 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ListBerita()),
-                  );
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("Lihat Semua"),
-                    SizedBox(
-                      width: 2,
-                    ),
-                    Icon(Icons.chevron_right_outlined)
-                  ],
-                ),
-              ),
-            ],
-          ),
-          pengajuanMenunggu == null || pengajuanMenunggu!.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Center(
-                    child: Text(
-                      "Tidak ada surat",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: pengajuanMenunggu?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final surat = pengajuanMenunggu?[index];
-                    Color headerColor = getHeaderColor(surat?.status ?? "");
+          ListView.builder(
+            itemCount: pengajuanMenunggu?.length ?? 0,
+            itemBuilder: (context, index) {
+              final surat = pengajuanMenunggu?[index];
+              Color headerColor = getHeaderColor(surat?.status ?? "");
 
-                    return Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: Colors.black26,
-                          width: .2,
-                        ),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailRiwayat(
+              return Card(
+                margin: EdgeInsets.only(
+                    top: index == 0 ? 10 : 4, bottom: 4, left: 16, right: 16),
+                elevation: 0,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: Colors.black26,
+                    width: .2,
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailRiwayat(
                                 idPengajuan: surat?.id ?? 0,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                              )),
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Row(
                           children: [
-                            Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Row(
+                            CircleAvatar(
+                              radius: width * 0.05,
+                              backgroundColor: headerColor,
+                              child: const Icon(Icons.mail_rounded,
+                                  color: Colors.white),
+                            ),
+                            Gap(12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CircleAvatar(
-                                    radius: width * 0.05,
-                                    backgroundColor: headerColor,
-                                    child: const Icon(Icons.mail_rounded,
-                                        color: Colors.white),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          surat?.surat.nama_surat ?? "",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      Text(
+                                        formatStatus(surat?.status ?? ""),
+                                        style: TextStyle(
+                                            color: headerColor, fontSize: 14),
+                                      ),
+                                    ],
                                   ),
-                                  Gap(12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                surat?.surat.nama_surat ?? "",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Text(
-                                              formatStatus(surat?.status ?? ""),
-                                              style: TextStyle(
-                                                  color: headerColor,
-                                                  fontSize: 14),
-                                            ),
-                                          ],
+                                  Gap(6),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          surat?.masyarakat.namaLengkap ?? "",
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12),
                                         ),
-                                        Gap(6),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                surat?.masyarakat.namaLengkap ??
-                                                    "",
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontSize: 12),
-                                              ),
-                                            ),
-                                            Text(
-                                              surat?.createdAt ?? "",
-                                              style: TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      Text(
+                                        surat?.createdAt ?? "",
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -723,9 +620,12 @@ class _HomeRTState extends State<HomeRT> {
                           ],
                         ),
                       ),
-                    );
-                  },
-                )
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
         ],
       ),
     );
@@ -833,41 +733,20 @@ class _HomeRTState extends State<HomeRT> {
 
   Widget _statusItem(String title, String count, bool isSmall) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          count,
           style: TextStyle(
-            color: Colors.black87,
-            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            fontSize: isSmall ? 16 : 18,
+            color: lightColorScheme.primary,
           ),
-          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
-        Row(
-          children: [
-            Text(
-              count,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: isSmall ? 18 : 20,
-                color: lightColorScheme.primary,
-              ),
-            ),
-            SizedBox(
-              width: 4,
-            ),
-            Text(
-              "surat",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 14,
-                color: lightColorScheme.primary,
-              ),
-            ),
-          ],
-        )
+        Text(
+          title,
+          style: TextStyle(fontSize: isSmall ? 12 : 14),
+        ),
       ],
     );
   }
@@ -982,4 +861,5 @@ class _HomeRTState extends State<HomeRT> {
         return "Menunggu";
     }
   }
+
 }
