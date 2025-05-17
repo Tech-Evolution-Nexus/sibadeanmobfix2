@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/riwayat_pengajuan.dart';
@@ -107,6 +107,14 @@ class _DashboardRTState extends State<DashboardRT> {
               ),
               _buildDrawerItem(
                 icon: Icons.person_4_outlined,
+                title: 'Home',
+                onTap: () {
+                  setState(() => _currentIndex = 0);
+                  Navigator.pop(context);
+                },
+              ),
+              _buildDrawerItem(
+                icon: Icons.person_4_outlined,
                 title: 'Profil',
                 onTap: () {
                   setState(() => _currentIndex = 3);
@@ -190,11 +198,7 @@ class _DashboardRTState extends State<DashboardRT> {
       await DatabaseHelper().deleteUser();
 
       // Navigasi ke halaman login
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-        (route) => false,
-      );
+      context.go('/login');
     }
   }
 
@@ -214,6 +218,36 @@ class _HomeRTState extends State<HomeRT> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
+  Future<void> fetchBerita() async {
+    try {
+      var response = await API().getdatadashboard();
+      if (response.statusCode == 200) {
+        setState(() {
+          dataModel = BeritaSuratModel.fromJson(response.data['data']);
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> getUserData() async {
+    final user = await Auth.user();
+    setState(() {
+      nama = user['nama'] ?? "User";
+      nik = user['nik'] ?? "NIK tidak ditemukan";
+      foto = user['foto'] ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+    fetchBerita();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +272,8 @@ class _HomeRTState extends State<HomeRT> {
                         buildHeader(),
                         const Gap(16),
                         cardHero(),
+                        const Gap(16),
+                        cardshhortcutpengajuan(),
                         const Gap(16),
                         berita(),
                         const Gap(16),
@@ -400,11 +436,17 @@ class _HomeRTState extends State<HomeRT> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem('Menunggu persetujuan', '20', isSmall),
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModel!.dash.totalMenungguPersetujuan.toString(),
+                    isSmall),
               ),
               Expanded(
                 flex: 3,
-                child: _statusItem('Selesai', '0', isSmall),
+                child: _statusItem(
+                    'Selesai',
+                    dataModel!.dash.totalPersetujuanSelesai.toString(),
+                    isSmall),
               ),
             ],
           ),
@@ -444,35 +486,78 @@ class _HomeRTState extends State<HomeRT> {
     );
   }
 
-  Future<void> fetchBerita() async {
-    try {
-      var response = await API().getdatadashboard();
-      if (response.statusCode == 200) {
-        setState(() {
-          dataModel = BeritaSuratModel.fromJson(response.data['data']);
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Error: $e");
-      setState(() => isLoading = false);
-    }
-  }
+  Widget cardshhortcutpengajuan() {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
+    final isSmall = width < 360;
 
-  Future<void> getUserData() async {
-    final user = await Auth.user();
-    setState(() {
-      nama = user['nama'] ?? "User";
-      nik = user['nik'] ?? "NIK tidak ditemukan";
-      foto = user['foto'] ?? "";
-    });
-  }
+    final horizontalPadding = width * 0.04;
+    final verticalPadding = height * 0.02;
 
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchBerita();
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
+      decoration: _boxDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment
+                .spaceBetween, // bisa dihapus karena Expanded akan mengatur lebar
+            children: [
+              Expanded(
+                flex: 5,
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModel!.dash.totalMenungguPersetujuan.toString(),
+                    isSmall),
+              ),
+              Expanded(
+                flex: 3,
+                child: _statusItem(
+                    'Selesai',
+                    dataModel!.dash.totalPersetujuanSelesai.toString(),
+                    isSmall),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          Divider(
+            height: 1,
+          ),
+          MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                // crossAxisCount: (width / 100).floor(),
+                crossAxisSpacing: width * 0,
+                mainAxisSpacing: height * 0,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: (dataModel?.surat?.length ?? 0) + 1,
+              itemBuilder: (context, index) {
+                if (index < dataModel!.surat.length) {
+                  final item = dataModel!.surat[index];
+                  // final color = colors[index % colors.length];
+                  return _suratButton(context, item, width);
+                } else {
+                  return _lihatSemuaButton(context, width);
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget pengajuan() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
@@ -45,13 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (response.statusCode == 200) {
       // Hapus semua data user dari tabel 'user'
       await DatabaseHelper().deleteUser();
-
-      // Navigasi ke halaman login
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-        (route) => false,
-      );
+      context.go('/login');
     }
   }
 

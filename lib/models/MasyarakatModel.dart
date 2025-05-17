@@ -86,7 +86,7 @@ class MasyarakatModel {
       namaAyah: json['nama_ayah'] ?? '',
       namaIbu: json['nama_ibu'] ?? '',
       createdAt: formattedDate,
-      ktpgambar: json['ktp_gambar'],
+      ktpgambar: json['ktp_gambar'] ?? '',
       kartuKeluarga: json['kartu_keluarga'] != null
           ? KartuKeluargaModel.fromJson(json['kartu_keluarga'])
           : null,

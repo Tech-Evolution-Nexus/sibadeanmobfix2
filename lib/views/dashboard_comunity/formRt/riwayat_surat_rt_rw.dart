@@ -180,6 +180,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
       final user = await Auth.user();
 
       var response = await API().getRiwayatPengajuanMasyarakat();
+      print(response.data["data"]);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
