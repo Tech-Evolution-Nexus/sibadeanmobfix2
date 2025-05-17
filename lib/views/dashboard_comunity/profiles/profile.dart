@@ -42,29 +42,53 @@ class _ProfilePageState extends State<ProfilePage> {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Konfirmasi'),
-        content: Text('Apakah Anda yakin ingin keluar?'),
+        title: const Text('Konfirmasi'),
+        content: const Text('Apakah Anda yakin ingin keluar?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Batal'),
+            child: const Text('Batal'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Keluar'),
+            child: const Text('Keluar'),
           ),
         ],
       ),
     );
 
-    if (shouldLogout ?? false) {
-      try {
-        final response = await API().logout();
+    if (shouldLogout != true) return;
 
-    if (response.statusCode == 200) {
-      // Hapus semua data user dari tabel 'user'
-      await DatabaseHelper().deleteUser();
-      context.go('/login');
+    try {
+      final response = await API().logout();
+      print("Response Logout: $response");
+
+      if (response?.statusCode == 200) {
+        print("Logout berhasil, hapus user...");
+        await DatabaseHelper().deleteUser();
+
+        if (!context.mounted) return;
+        context.go('/login');
+      } else {
+        final code = response?.statusCode;
+        final message = response?.statusMessage ?? 'Tidak diketahui';
+        print("Logout gagal. Status: $code, Pesan: $message");
+        print("Body: ${response?.data}");
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Logout gagal: $message')),
+          );
+        }
+      }
+    } catch (e) {
+      print("Error saat logout: $e");
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Terjadi kesalahan saat logout')),
+        );
+      }
     }
   }
 
