@@ -45,32 +45,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? ktpGambar;
   Uint8List? ktpGambarBytes;
 
-  Future<void> pickImage() async {
+  Future<void> pickImage(String jenis) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-        source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear);
+    XFile? image;
+
+    // Tentukan sumber gambar berdasarkan jenis dokumen
+    if (jenis == 'KTP') {
+      image = await picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+    } else if (jenis == 'KK') {
+      image = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+    } else {
+      debugPrint("Jenis dokumen tidak dikenali.");
+      return;
+    }
 
     if (image == null) {
       debugPrint("Tidak ada gambar yang dipilih.");
       return;
     }
 
+    // Jika platform Web
     if (kIsWeb) {
-      kkGambarBytes = await image.readAsBytes();
-      debugPrint("Gambar berhasil dipilih (Web)");
-    } else {
-      kkGambar = File(image.path);
-      debugPrint("Gambar berhasil dipilih (Mobile)");
-    }
-
-    if (image != null) {
       final bytes = await image.readAsBytes();
       setState(() {
-        ktpGambar = File(image.path);
-        ktpGambarBytes = bytes;
+        if (jenis == 'KTP') {
+          ktpGambarBytes = bytes;
+        } else if (jenis == 'KK') {
+          kkGambarBytes = bytes;
+        }
       });
+      debugPrint("Gambar berhasil dipilih (Web)");
+    } else {
+      final file = File(image.path);
+      final bytes = await image.readAsBytes();
+      setState(() {
+        if (jenis == 'KTP') {
+          ktpGambar = file;
+          ktpGambarBytes = bytes;
+        } else if (jenis == 'KK') {
+          kkGambar = file;
+          kkGambarBytes = bytes;
+        }
+      });
+      debugPrint("Gambar berhasil dipilih (Mobile)");
     }
   }
+
 
   void nextPage() {
     if (_formKey.currentState!.validate()) {
@@ -407,9 +432,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 SizedBox(height: 10),
                                 ElevatedButton.icon(
-                                  onPressed: pickImage,
+                                  onPressed: () => pickImage('KTP'),
                                   icon: Icon(Icons.upload_file),
-                                  label: Text("Upload Foto KK"),
+                                  label: Text('Upload Foto KK (Kamera)'),
                                 ),
                                 if (kkGambar != null || kkGambarBytes != null)
                                   Padding(
@@ -421,9 +446,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 SizedBox(height: 10),
                                 ElevatedButton.icon(
-                                  onPressed: pickImage,
+                                  onPressed: () => pickImage('KTP'),
                                   icon: Icon(Icons.upload_file),
-                                  label: Text("Upload Foto KTP"),
+                                  label: Text('Upload Foto KTP (Kamera)'),
                                 ),
                                 if (ktpGambar != null || ktpGambarBytes != null)
                                   Padding(
