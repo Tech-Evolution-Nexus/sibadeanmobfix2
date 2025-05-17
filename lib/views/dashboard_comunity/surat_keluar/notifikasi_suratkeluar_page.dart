@@ -54,10 +54,14 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => PDFViewerPage(
+// <<<<<<< HEAD
                         url: fileUrl,
                         title: surat.title,
                       ),
-                    ),
+// =======
+//                           url: surat.namaFile, title: surat.title),
+// >>>>>>> 0b74f1409a07a8d8010488538936cc970003c713
+                     ),
                   );
                 },
               );

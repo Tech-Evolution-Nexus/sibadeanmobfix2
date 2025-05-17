@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/ForgotPasswordPage.dart';
 import '../../methods/api.dart';
@@ -22,6 +22,7 @@ class _LoginState extends State<Login> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
   bool _obscurePassword = true;
+  bool isLoading = false;
 
   final TextEditingController nikController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -49,6 +50,9 @@ class _LoginState extends State<Login> {
   }
 
   void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
     final nik = nikController.text.trim();
     final pass = passwordController.text.trim();
 
@@ -62,11 +66,11 @@ class _LoginState extends State<Login> {
     try {
       final response = await API().loginUser(nik: nik, password: pass);
 
-      final data = response.data['data'];
+      final data = response!.data['data'];
       final userData = data?['user'];
       final masyarakat = userData?['masyarakat'];
 
-      if (response.statusCode == 200 && data?['access_token'] != null) {
+      if (response!.statusCode == 200 && data?['access_token'] != null) {
         if (userData == null || masyarakat == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Data user tidak lengkap')),
@@ -87,7 +91,8 @@ class _LoginState extends State<Login> {
         await DatabaseHelper().insertUser(user);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'] ?? 'Login berhasil')),
+          SnackBar(
+              content: Text(response!.data['message'] ?? 'Login berhasil')),
         );
 
         // Navigasi sesuai role
@@ -107,12 +112,18 @@ class _LoginState extends State<Login> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login gagal: $errorMessage')),
         );
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
       );
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -233,18 +244,22 @@ class _LoginState extends State<Login> {
                           height: 50, // Tinggi tombol 50
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xFF052158), // warna biru gelap
+                              backgroundColor: isLoading
+                                  ? Colors.grey.shade300
+                                  : Color(0xFF052158), // warna biru gelap
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     12), // sudut tombol agak bulat
                               ),
                             ),
-                            onPressed: () {
-                              if (_formSignInKey.currentState!.validate()) {
-                                loginUser();
-                              }
-                            },
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    if (_formSignInKey.currentState!
+                                        .validate()) {
+                                      loginUser();
+                                    }
+                                  },
                             child: const Text(
                               "Login",
                               style: TextStyle(

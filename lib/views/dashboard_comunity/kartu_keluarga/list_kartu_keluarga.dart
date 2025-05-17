@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan/pengajuan_surat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/pengajuan_surat.dart';
 
 class DaftarAnggotaKeluargaView extends StatefulWidget {
   final int idsurat;

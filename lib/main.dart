@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sibadeanmob_v2_fix/helper/GoRouteHelper.dart';
+import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'providers/auth_provider.dart';
 
 void main() async {
@@ -52,6 +53,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: ThemeData.from(
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: lightColorScheme.primary)),
       routerConfig: GoRouteHelper.router,
       debugShowCheckedModeBanner: false,
     );
