@@ -70,40 +70,44 @@ class _DashboardRTState extends State<DashboardRT> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: lightColorScheme.primary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: foto.isNotEmpty
-                          ? NetworkImage(foto)
-                          : const AssetImage('assets/images/6.jpg')
-                              as ImageProvider,
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      nama,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+              SizedBox(
+                height: 195,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: lightColorScheme.primary,
+                  ),
+                  padding: EdgeInsets.only(left: 20, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: foto.isNotEmpty
+                            ? NetworkImage(foto)
+                            : const AssetImage('assets/images/6.jpg')
+                                as ImageProvider,
                       ),
-                    ),
-                    Text(
-                      nik,
-                      style: TextStyle(
-                        color: Colors.grey.shade200,
-                        fontSize: 12,
+                      SizedBox(
+                        height: 4,
                       ),
-                    )
-                  ],
+                      Text(
+                        nama,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        nik,
+                        style: TextStyle(
+                          color: Colors.grey.shade200,
+                          fontSize: 12,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               _buildDrawerItem(
@@ -171,16 +175,16 @@ class _DashboardRTState extends State<DashboardRT> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey),
-      title: Text(
-        title,
-        style: TextStyle(
-            color: Colors.grey.shade800,
-            fontWeight: FontWeight.w600,
-            fontSize: 14),
-      ),
-      onTap: onTap,
-    );
+        leading: Icon(icon, color: Colors.grey),
+        title: Text(
+          title,
+          style: TextStyle(
+              color: Colors.grey.shade800,
+              fontWeight: FontWeight.w600,
+              fontSize: 14),
+        ),
+        onTap: onTap,
+      );
   }
 
   void logout() async {

@@ -19,6 +19,7 @@ class _VerifikasiState extends State<Verifikasi>
   late TabController _tabController;
   List<MasyarakatModel> verifikasiMasyarakatMenunggu = [];
   List<MasyarakatModel> verifikasiMasyarakatSelesai = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -182,22 +183,20 @@ class _VerifikasiState extends State<Verifikasi>
       var response = await API().verifikasiMasyarakat();
       if (response.statusCode == 200) {
         setState(() {
-          verifikasiMasyarakatMenunggu = (response.data["data"] as List)
-              .map((item) => MasyarakatModel.fromJson(item))
-              .toList();
-          // pengajuanMenunggu =
-          //     (response.data["data"]["pengajuanMenunggu"] as List)
-          //         .map((item) => PengajuanSurat.fromJson(item))
-          //         .toList();
-          // pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
-          //     .map((item) => PengajuanSurat.fromJson(item))
-          //     .toList();
-          // isLoading = false;
+          verifikasiMasyarakatMenunggu =
+              (response.data["data"]["verifikasiMenunggu"] as List)
+                  .map((item) => MasyarakatModel.fromJson(item))
+                  .toList();
+          verifikasiMasyarakatSelesai =
+              (response.data["data"]["verifikasiSelesai"] as List)
+                  .map((item) => MasyarakatModel.fromJson(item))
+                  .toList();
+          isLoading = false;
         });
       }
     } catch (e) {
       print("Error: $e");
-      // setState(() => isLoading = false);
+      setState(() => isLoading = false);
     }
   }
 
