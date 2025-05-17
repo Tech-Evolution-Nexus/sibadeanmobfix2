@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 
@@ -35,9 +36,9 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
   File? _kkFile;
   String? _kkFileName;
   Future<void> getUserData() async {
-    final userList = await DatabaseHelper().getUser();
+    final userList = await Auth.user();
     setState(() {
-      nik = userList.first.nik ?? "NIK tidak ditemukan";
+      nik = userList['nik'] ?? "NIK tidak ditemukan";
     });
     var response = await API().profiledata(nik: nik);
     // print(response);
@@ -78,7 +79,8 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
   }
 
   Future<void> _updateDatagambar(String data, File file) async {
-    // Cek apakah file-nya ada
+    final userList = await Auth.user();
+
     bool fileExists = await file.exists();
     if (!fileExists) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,10 +90,10 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
     }
 
     final fileName = file.path.split('/').last;
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
 
-    final nik = prefs.getString('nik');
-    final noKK = prefs.getString('noKK');
+    final nik = userList['nik'];
+    final noKK = userList['noKK'];
 
     final formMap = <String, dynamic>{
       'file': await MultipartFile.fromFile(file.path, filename: fileName),
@@ -104,24 +106,23 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
     }
 
     final formData = FormData.fromMap(formMap);
-    formMap.forEach((key, value) {
-      print('$key: $value');
-    });
-
     try {
       if (data == "ktp") {
         var response = await API().updategambarktp(formData: formData);
         print(response);
         setState(() {
           isEditingktp = false;
+          _ktpFileName = "";
         });
       } else if (data == "kk") {
         var response = await API().updategambarkk(formData: formData);
-        print(response);
+        ;
         setState(() {
           isEditingkk = false;
+          _kkFileName = "";
         });
       }
+      await getUserData();
     } catch (e) {
       print("Gagal mengirim data: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -221,9 +222,10 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
                       onEditToggle: () {
                         setState(() {
                           isEditingkk = !isEditingkk;
+                          _kkFileName = "";
                         });
                       },
-                      selectedFileName: isEditingktp
+                      selectedFileName: isEditingkk
                           ? _kkFileName
                           : dataModel?.kartuKeluarga?.kkgambar,
                       onFilePick: () => pickFile('kk'),
@@ -357,14 +359,10 @@ class UploadDokumenWidget extends StatelessWidget {
                     color: Colors.grey.shade100,
                   ),
                   child: selectedFileName != null &&
-                          selectedFileName!.isNotEmpty &&
-                          selectedFileName!.startsWith('http')
+                          selectedFileName!.isNotEmpty
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          // ubah sesuai rasio yang diinginkan
-                          child: (selectedFileName != null &&
-                                  selectedFileName!.isNotEmpty &&
-                                  selectedFileName!.startsWith('http'))
+                          child: selectedFileName!.startsWith('http')
                               ? Image.network(
                                   selectedFileName!,
                                   fit: BoxFit.cover,
@@ -375,16 +373,14 @@ class UploadDokumenWidget extends StatelessWidget {
                                     );
                                   },
                                 )
-                              : (selectedFileName != null &&
-                                      selectedFileName!.isNotEmpty)
-                                  ? Image.file(
-                                      File(selectedFileName!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.network(
-                                      'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
-                                      fit: BoxFit.cover,
-                                    ),
+                              : Image.file(
+                                  File(
+                                      selectedFileName!), // load dari file lokal
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.broken_image);
+                                  },
+                                ),
                         )
                       : Row(
                           children: const [

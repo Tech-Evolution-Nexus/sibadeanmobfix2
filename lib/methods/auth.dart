@@ -3,8 +3,20 @@ import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class Auth {
   static Future<Map<String, dynamic>> user() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+
     final userList = await DatabaseHelper().getUser();
+    if (userList.isEmpty) {
+      return {
+        'user_id': "",
+        'role': "",
+        'nama': "",
+        'nik': "",
+        'noKK': "",
+        'token': "",
+        'noKk': "",
+      }; // map kosong, bukan null
+    }
     return {
       'user_id': userList.first.id,
       'role': userList.first.role,

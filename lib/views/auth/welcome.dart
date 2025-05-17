@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'login.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -47,10 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-      );
+      context.go("/login");
     }
   }
 
@@ -176,10 +174,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               right: 20,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Login()),
-                  );
+                  context.go("/login");
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,

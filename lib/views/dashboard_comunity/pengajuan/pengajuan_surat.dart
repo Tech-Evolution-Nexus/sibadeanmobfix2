@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data'; 
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
@@ -351,68 +351,133 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                     elevation: 0,
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
                                     child: Padding(
-                                      padding: EdgeInsets.all(16),
+                                      padding: const EdgeInsets.all(20),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Upload File Pengantar Rt (Opsional):",
+                                          const Text(
+                                            "Upload File Pengantar RT (Opsional)",
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 20,
                                               fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
                                             ),
                                           ),
-                                          SizedBox(height: 10),
-                                          if (_selectedFile != null)
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  "File Terpilih: ${_fileName ?? ''}",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                          const SizedBox(height: 16),
+
+                                          /// Box upload area with preview
+                                          GestureDetector(
+                                            onTap: _pickPengantarFile,
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 250,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.grey.shade400,
+                                                  style: BorderStyle.solid,
+                                                  width: 2,
                                                 ),
-                                                SizedBox(height: 10),
-                                                if (_fileName != null &&
-                                                    (_fileName!
-                                                            .endsWith('.jpg') ||
-                                                        _fileName!
-                                                            .endsWith('.png')))
-                                                  Image.file(
-                                                    _selectedFile!,
-                                                    height: 100,
-                                                  ),
-                                              ],
-                                            )
-                                          else
-                                            Text(
-                                              "Belum ada file yang dipilih",
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                          SizedBox(height: 10),
-                                          ElevatedButton.icon(
-                                            onPressed: _pickPengantarFile,
-                                            icon: Icon(Icons.upload_file),
-                                            label: Text(
-                                                "Upload Foto Pengantar Rt"),
-                                          ),
-                                          if (PengantarRtgambar != null)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0),
-                                              child: Text(
-                                                "Gambar Pengantar Rt telah dipilih!",
-                                                style: TextStyle(
-                                                    color: Colors.green),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                color: Colors.grey.shade50,
+                                                image: _selectedFile != null &&
+                                                        (_fileName
+                                                                    ?.toLowerCase()
+                                                                    .endsWith(
+                                                                        '.jpg') ==
+                                                                true ||
+                                                            _fileName
+                                                                    ?.toLowerCase()
+                                                                    .endsWith(
+                                                                        '.jpeg') ==
+                                                                true ||
+                                                            _fileName
+                                                                    ?.toLowerCase()
+                                                                    .endsWith(
+                                                                        '.png') ==
+                                                                true)
+                                                    ? DecorationImage(
+                                                        image: FileImage(
+                                                            _selectedFile!),
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : null,
                                               ),
+                                              child: _selectedFile == null
+                                                  ? Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .cloud_upload_outlined,
+                                                          size: 40,
+                                                          color:
+                                                              Colors.blueAccent,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Text(
+                                                          _fileName ??
+                                                              "Klik untuk memilih file",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .grey.shade600,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.3),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        _fileName ?? '',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          backgroundColor:
+                                                              Colors.black38,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          /// Pesan berhasil
+                                          if (PengantarRtgambar != null)
+                                            Row(
+                                              children: const [
+                                                Icon(Icons.check_circle,
+                                                    color: Colors.green),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  "File berhasil dipilih!",
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                         ],
                                       ),
