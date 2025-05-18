@@ -10,7 +10,7 @@ class NotifikasiSuratKeluarPage extends StatefulWidget {
 
 class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
   late Future<List<SuratKeluar>> futureSuratKeluar;
-  final String baseUrl = 'https://sibadean.kholzt.com/storage/private/surat-keluar';
+  final String baseViewUrl = 'https://sibadean.kholzt.com/view-pdf?path=surat-keluar';
 
   @override
   void initState() {
@@ -39,9 +39,10 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
             itemCount: suratKeluarList.length,
             itemBuilder: (context, index) {
               final surat = suratKeluarList[index];
+
               final fileUrl = surat.namaFile.startsWith('http')
                   ? surat.namaFile
-                  : '$baseUrl/${surat.namaFile}';
+                  : '$baseViewUrl/${surat.namaFile}';
 
               return ListTile(
                 leading: Icon(Icons.mail_outline),

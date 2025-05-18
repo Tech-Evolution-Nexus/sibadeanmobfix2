@@ -34,9 +34,15 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
       final file = File(filePath);
 
       if (await file.exists()) {
-        await file.delete();
+        // Jika file sudah ada, langsung pakai file ini (cache)
+        setState(() {
+          localFilePath = filePath;
+          isLoading = false;
+        });
+        return;
       }
 
+      // Kalau file belum ada, download dulu
       final response = await Dio().download(widget.url, filePath);
 
       if (response.statusCode == 200) {
