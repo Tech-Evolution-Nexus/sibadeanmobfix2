@@ -55,6 +55,19 @@ class _ListBeritaState extends State<ListBerita> {
         .toList();
 
     return Scaffold(
+      appBar: AppBar(
+        title:
+            Text("Berita", style: TextStyle(color: Colors.white, fontSize: 20)),
+        backgroundColor: lightColorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        automaticallyImplyLeading: false,
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: isLoading
@@ -96,7 +109,7 @@ class _ListBeritaState extends State<ListBerita> {
                         Text(
                           "Rekomendasi untukmu",
                           style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 12),
                         filteredBerita.isEmpty
