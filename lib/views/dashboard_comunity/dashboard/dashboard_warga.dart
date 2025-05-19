@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
@@ -25,6 +27,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0; //navigasi butoon
+  int jumlahNotifikasi = 0;
   final List<Widget> _pages = [
     DashboardContent(),
     ListBerita(),
@@ -83,12 +86,14 @@ class _DashboardContentState extends State<DashboardContent> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
+  int jumlahNotifikasi = 0;
 
   @override
   void initState() {
     super.initState();
     getUserData();
     fetchDash();
+     fetchNotifikasi();
   }
 
   Future<void> getUserData() async {
@@ -125,7 +130,19 @@ class _DashboardContentState extends State<DashboardContent> {
       setState(() => isLoading = false);
     }
   }
-
+  
+    void fetchNotifikasi() async {
+    try {
+      final listSurat = await API().getSuratKeluar();
+      setState(() {
+        jumlahNotifikasi = listSurat.length;
+      });
+    } catch (e) {
+      setState(() {
+        jumlahNotifikasi = 0;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -134,30 +151,36 @@ class _DashboardContentState extends State<DashboardContent> {
     final isSmall = width < 360;
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(0),
-            children: [
-              Stack(
-                children: [
-                  buildBackground(),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 60),
-                    child: Column(
-                      children: [
-                        const Gap(16),
-                        buildHeader(),
-                        const Gap(32),
-                        cardhero(),
-                        const Gap(16),
-                        berita(),
-                      ],
+        : RefreshIndicator(
+            onRefresh: () async {
+              getUserData();
+              fetchDash();
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(0),
+              children: [
+                Stack(
+                  children: [
+                    buildBackground(),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 60),
+                      child: Column(
+                        children: [
+                          const Gap(16),
+                          buildHeader(),
+                          const Gap(32),
+                          cardhero(),
+                          const Gap(16),
+                          berita(),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const Gap(16),
-            ],
+                  ],
+                ),
+                const Gap(16),
+              ],
+            ),
           );
   }
 
@@ -191,6 +214,7 @@ class _DashboardContentState extends State<DashboardContent> {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
+
     return Row(
       children: [
         CircleAvatar(
@@ -221,19 +245,24 @@ class _DashboardContentState extends State<DashboardContent> {
           ],
         ),
         const Spacer(),
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
-            );
-          },
+        // Ganti icon notifikasi dengan badge
+         badges.Badge(
+          showBadge: jumlahNotifikasi > 0,
+          badgeContent: Text(
+            '$jumlahNotifikasi',
+            style: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          badgeStyle: badges.BadgeStyle(
+            badgeColor: Colors.red,
+            elevation: 0,
+            padding: EdgeInsets.all(6),
+          ),
+          child: const Icon(Icons.notifications, color: Colors.white),
         ),
       ],
     );
   }
-
+  
   Widget cardhero() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
@@ -355,7 +384,10 @@ class _DashboardContentState extends State<DashboardContent> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return BeritaItem(berita: dataModel!.berita[index]);
+              return BeritaItem(
+                berita: dataModel!.berita[index],
+                variant: "vertical",
+              );
             },
           ),
         )
@@ -514,17 +546,16 @@ class _DashboardContentState extends State<DashboardContent> {
               showModalBottomSheet(
                   enableDrag: true,
                   showDragHandle: true,
-                  isScrollControlled: true,
+                  //   isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(32))),
                   context: context,
-                  builder: (BuildContext context) =>
-                      Container(width: double.infinity, child: ListSurat()));
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ListSurat()),
-              // );
+                  builder: (BuildContext context) => Container(
+                      constraints:
+                          BoxConstraints(minHeight: 500, maxHeight: 600),
+                      child: SizedBox(
+                          width: double.infinity, child: ListSurat())));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

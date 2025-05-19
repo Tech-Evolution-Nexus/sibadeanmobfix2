@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
+
 import 'pdf_viewer_page.dart';
 
 class NotifikasiSuratKeluarPage extends StatefulWidget {
   @override
-  _NotifikasiSuratKeluarPageState createState() => _NotifikasiSuratKeluarPageState();
+  _NotifikasiSuratKeluarPageState createState() =>
+      _NotifikasiSuratKeluarPageState();
 }
 
 class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
   late Future<List<SuratKeluar>> futureSuratKeluar;
-  final String baseUrl = 'https://sibadean.kholzt.com/storage/private/surat-keluar';
+  final String baseViewUrl =
+      'https://sibadean.kholzt.com/view-pdf?path=surat-keluar';
 
   @override
   void initState() {
@@ -39,20 +42,21 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
             itemCount: suratKeluarList.length,
             itemBuilder: (context, index) {
               final surat = suratKeluarList[index];
+
               final fileUrl = surat.namaFile.startsWith('http')
                   ? surat.namaFile
-                  : '$baseUrl/${surat.namaFile}';
+                  : '$baseViewUrl/${surat.namaFile}';
 
               return ListTile(
                 leading: Icon(Icons.mail_outline),
                 title: Text(surat.title),
                 subtitle: Text('Expired: ${surat.expDate}'),
                 onTap: () {
-                  print('Buka PDF: $fileUrl');  // Debug URL
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PDFViewerPage(url: fileUrl, title: surat.title),
+                      builder: (_) =>
+                          PDFViewerPage(url: fileUrl, title: surat.title),
                     ),
                   );
                 },

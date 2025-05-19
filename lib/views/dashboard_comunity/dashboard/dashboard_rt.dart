@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -218,6 +219,7 @@ class _HomeRTState extends State<HomeRT> {
   String nama = "User";
   String nik = "";
   String foto = "";
+  int jumlahNotifikasi = 0;
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
@@ -227,6 +229,7 @@ class _HomeRTState extends State<HomeRT> {
     getUserData();
     fetchBerita();
     fetchData();
+    fetchNotifikasi();
   }
 
   Future<void> fetchBerita() async {
@@ -275,6 +278,18 @@ class _HomeRTState extends State<HomeRT> {
     });
   }
 
+  void fetchNotifikasi() async {
+    try {
+      final listSurat = await API().getSuratKeluar();
+      setState(() {
+        jumlahNotifikasi = listSurat.length;
+      });
+    } catch (e) {
+      setState(() {
+        jumlahNotifikasi = 0;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -399,10 +414,11 @@ class _HomeRTState extends State<HomeRT> {
     );
   }
 
-  Widget buildHeader() {
+Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
+
     return Row(
       children: [
         CircleAvatar(
@@ -433,11 +449,24 @@ class _HomeRTState extends State<HomeRT> {
           ],
         ),
         const Spacer(),
-        const Icon(Icons.notifications, color: Colors.white),
+        // Ganti icon notifikasi dengan badge
+        badges.Badge(
+          showBadge: jumlahNotifikasi > 0,
+          badgeContent: Text(
+            '$jumlahNotifikasi',
+            style: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+          badgeStyle: badges.BadgeStyle(
+            badgeColor: Colors.red,
+            elevation: 0,
+            padding: EdgeInsets.all(6),
+          ),
+          child: const Icon(Icons.notifications, color: Colors.white),
+        ),
       ],
     );
   }
-
+  
   Widget cardHero() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
