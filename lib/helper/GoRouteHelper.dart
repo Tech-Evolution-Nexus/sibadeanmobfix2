@@ -36,7 +36,7 @@ class GoRouteHelper {
       ),
       GoRoute(
         path: '/dashboard_rt',
-        builder: (context, state) => const DashboardRT(), // Halaman utama
+        builder: (context, state) => const DashboardRTRW(), // Halaman utama
       ),
       GoRoute(
         path: '/dashboard_rw',
