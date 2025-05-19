@@ -522,27 +522,27 @@ class API {
     }
   }
 
- Future<List<SuratKeluar>> getSuratKeluar() async {
-  try {
-    final response = await _dio.get('/surat-keluar/{id}');
-    print('Response data: ${response.data}');  // debug
+  Future<List<SuratKeluar>> getSuratKeluar() async {
+    try {
+      final response = await _dio.get('/surat-keluar');
+      print('Response data: ${response.data}'); // debug
 
-    if (response.statusCode == 200) {
-      final List data;
-      if (response.data is List) {
-        data = response.data;
-      } else if (response.data is Map && response.data.containsKey('suratkeluar')) {
-        data = response.data['suratkeluar'];
+      if (response.statusCode == 200) {
+        final List data;
+        if (response.data is List) {
+          data = response.data;
+        } else if (response.data is Map &&
+            response.data.containsKey('suratkeluar')) {
+          data = response.data['suratkeluar'];
+        } else {
+          throw Exception('Format response tidak dikenal');
+        }
+        return data.map((json) => SuratKeluar.fromJson(json)).toList();
       } else {
-        throw Exception('Format response tidak dikenal');
+        throw Exception('Failed to load surat keluar');
       }
-      return data.map((json) => SuratKeluar.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load surat keluar');
+    } catch (e) {
+      throw Exception('Error fetching surat keluar: $e');
     }
-  } catch (e) {
-    throw Exception('Error fetching surat keluar: $e');
   }
-}
-
 }
