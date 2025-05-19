@@ -32,12 +32,12 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
     try {
       final response =
           await API().verifikasiDetailMasyarakat(idUser: widget.idUser);
-      //   print(response.data);
+
       if (response.statusCode == 200) {
         setState(() {
           pengajuanData = MasyarakatModel.fromJson(response.data["data"]);
-          // MasyarakatModel.fromJson(response.data["data"]);
           isLoading = false;
+          
           pengajuanData?.user?.status == 0 ? canEdit = true : "";
         });
       } else {
@@ -52,9 +52,9 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
   Future<void> submit(int status) async {
     try {
       final user = await Auth.user();
-      print(keteranganController.text.trim());
       final response =
           await API().updateVerifikasi(idUser: widget.idUser, status: status);
+      print(response);
       if (response.statusCode == 200) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(

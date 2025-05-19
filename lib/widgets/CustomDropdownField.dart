@@ -57,15 +57,15 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
               horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.blue, width: 1.8),
+            borderSide: const BorderSide(color: Colors.blue, width: 1),
           ),
         ),
       ),

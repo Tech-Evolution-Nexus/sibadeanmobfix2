@@ -28,41 +28,38 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   }
 
   Future<void> fetchData() async {
-  try {
-    final user = await Auth.user();
-    final nokk = user['noKK']?.toString();
+    try {
+      final user = await Auth.user();
+      final nokk = user['noKK']?.toString();
 
-    print("NoKK dari user: $nokk");
+      print("NoKK dari user: $nokk");
 
-    if (nokk == null || nokk.isEmpty) {
-      print("NoKK tidak ditemukan!");
+      if (nokk == null || nokk.isEmpty) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      var response = await API().getAnggotaKeluarga(nokk: nokk);
+
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data["data"] != null) {
+        final List<dynamic> dataJson = response.data["data"];
+
+        setState(() {
+          anggotaKeluarga =
+              dataJson.map((item) => MasyarakatModel.fromJson(item)).toList();
+          isLoading = false;
+        });
+      } else {
+        print("Gagal fetch data: statusCode ${response.statusCode}");
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print("Error saat fetch data: $e");
       setState(() => isLoading = false);
-      return;
     }
-
-    var response = await API().getAnggotaKeluarga(nokk: nokk);
-
-    if (response.statusCode == 200 && response.data != null && response.data["data"] != null) {
-      final List<dynamic> dataJson = response.data["data"];
-
-      // Tampilkan log per item di console
-      dataJson.forEach((item) => print("Item json: $item"));
-
-      setState(() {
-        anggotaKeluarga = dataJson
-            .map((item) => MasyarakatModel.fromJson(item))
-            .toList();
-        isLoading = false;
-      });
-    } else {
-      print("Gagal fetch data: statusCode ${response.statusCode}");
-      setState(() => isLoading = false);
-    }
-  } catch (e) {
-    print("Error saat fetch data: $e");
-    setState(() => isLoading = false);
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +90,18 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                           itemCount: anggotaKeluarga.length,
                           itemBuilder: (context, index) {
                             final anggota = anggotaKeluarga[index];
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PengajuanSuratPage(
+                                        idsurat: widget.idsurat,
+                                        namaSurat: widget.namasurat,
+                                        nik: anggota.nik),
+                                  ),
+                                );
+                              },
                               child: ListTile(
                                 title: Text(
                                   anggota.namaLengkap,
@@ -103,17 +110,6 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                                 ),
                                 subtitle: Text(
                                     '${anggota.statusKeluarga} - ${anggota.nik}'),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PengajuanSuratPage(
-                                          idsurat: widget.idsurat,
-                                          namaSurat: widget.namasurat,
-                                          nik: anggota.nik),
-                                    ),
-                                  );
-                                },
                               ),
                             );
                           },

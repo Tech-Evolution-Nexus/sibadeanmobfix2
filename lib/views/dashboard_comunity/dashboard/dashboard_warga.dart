@@ -149,30 +149,36 @@ class _DashboardContentState extends State<DashboardContent> {
     final isSmall = width < 360;
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(0),
-            children: [
-              Stack(
-                children: [
-                  buildBackground(),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 60),
-                    child: Column(
-                      children: [
-                        const Gap(16),
-                        buildHeader(),
-                        const Gap(32),
-                        cardhero(),
-                        const Gap(16),
-                        berita(),
-                      ],
+        : RefreshIndicator(
+            onRefresh: () async {
+              getUserData();
+              fetchDash();
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(0),
+              children: [
+                Stack(
+                  children: [
+                    buildBackground(),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 60),
+                      child: Column(
+                        children: [
+                          const Gap(16),
+                          buildHeader(),
+                          const Gap(32),
+                          cardhero(),
+                          const Gap(16),
+                          berita(),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const Gap(16),
-            ],
+                  ],
+                ),
+                const Gap(16),
+              ],
+            ),
           );
   }
 
@@ -385,7 +391,10 @@ class _DashboardContentState extends State<DashboardContent> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return BeritaItem(berita: dataModel!.berita[index]);
+              return BeritaItem(
+                berita: dataModel!.berita[index],
+                variant: "vertical",
+              );
             },
           ),
         )
@@ -544,17 +553,16 @@ class _DashboardContentState extends State<DashboardContent> {
               showModalBottomSheet(
                   enableDrag: true,
                   showDragHandle: true,
-                  isScrollControlled: true,
+                  //   isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(32))),
                   context: context,
-                  builder: (BuildContext context) =>
-                      Container(width: double.infinity, child: ListSurat()));
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => ListSurat()),
-              // );
+                  builder: (BuildContext context) => Container(
+                      constraints:
+                          BoxConstraints(minHeight: 500, maxHeight: 600),
+                      child: SizedBox(
+                          width: double.infinity, child: ListSurat())));
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
