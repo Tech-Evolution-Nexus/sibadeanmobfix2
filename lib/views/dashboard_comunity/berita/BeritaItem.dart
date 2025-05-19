@@ -41,7 +41,7 @@ class _BeritaItemState extends State<BeritaItem> {
                       errorBuilder: (context, error, stackTrace) {
                         // Jika gagal load gambar, tampilkan gambar alternatif online
                         return Image.network(
-                          'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                          widget.berita.gambar,
                           fit: BoxFit.cover,
                         );
                       },
