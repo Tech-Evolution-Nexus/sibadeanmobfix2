@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
+import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -247,83 +248,79 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ? "Tempat lahir wajib diisi"
                                       : null,
                                 ),
-                                TextFormField(
+                                CustomTextField(
                                   controller: tanggalLahirController,
-                                  decoration: InputDecoration(
-                                    labelText: "Tanggal Lahir",
-                                    hintText: "Pilih tanggal lahir",
-                                    border:
-                                        OutlineInputBorder(), // Border default
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors
-                                              .grey), // Border saat tidak aktif
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue,
-                                          width: 2.0), // Border saat aktif
-                                    ),
-                                    suffixIcon: Icon(Icons
-                                        .calendar_today), // Ikon tambahan opsional
-                                  ),
+                                  labelText: "Tanggal Lahir",
+                                  hintText: "Pilih tanggal lahir",
                                   readOnly: true,
-                                  onTap: () async {
+                                  suffixIcon: Icons.calendar_today,
+                                  onSuffixPressed: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(1900),
                                       lastDate: DateTime.now(),
                                     );
+
                                     if (pickedDate != null) {
                                       String formattedDate =
                                           DateFormat('dd-MM-yyyy')
                                               .format(pickedDate);
-                                      setState(() {
-                                        tanggalLahirController.text =
-                                            formattedDate;
-                                      });
+                                      tanggalLahirController.text =
+                                          formattedDate;
                                     }
                                   },
                                 ),
-                                DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    labelText: "Jenis Kelamin",
-                                    hintText: "Pilih jenis kelamin",
-                                  ),
+                                CustomDropdownField(
+                                  labelText: "Jenis Kelamin",
+                                  hintText: "Pilih jenis kelamin",
                                   value: selectedGender,
-                                  items: ["Laki-laki", "Perempuan"]
-                                      .map((e) => DropdownMenuItem(
-                                          value: e, child: Text(e)))
-                                      .toList(),
-                                  onChanged: (value) =>
-                                      setState(() => selectedGender = value),
-                                  validator: (value) => value == null
-                                      ? "Jenis kelamin wajib dipilih"
-                                      : null,
+                                  items: [
+                                    DropdownMenuItem(
+                                        value: "laki-laki",
+                                        child: Text("Laki-laki")),
+                                    DropdownMenuItem(
+                                        value: "perempuan",
+                                        child: Text("Perempuan")),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGender = value;
+                                    });
+                                  },
                                 ),
-                                DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    labelText: "Agama",
-                                    hintText: "Pilih agama",
-                                  ),
+                                CustomDropdownField(
+                                  labelText: "Agama",
+                                  hintText: "Pilih jenis kelamin",
                                   value: selectedAgama,
                                   items: [
-                                    "Islam",
-                                    "Kristen",
-                                    "Katolik",
-                                    "Hindu",
-                                    "Buddha",
-                                    "Konghucu"
-                                  ]
-                                      .map((e) => DropdownMenuItem(
-                                          value: e, child: Text(e)))
-                                      .toList(),
-                                  onChanged: (value) =>
-                                      setState(() => selectedAgama = value),
-                                  validator: (value) => value == null
-                                      ? "Agama wajib dipilih"
-                                      : null,
+                                    DropdownMenuItem(
+                                        value: "islam",
+                                        child: Text("Islam")),
+                                    DropdownMenuItem(
+                                        value: "kristen_protestan",
+                                        child: Text("Kristen")),
+                                    DropdownMenuItem(
+                                        value: "kristen_katolik",
+                                        child: Text("Katholik")),
+                                    DropdownMenuItem(
+                                        value: "hindu",
+                                        child: Text("Hindu")),
+                                    DropdownMenuItem(
+                                        value: "buddha",
+                                        child: Text("Buddha")),
+                                    DropdownMenuItem(
+                                        value: "konghucu",
+                                        child: Text("Khonghucu")),
+                                    DropdownMenuItem(
+                                        value: "lainnya",
+                                        child: Text("Lainnya")),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedAgama = value;
+                                    });
+                                  },
                                 ),
                                 CustomTextField(
                                   controller: pekerjaanController,
