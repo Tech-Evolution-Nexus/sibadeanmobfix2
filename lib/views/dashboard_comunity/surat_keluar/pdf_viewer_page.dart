@@ -8,7 +8,8 @@ class PDFViewerPage extends StatefulWidget {
   final String url;
   final String title;
 
-  const PDFViewerPage({Key? key, required this.url, required this.title}) : super(key: key);
+  const PDFViewerPage({Key? key, required this.url, required this.title})
+      : super(key: key);
 
   @override
   State<PDFViewerPage> createState() => _PDFViewerPageState();
@@ -29,30 +30,27 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
     try {
       final dir = await getApplicationDocumentsDirectory();
       final fileName = widget.url.split('/').last.split('?').first;
-      final filePath = "${dir.path}/$fileName";
+      final filePath = '${dir.path}/$fileName';
 
       final file = File(filePath);
 
       if (await file.exists()) {
-        await file.delete();
-      }
-
-      final response = await Dio().download(widget.url, filePath);
-
-      if (response.statusCode == 200) {
         setState(() {
           localFilePath = filePath;
           isLoading = false;
         });
-      } else {
-        setState(() {
-          errorMessage = "Gagal mengunduh file PDF (Status: ${response.statusCode})";
-          isLoading = false;
-        });
+        return;
       }
+
+      await Dio().download(widget.url, filePath);
+
+      setState(() {
+        localFilePath = filePath;
+        isLoading = false;
+      });
     } catch (e) {
       setState(() {
-        errorMessage = "Terjadi kesalahan: $e";
+        errorMessage = 'Gagal mengunduh PDF: $e';
         isLoading = false;
       });
     }
@@ -62,14 +60,14 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text("Memuat ${widget.title}...")),
+        appBar: AppBar(title: Text('Loading ${widget.title}')),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: Text("Error")),
+        appBar: AppBar(title: Text('Error')),
         body: Center(child: Text(errorMessage!)),
       );
     }
