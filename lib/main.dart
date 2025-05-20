@@ -19,7 +19,7 @@ void main() async {
 
   // Dapatkan token
   String? token = await messaging.getToken();
-
+  // print("Token: $token"); 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
       showDialog(
