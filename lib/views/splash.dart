@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_warga.dart';
@@ -32,7 +33,11 @@ class _SplashState extends State<Splash> {
   Future<void> _checkTokenAndNavigate() async {
     final user = await Auth.user();
     String view;
-
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => RegisterScreen()),
+    // );
+    // return;
     if (user != null && user['access_token'] != "") {
       final role = user['role'];
 

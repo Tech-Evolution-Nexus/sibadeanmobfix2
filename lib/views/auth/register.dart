@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../methods/api.dart';
@@ -46,31 +47,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Uint8List? ktpGambarBytes;
 
   Future<void> pickImage(String jenis) async {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Kamera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromSource(jenis, ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Galeri'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromSource(jenis, ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImageFromSource(String jenis, ImageSource source) async {
     final ImagePicker picker = ImagePicker();
-    XFile? image;
-    // Tentukan sumber gambar berdasarkan jenis dokumen
-    if (jenis == 'KTP') {
-      image = await picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.rear,
-      );
-    } else if (jenis == 'KK') {
-      image = await picker.pickImage(
-        source: ImageSource.gallery,
-      );
-    } else {
-      debugPrint("Jenis dokumen tidak dikenali.");
-      return;
-    }
+    final XFile? image = await picker.pickImage(
+      source: source,
+      preferredCameraDevice: CameraDevice.rear,
+    );
 
     if (image == null) {
       debugPrint("Tidak ada gambar yang dipilih.");
       return;
     }
 
-    // Jika platform Web
+    final bytes = await image.readAsBytes();
+
     if (kIsWeb) {
-      final bytes = await image.readAsBytes();
       setState(() {
         if (jenis == 'KTP') {
           ktpGambarBytes = bytes;
@@ -81,7 +105,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       debugPrint("Gambar berhasil dipilih (Web)");
     } else {
       final file = File(image.path);
-      final bytes = await image.readAsBytes();
       setState(() {
         if (jenis == 'KTP') {
           ktpGambar = file;
@@ -96,16 +119,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void clearImage(String jenis) {
-  setState(() {
-    if (jenis == 'KK') {
-      kkGambar = null;
-      kkGambarBytes = null;
-    } else if (jenis == 'KTP') {
-      ktpGambar = null;
-      ktpGambarBytes = null;
-    }
-  });
-}
+    setState(() {
+      if (jenis == 'KK') {
+        kkGambar = null;
+        kkGambarBytes = null;
+      } else if (jenis == 'KTP') {
+        ktpGambar = null;
+        ktpGambarBytes = null;
+      }
+    });
+  }
 
   void nextPage() {
     if (_formKey.currentState!.validate()) {
@@ -135,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    if (kkGambar == null && kkGambarBytes == null) {
+    if (kkGambar == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Harap unggah gambar KK terlebih dahulu."),
@@ -145,19 +168,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    if (ktpGambar == null && ktpGambarBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Harap unggah gambar KTP terlebih dahulu."),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-    FormData formData = FormData();
-
-    formData = FormData.fromMap({
-      "full_name": fullNameController.text,
+    FormData formData = FormData.fromMap({
+      "nama_lengkap": fullNameController.text,
       "nik": nikController.text,
       "tempat_lahir": tempatLahirController.text,
       "tanggal_lahir": tanggalLahirController.text,
@@ -171,25 +183,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "alamat": alamatController.text,
       "rt": rtController.text,
       "rw": rwController.text,
-      "foto_kk": kkGambar,
-      "foto_ktp": ktpGambar, // bisa null, tergantung validasi kamu
+      "kk_gambar": kkGambar != null
+          ? await MultipartFile.fromFile(kkGambar!.path, filename: "kk.jpg")
+          : null,
+      "ktp_gambar": ktpGambar != null
+          ? await MultipartFile.fromFile(ktpGambar!.path, filename: "ktp.jpg")
+          : null,
     });
+    // print(formData.fields);
 
     try {
       var response = await API().registerUser(formData: formData);
-      // Kalau mau cek response dari API:
-      debugPrint("Response dari API: ${response.body}");
-
-      var jsonResponse = jsonDecode(response.body);
-      String message = jsonResponse['message'] ??
-          jsonResponse['error'] ??
-          "Pendaftaran berhasil";
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.green),
+      if (response.statusCode == 200) {
+        context.go('/login');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Gagal registrasi")),
       );
+      }
+      // var jsonResponse = jsonDecode(response.body);
+      // String message = jsonResponse['message'] ??
+      //     jsonResponse['error'] ??
+      //     "Pendaftaran berhasil";
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text(message), backgroundColor: Colors.green),
+      // );
     } catch (e) {
-      debugPrint("Error saat mendaftar: $e");
+      print("Error saat mendaftar: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Terjadi kesalahan, coba lagi nanti.")),
       );
@@ -518,7 +539,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: () => pickImage('KTP'),
@@ -551,7 +571,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                                   Colors.grey),
                                                           SizedBox(height: 8),
                                                           Text(
-                                                              "Klik untuk unggah Foto KTP"),
+                                                              "Klik untuk unggah Foto KTP (opsional)"),
                                                         ],
                                                       ),
                                                     ),
@@ -578,7 +598,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: _register,

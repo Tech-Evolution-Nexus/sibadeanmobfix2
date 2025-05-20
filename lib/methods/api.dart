@@ -37,7 +37,14 @@ class API {
   }
 
   Future<dynamic> registerUser({required FormData formData}) async {
-    return await _dio.post('register', data: formData);
+    try {
+      // print('NIK: $nik');
+      final response = await _dio.post('register', data: formData);
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  
   }
 
   // === Aktivasi Akun ===
