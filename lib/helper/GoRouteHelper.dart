@@ -40,7 +40,7 @@ class GoRouteHelper {
       ),
       GoRoute(
         path: '/dashboard_rw',
-        builder: (context, state) => const DashboardRW(), // Halaman utama
+        builder: (context, state) => const DashboardRTRW(), // Halaman utama
       ),
     ],
   );
