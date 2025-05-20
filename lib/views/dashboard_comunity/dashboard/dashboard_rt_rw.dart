@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
@@ -75,146 +76,147 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: lightColorScheme.primary),
       drawer: Drawer(
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: <Widget>[
-      SizedBox(
-        height: 195,
-        child: DrawerHeader(
-          decoration: BoxDecoration(
-            color: lightColorScheme.primary,
-          ),
-          padding: EdgeInsets.only(left: 20, bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: foto.isNotEmpty
-                    ? NetworkImage(foto)
-                    : const AssetImage('assets/images/6.jpg') as ImageProvider,
-              ),
-              SizedBox(height: 4),
-              Text(
-                nama,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 195,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: lightColorScheme.primary,
+                ),
+                padding: EdgeInsets.only(left: 20, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: foto.isNotEmpty
+                          ? NetworkImage(foto)
+                          : const AssetImage('assets/images/6.jpg')
+                              as ImageProvider,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      nama,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      nik,
+                      style: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
                 ),
               ),
-              Text(
-                nik,
-                style: TextStyle(
-                  color: Colors.grey.shade200,
-                  fontSize: 12,
-                ),
-              )
-            ],
-          ),
+            ),
+            _buildDrawerItem(
+              icon: Icons.home_outlined,
+              title: 'Home',
+              onTap: () {
+                setState(() => _currentIndex = 0);
+                Navigator.pop(context);
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.account_circle_outlined,
+              title: 'Informasi Datadiri',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => InformasiDiriPage()),
+                );
+              },
+            ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
+            _buildDrawerItem(
+              icon: Icons.description_outlined,
+              title: 'Penyetujuan Surat',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.history,
+              title: 'Riwayat Pengajuan',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => PengajuanPage(showAppBar: true)),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.verified_outlined,
+              title: 'Verifikasi Masyarakat',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => Verifikasi()),
+                );
+              },
+            ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
+            _buildDrawerItem(
+              icon: Icons.email_outlined,
+              title: 'Ganti Email',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiEmailPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.phone_android_outlined,
+              title: 'Ganti No HP',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiNoHpPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.lock_outline,
+              title: 'Ganti Password',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiPasswordPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.info_outline,
+              title: 'Tentang SIBADEAN',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => TentangPage()),
+                );
+              },
+            ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
+            _buildDrawerItem(
+              icon: Icons.logout_outlined,
+              title: 'Logout',
+              onTap: logout,
+            ),
+          ],
         ),
       ),
-      _buildDrawerItem(
-        icon: Icons.home_outlined,
-        title: 'Home',
-        onTap: () {
-          setState(() => _currentIndex = 0);
-          Navigator.pop(context);
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.account_circle_outlined,
-        title: 'Informasi Datadiri',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => InformasiDiriPage()),
-          );
-        },
-      ),
-      Divider(thickness: 1, color: Colors.grey.shade300),
-      _buildDrawerItem(
-        icon: Icons.description_outlined,
-        title: 'Penyetujuan Surat',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
-          );
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.history,
-        title: 'Riwayat Pengajuan',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => PengajuanPage(showAppBar: true)),
-          );
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.verified_outlined,
-        title: 'Verifikasi Masyarakat',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => Verifikasi()),
-          );
-        },
-      ),
-      Divider(thickness: 1, color: Colors.grey.shade300),
-      _buildDrawerItem(
-        icon: Icons.email_outlined,
-        title: 'Ganti Email',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => GantiEmailPage()),
-          );
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.phone_android_outlined,
-        title: 'Ganti No HP',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => GantiNoHpPage()),
-          );
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.lock_outline,
-        title: 'Ganti Password',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => GantiPasswordPage()),
-          );
-        },
-      ),
-      _buildDrawerItem(
-        icon: Icons.info_outline,
-        title: 'Tentang SIBADEAN',
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => TentangPage()),
-          );
-        },
-      ),
-      Divider(thickness: 1, color: Colors.grey.shade300),
-      _buildDrawerItem(
-        icon: Icons.logout_outlined,
-        title: 'Logout',
-        onTap: logout,
-      ),
-    ],
-  ),
-),
-
       body: _pages[_currentIndex],
     );
   }
@@ -317,12 +319,30 @@ class _HomeRTRWState extends State<HomeRTRW> {
     }
   }
 
+  void fetchJumlahSuratKeluar() async {
+    final suratList = await API().getSuratKeluar();
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    // hanya hitung surat yang belum dibaca
+    final belumDibaca = suratList
+        .where(
+          (surat) => !dibacaIds.contains(surat.id.toString()),
+        )
+        .toList();
+
+    setState(() {
+      jumlahNotifikasi = belumDibaca.length;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getUserData();
     fetchBerita();
     fetchData();
+    fetchJumlahSuratKeluar();
   }
 
   @override
@@ -523,13 +543,8 @@ class _HomeRTRWState extends State<HomeRTRW> {
               context,
               MaterialPageRoute(
                 builder: (_) => NotifikasiSuratKeluarPage(
-                  onSuratDibaca: () {
-                    setState(() {
-                      if (jumlahNotifikasi > 0) {
-                        jumlahNotifikasi--;
-                      }
-                    });
-                  },
+                  onSuratDibaca:
+                      fetchJumlahSuratKeluar, // refresh badge setelah dibuka
                 ),
               ),
             );

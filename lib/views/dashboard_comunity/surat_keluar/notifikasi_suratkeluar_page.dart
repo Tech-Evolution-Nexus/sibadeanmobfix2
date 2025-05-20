@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/file_utils.dart';
 
 import 'pdf_viewer_page.dart';
 
 class NotifikasiSuratKeluarPage extends StatefulWidget {
   final VoidCallback onSuratDibaca;
 
-  const NotifikasiSuratKeluarPage({Key? key, required this.onSuratDibaca})
-      : super(key: key);
+  NotifikasiSuratKeluarPage({required this.onSuratDibaca});
 
   @override
   _NotifikasiSuratKeluarPageState createState() =>
@@ -24,6 +25,17 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
   void initState() {
     super.initState();
     futureSuratKeluar = API().getSuratKeluar();
+  }
+
+  Future<void> tandaiSuratDibaca(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    if (!dibacaIds.contains(id.toString())) {
+      dibacaIds.add(id.toString());
+      await prefs.setStringList('dibaca_surat', dibacaIds);
+      widget.onSuratDibaca(); // refresh dashboard badge
+    }
   }
 
   @override
@@ -53,21 +65,27 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                   : '$baseViewUrl/${surat.namaFile}';
 
               return ListTile(
-                  leading: Icon(Icons.mail_outline),
-                  title: Text(surat.title),
-                  subtitle: Text('Expired: ${surat.expDate}'),
-                  onTap: () {
-                    widget
-                        .onSuratDibaca(); // panggil callback untuk kurangi badge
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            PDFViewerPage(url: fileUrl, title: surat.title),
-                      ),
-                    );
-                  });
+                leading: Icon(Icons.mail_outline),
+                title: Text(surat.title),
+                subtitle: Text('Expired: ${surat.expDate}'),
+                trailing: IconButton(
+                  icon: Icon(Icons.download),
+                  onPressed: () {
+                    downloadAndOpenFile(
+                        context, fileUrl, 'surat_${surat.id}.pdf');
+                  },
+                ),
+                onTap: () async {
+                  await tandaiSuratDibaca(surat.id);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          PDFViewerPage(url: fileUrl, title: surat.title),
+                    ),
+                  );
+                },
+              );
             },
           );
         },

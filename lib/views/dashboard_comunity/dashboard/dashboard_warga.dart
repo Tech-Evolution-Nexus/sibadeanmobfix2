@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
@@ -92,7 +93,24 @@ class _DashboardContentState extends State<DashboardContent> {
     super.initState();
     getUserData();
     fetchDash();
-    fetchNotifikasi();
+    fetchJumlahSuratKeluar();
+  }
+
+  void fetchJumlahSuratKeluar() async {
+    final suratList = await API().getSuratKeluar();
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    // hanya hitung surat yang belum dibaca
+    final belumDibaca = suratList
+        .where(
+          (surat) => !dibacaIds.contains(surat.id.toString()),
+        )
+        .toList();
+
+    setState(() {
+      jumlahNotifikasi = belumDibaca.length;
+    });
   }
 
   Future<void> getUserData() async {
@@ -250,13 +268,8 @@ class _DashboardContentState extends State<DashboardContent> {
               context,
               MaterialPageRoute(
                 builder: (_) => NotifikasiSuratKeluarPage(
-                  onSuratDibaca: () {
-                    setState(() {
-                      if (jumlahNotifikasi > 0) {
-                        jumlahNotifikasi--;
-                      }
-                    });
-                  },
+                  onSuratDibaca:
+                      fetchJumlahSuratKeluar, // refresh badge setelah dibuka
                 ),
               ),
             );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:badges/badges.dart' as badges;
 import 'package:gap/gap.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
@@ -140,7 +141,7 @@ class _HomeRWState extends State<HomeRW> {
     );
   }
 
-   void fetchNotifikasi() async {
+  void fetchNotifikasi() async {
     try {
       List<SuratKeluar> data = await API().getSuratKeluar();
       setState(() {
@@ -150,6 +151,23 @@ class _HomeRWState extends State<HomeRW> {
       print("Gagal memuat notifikasi: $e");
     }
   }
+  void fetchJumlahSuratKeluar() async {
+    final suratList = await API().getSuratKeluar();
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    // hanya hitung surat yang belum dibaca
+    final belumDibaca = suratList
+        .where(
+          (surat) => !dibacaIds.contains(surat.id.toString()),
+        )
+        .toList();
+
+    setState(() {
+      jumlahNotifikasi = belumDibaca.length;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +227,7 @@ class _HomeRWState extends State<HomeRW> {
     );
   }
 
- Widget buildHeader() {
+  Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
@@ -247,21 +265,15 @@ class _HomeRWState extends State<HomeRW> {
         // Ganti icon notifikasi dengan badge
         GestureDetector(
           onTap: () {
-           Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => NotifikasiSuratKeluarPage(
-      onSuratDibaca: () {
-        setState(() {
-          if (jumlahNotifikasi > 0) {
-            jumlahNotifikasi--;
-          }
-        });
-      },
-    ),
-  ),
-);
-
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca:
+                      fetchJumlahSuratKeluar, // refresh badge setelah dibuka
+                ),
+              ),
+            );
           },
           child: badges.Badge(
             showBadge: jumlahNotifikasi > 0,
@@ -385,6 +397,7 @@ class _HomeRWState extends State<HomeRW> {
     super.initState();
     getUserData();
     fetchBerita();
+    fetchJumlahSuratKeluar();
   }
 
   Widget pengajuan() {
