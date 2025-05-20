@@ -1,13 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
-import 'package:sibadeanmob_v2_fix/models/LampiranSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/suratlampiranmodel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/informasi_diri.dart';
-import '../../../services/pengajuan_servis.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/costum_texfield.dart';
 import 'package:dio/dio.dart';
@@ -60,6 +59,9 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   String? _fileName;
   // Uint8List? PengantarRtgambarBytes;
   File? PengantarRtgambar;
+  final TextEditingController ketController = TextEditingController();
+  Map<String, bool> _expandedStates = {};
+
   // String? kkFileName;
   @override
   void initState() {
@@ -212,13 +214,13 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         dataModelUser?.kartuKeluarga?.kkgambar == "";
 
     // Validasi file KK dan KTP wajib ada
-    if (isKtpKosong || isKkKosong) {
+    if (isKkKosong) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text("Perhatian"),
           content: Text(
-              "Harap unggah file KTP dan KK terlebih dahulu sebelum melanjutkan."),
+              "Harap unggah file KK terlebih dahulu sebelum melanjutkan."),
           actions: [
             TextButton(
               onPressed: () {
@@ -288,16 +290,20 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       }
 
       var response = await API().kirimKeDio(formData: formData);
-      print(response);
       if (response.statusCode == 200) {
-        print("Pengajuan berhasil: ${response.data}");
-        // Bisa tampilkan notifikasi atau redirect
+        var role = await Auth.user();
+        print("Arahkan ke dashboard: ${role['role']}");
+
+       Navigator.pop(context);
       } else {
-        print("Gagal mengirim: ${response.statusCode}");
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Gagal Melakukan Pengajuan")),
+        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Mohon lengkapi semua data dan upload KK")),
+        SnackBar(content: Text("Mohon lengkapi semua data")),
       );
     }
   }
@@ -337,6 +343,49 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                             child: Column(
                               children: [
                                 _buildBiodataCard(),
+                                SizedBox(
+                                    width: double.infinity,
+                                    child: Card(
+                                      elevation: 0,
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Keterangan Pengajuan Surat",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              CustomTextField(
+                                                labelText:
+                                                    "Keterangan Pengajuan Surat",
+                                                hintText:
+                                                    "Masukkan Keterangan Pengajuan Surat",
+                                                controller: ketController,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                prefixIcon:
+                                                    Icons.card_membership,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Masukkan Keterangan Pengajuan Surat Anda';
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          )),
+                                    )),
                                 _buildImageCard(
                                   "Dokumen Kartu Keluarga",
                                   dataModelUser?.kartuKeluarga?.kkgambar ?? '',
@@ -685,8 +734,9 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   }
 
   Widget _buildImageCard(String title, String img) {
+    final isExpanded = _expandedStates[title] ?? false;
     return SizedBox(
-      width: double.infinity, // Mengatur lebar Container
+      width: double.infinity,
       child: Card(
         elevation: 0,
         color: Colors.white,
@@ -694,32 +744,51 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           borderRadius: BorderRadius.circular(12),
         ),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _expandedStates[title] = !isExpanded;
+            });
+          },
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      isExpanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 10),
-              Image.network(
-                (img != null && img.isNotEmpty)
-                    ? img
-                    : 'https://dummyimage.com/500x200/f2f2f2/555555&text=No+Image',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.network(
-                    'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                if (isExpanded) ...[
+                  SizedBox(height: 10),
+                  Image.network(
+                    (img.isNotEmpty)
+                        ? img
+                        : 'https://dummyimage.com/500x200/f2f2f2/555555&text=No+Image',
                     fit: BoxFit.cover,
-                  );
-                },
-              )
-            ],
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network(
+                        'https://dummyimage.com/80x80/f2f2f2/555555&text=No+Image',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ]
+              ],
+            ),
           ),
         ),
       ),
