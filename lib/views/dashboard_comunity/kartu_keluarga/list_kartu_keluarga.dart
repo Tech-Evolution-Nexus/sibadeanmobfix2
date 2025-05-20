@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
+import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/pengajuan_surat.dart';
 
 class DaftarAnggotaKeluargaView extends StatefulWidget {
@@ -64,10 +65,18 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Daftar Anggota Keluarga'),
+        title: const Text(
+          'Daftar Anggota Keluarga',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        backgroundColor: lightColorScheme.primary,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -102,14 +111,33 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
                                   ),
                                 );
                               },
-                              child: ListTile(
-                                title: Text(
-                                  anggota.namaLengkap,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 4),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey.shade200)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        anggota.namaLengkap,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                      Text(
+                                        anggota.nik,
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                subtitle: Text(
-                                    '${anggota.statusKeluarga} - ${anggota.nik}'),
                               ),
                             );
                           },

@@ -320,10 +320,10 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Isi Data Pengajuan:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  // Text(
+                  //   "Isi Data Pengajuan:",
+                  //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  // ),
                   SizedBox(height: 10),
                   Form(
                     key: _formKey,
@@ -485,7 +485,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                   ),
                                 ),
                                 SizedBox(height: 16),
-                                Center(
+                                SizedBox(
+                                  width: double.infinity,
                                   child: ElevatedButton(
                                     onPressed:
                                         (dataModel?.fields?.isEmpty ?? true) &&
@@ -654,7 +655,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      margin: EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -693,7 +694,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
