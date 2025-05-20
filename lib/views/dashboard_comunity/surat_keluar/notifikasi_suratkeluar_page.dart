@@ -5,6 +5,11 @@ import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'pdf_viewer_page.dart';
 
 class NotifikasiSuratKeluarPage extends StatefulWidget {
+  final VoidCallback onSuratDibaca;
+
+  const NotifikasiSuratKeluarPage({Key? key, required this.onSuratDibaca})
+      : super(key: key);
+
   @override
   _NotifikasiSuratKeluarPageState createState() =>
       _NotifikasiSuratKeluarPageState();
@@ -48,19 +53,21 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                   : '$baseViewUrl/${surat.namaFile}';
 
               return ListTile(
-                leading: Icon(Icons.mail_outline),
-                title: Text(surat.title),
-                subtitle: Text('Expired: ${surat.expDate}'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          PDFViewerPage(url: fileUrl, title: surat.title),
-                    ),
-                  );
-                },
-              );
+                  leading: Icon(Icons.mail_outline),
+                  title: Text(surat.title),
+                  subtitle: Text('Expired: ${surat.expDate}'),
+                  onTap: () {
+                    widget
+                        .onSuratDibaca(); // panggil callback untuk kurangi badge
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            PDFViewerPage(url: fileUrl, title: surat.title),
+                      ),
+                    );
+                  });
             },
           );
         },

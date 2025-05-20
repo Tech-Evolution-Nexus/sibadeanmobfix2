@@ -248,7 +248,17 @@ class _DashboardContentState extends State<DashboardContent> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca: () {
+                    setState(() {
+                      if (jumlahNotifikasi > 0) {
+                        jumlahNotifikasi--;
+                      }
+                    });
+                  },
+                ),
+              ),
             );
           },
           child: badges.Badge(

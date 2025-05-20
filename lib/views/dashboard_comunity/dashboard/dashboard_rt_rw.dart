@@ -232,6 +232,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
   String nama = "User";
   String nik = "";
   String foto = "";
+  int jumlahNotifikasi = 0;
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
@@ -489,7 +490,17 @@ class _HomeRTRWState extends State<HomeRTRW> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca: () {
+                    setState(() {
+                      if (jumlahNotifikasi > 0) {
+                        jumlahNotifikasi--;
+                      }
+                    });
+                  },
+                ),
+              ),
             );
           },
         ),

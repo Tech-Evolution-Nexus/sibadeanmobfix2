@@ -247,10 +247,21 @@ class _HomeRWState extends State<HomeRW> {
         // Ganti icon notifikasi dengan badge
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
-            );
+           Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => NotifikasiSuratKeluarPage(
+      onSuratDibaca: () {
+        setState(() {
+          if (jumlahNotifikasi > 0) {
+            jumlahNotifikasi--;
+          }
+        });
+      },
+    ),
+  ),
+);
+
           },
           child: badges.Badge(
             showBadge: jumlahNotifikasi > 0,

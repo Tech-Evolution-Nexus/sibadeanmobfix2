@@ -457,7 +457,17 @@ class _HomeRTState extends State<HomeRT> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca: () {
+                    setState(() {
+                      if (jumlahNotifikasi > 0) {
+                        jumlahNotifikasi--;
+                      }
+                    });
+                  },
+                ),
+              ),
             );
           },
           child: badges.Badge(
