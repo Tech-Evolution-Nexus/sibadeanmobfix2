@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/verifikasi.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
@@ -14,6 +16,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/deta
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 
 import '../../../theme/theme.dart';
 import '../formRt/riwayat_surat_rt_rw.dart';
@@ -38,6 +41,7 @@ class _DashboardRTState extends State<DashboardRT> {
   String nik = "";
   String foto = "";
   int _currentIndex = 0;
+  int jumlahNotifikasi = 0;
   final List<Widget> _pages = [
     HomeRT(),
     RiwayatSuratRTRW(),
@@ -52,6 +56,7 @@ class _DashboardRTState extends State<DashboardRT> {
     // TODO: implement initState
     super.initState();
     getUserData();
+
     _currentIndex = widget.initialIndex;
   }
 
@@ -218,6 +223,7 @@ class _HomeRTState extends State<HomeRT> {
   String nama = "User";
   String nik = "";
   String foto = "";
+  int jumlahNotifikasi = 0;
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
@@ -227,6 +233,7 @@ class _HomeRTState extends State<HomeRT> {
     getUserData();
     fetchBerita();
     fetchData();
+    fetchNotifikasi();
   }
 
   Future<void> fetchBerita() async {
@@ -273,6 +280,17 @@ class _HomeRTState extends State<HomeRT> {
       nik = user['nik'] ?? "NIK tidak ditemukan";
       foto = user['foto'] ?? "";
     });
+  }
+
+  void fetchNotifikasi() async {
+    try {
+      List<SuratKeluar> data = await API().getSuratKeluar();
+      setState(() {
+        jumlahNotifikasi = data.length;
+      });
+    } catch (e) {
+      print("Gagal memuat notifikasi: $e");
+    }
   }
 
   @override
@@ -403,6 +421,7 @@ class _HomeRTState extends State<HomeRT> {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
+
     return Row(
       children: [
         CircleAvatar(
@@ -433,7 +452,29 @@ class _HomeRTState extends State<HomeRT> {
           ],
         ),
         const Spacer(),
-        const Icon(Icons.notifications, color: Colors.white),
+        // Ganti icon notifikasi dengan badge
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+            );
+          },
+          child: badges.Badge(
+            showBadge: jumlahNotifikasi > 0,
+            badgeContent: Text(
+              '$jumlahNotifikasi',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            badgeStyle: const badges.BadgeStyle(
+              badgeColor: Colors.red,
+              elevation: 0,
+              padding: EdgeInsets.all(6),
+            ),
+            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            child: const Icon(Icons.notifications, color: Colors.white),
+          ),
+        ),
       ],
     );
   }
@@ -861,5 +902,4 @@ class _HomeRTState extends State<HomeRT> {
         return "Menunggu";
     }
   }
-
 }

@@ -4,50 +4,51 @@ import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
-import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/detail_riwayat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/detail_riwayat.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 
 import '../../../theme/theme.dart';
 import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
 
-class DashboardRT extends StatefulWidget {
+class DashboardRTRW extends StatefulWidget {
   final int initialIndex;
-  const DashboardRT({super.key, this.initialIndex = 0});
+  const DashboardRTRW({super.key, this.initialIndex = 0});
   @override
-  _DashboardRTState createState() => _DashboardRTState();
+  _DashboardRTRWState createState() => _DashboardRTRWState();
 }
 
-class HomeRT extends StatefulWidget {
-  const HomeRT({super.key});
+class HomeRTRW extends StatefulWidget {
+  const HomeRTRW({super.key});
 
   @override
-  _HomeRTState createState() => _HomeRTState();
+  _HomeRTRWState createState() => _HomeRTRWState();
 }
 
-class _DashboardRTState extends State<DashboardRT> {
+class _DashboardRTRWState extends State<DashboardRTRW> {
   String nama = "User";
   String nik = "";
   String foto = "";
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    HomeRT(),
+    HomeRTRW(),
     RiwayatSuratRTRW(),
     VerifikasiPage(
       semuaWarga: [],
     ),
-    ProfilePage(),
+    ProfilePage(
+      showAppBar: true,
+    ),
   ];
 
   @override
@@ -69,112 +70,118 @@ class _DashboardRTState extends State<DashboardRT> {
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: lightColorScheme.primary),
       drawer: Drawer(
-        child: Container(
-          // color: lightColorScheme.primary,
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              SizedBox(
-                height: 195,
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: lightColorScheme.primary,
-                  ),
-                  padding: EdgeInsets.only(left: 20, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: foto.isNotEmpty
-                            ? NetworkImage(foto)
-                            : const AssetImage('assets/images/6.jpg')
-                                as ImageProvider,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 195,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: lightColorScheme.primary,
+                ),
+                padding: EdgeInsets.only(left: 20, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: foto.isNotEmpty
+                          ? NetworkImage(foto)
+                          : const AssetImage('assets/images/6.jpg')
+                              as ImageProvider,
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      nama,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      SizedBox(
-                        height: 4,
+                    ),
+                    Text(
+                      nik,
+                      style: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 12,
                       ),
-                      Text(
-                        nama,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        nik,
-                        style: TextStyle(
-                          color: Colors.grey.shade200,
-                          fontSize: 12,
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
-              _buildDrawerItem(
-                icon: Icons.person_4_outlined,
-                title: 'Home',
-                onTap: () {
-                  setState(() => _currentIndex = 0);
-                  Navigator.pop(context);
-                },
-              ),
-              _buildDrawerItem(
-                icon: Icons.person_4_outlined,
-                title: 'Profil',
-                onTap: () {
-                  setState(() => _currentIndex = 3);
-                  Navigator.pop(context);
-                },
-              ),
-              Divider(
-                thickness: 1,
-                color: Colors.grey.shade300,
-              ),
-              _buildDrawerItem(
-                icon: Icons.mark_email_read_outlined,
-                title: 'Penyetujuan Surat',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                icon: Icons.history,
-                title: 'Riwayat Pengajuan',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => PengajuanPage()),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                icon: Icons.verified_user_outlined,
-                title: 'Verifikasi Masyarakat',
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => Verifikasi()),
-                  );
-                },
-              ),
-              Divider(
-                thickness: 1,
-                color: Colors.grey.shade300,
-              ),
-              _buildDrawerItem(
-                icon: Icons.logout_outlined,
-                title: 'Logout',
-                onTap: logout,
-              ),
-            ],
-          ),
+            ),
+            _buildDrawerItem(
+              icon: Icons.person_4_outlined,
+              title: 'Home',
+              onTap: () {
+                setState(() => _currentIndex = 0);
+                Navigator.pop(context);
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.person_4_outlined,
+              title: 'Profil',
+              onTap: () {
+                // setState(() => _currentIndex = 3);
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => ProfilePage(
+                            showAppBar: true,
+                          )),
+                );
+              },
+            ),
+            Divider(
+              thickness: 1,
+              color: Colors.grey.shade300,
+            ),
+            _buildDrawerItem(
+              icon: Icons.mark_email_read_outlined,
+              title: 'Penyetujuan Surat',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.history,
+              title: 'Riwayat Pengajuan',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => PengajuanPage(
+                            showAppBar: true,
+                          )),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.verified_user_outlined,
+              title: 'Verifikasi Masyarakat',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => Verifikasi()),
+                );
+              },
+            ),
+            Divider(
+              thickness: 1,
+              color: Colors.grey.shade300,
+            ),
+            _buildDrawerItem(
+              icon: Icons.logout_outlined,
+              title: 'Logout',
+              onTap: logout,
+            ),
+          ],
         ),
       ),
       body: _pages[_currentIndex],
@@ -221,13 +228,14 @@ class _DashboardRTState extends State<DashboardRT> {
   }
 }
 
-class _HomeRTState extends State<HomeRT> {
+class _HomeRTRWState extends State<HomeRTRW> {
   String nama = "User";
   String nik = "";
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
+  List<PengajuanSurat> pengajuanSelesai = [];
   Future<void> fetchBerita() async {
     try {
       var response = await API().getdatadashboard();
@@ -265,6 +273,9 @@ class _HomeRTState extends State<HomeRT> {
               (response.data["data"]["pengajuanMenunggu"] as List)
                   .map((item) => PengajuanSurat.fromJson(item))
                   .toList();
+          pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
           // isLoading = false;
         });
       }
@@ -286,47 +297,54 @@ class _HomeRTState extends State<HomeRT> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
     final isSmall = width < 360;
 
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : ListView(
-            padding: const EdgeInsets.all(0),
-            children: [
-              Stack(
-                children: [
-                  buildBackground(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 0),
-                    child: Column(
-                      children: [
-                        const Gap(16),
-                        buildHeader(),
-                        const Gap(16),
-                        cardHero(),
-                        const Gap(16),
-                        cardshhortcutpengajuan(),
-                        const Gap(16),
-                        berita(),
-                        const Gap(16),
-                      ],
+        : RefreshIndicator(
+            onRefresh: () async {
+              getUserData(); // Mengambil data pengguna
+              fetchBerita(); // Mengambil data berita
+              fetchData(); // Mengambil data lainnya
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(0),
+              children: [
+                Stack(
+                  children: [
+                    buildBackground(),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 0),
+                      child: Column(
+                        children: [
+                          const Gap(16),
+                          buildHeader(),
+                          const Gap(16),
+                          cardHero(),
+                          const Gap(16),
+                          cardshhortcutpengajuan(),
+                          const Gap(16),
+                          berita(),
+                          const Gap(16),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const Gap(16),
-              // Menambahkan Surat Masuk di atas Berita
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                // child: suratMasuk(),
-              ),
-              const Gap(16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-              ),
-              const Gap(16),
-            ],
+                  ],
+                ),
+                const Gap(16),
+                // Menambahkan Surat Masuk di atas Berita
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  // child: suratMasuk(),
+                ),
+                const Gap(16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                ),
+                const Gap(16),
+              ],
+            ),
           );
   }
 
@@ -345,8 +363,8 @@ class _HomeRTState extends State<HomeRT> {
         InkWell(
           onTap: () {
             setState(() {
-              _DashboardRTState? state =
-                  context.findAncestorStateOfType<_DashboardRTState>();
+              _DashboardRTRWState? state =
+                  context.findAncestorStateOfType<_DashboardRTRWState>();
               if (state != null) {
                 state.setState(() {
                   state._currentIndex = 1;
@@ -368,7 +386,10 @@ class _HomeRTState extends State<HomeRT> {
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ListBerita()),
+                    MaterialPageRoute(
+                        builder: (_) => ListBerita(
+                              showAppBar: true,
+                            )),
                   );
                 },
                 child: Row(
@@ -397,7 +418,10 @@ class _HomeRTState extends State<HomeRT> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return BeritaItem(berita: dataModel!.berita[index]);
+              return BeritaItem(
+                berita: dataModel!.berita[index],
+                variant: "horizontal",
+              );
             },
           ),
         )
@@ -497,17 +521,13 @@ class _HomeRTState extends State<HomeRT> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem(
-                    'Menunggu persetujuan',
-                    dataModel!.dash.totalMenungguPersetujuan.toString(),
-                    isSmall),
+                child: _statusItem('Menunggu persetujuan',
+                    pengajuanMenunggu.length.toString(), isSmall),
               ),
               Expanded(
                 flex: 3,
                 child: _statusItem(
-                    'Selesai',
-                    dataModel!.dash.totalPersetujuanSelesai.toString(),
-                    isSmall),
+                    'Selesai', pengajuanSelesai.length.toString(), isSmall),
               ),
             ],
           ),
@@ -579,8 +599,8 @@ class _HomeRTState extends State<HomeRT> {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 2,
+        horizontal: 16,
+        vertical: 16,
       ),
       decoration: _boxDecoration(),
       child: Column(
@@ -599,7 +619,7 @@ class _HomeRTState extends State<HomeRT> {
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ListBerita()),
+                    MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
                   );
                 },
                 child: Row(
@@ -616,6 +636,9 @@ class _HomeRTState extends State<HomeRT> {
               ),
             ],
           ),
+          SizedBox(
+            height: 4,
+          ),
           pengajuanMenunggu == null || pengajuanMenunggu!.isEmpty
               ? Padding(
                   padding: const EdgeInsets.all(16),
@@ -629,7 +652,9 @@ class _HomeRTState extends State<HomeRT> {
               : ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: pengajuanMenunggu?.length ?? 0,
+                  itemCount: (pengajuanMenunggu?.length ?? 0) < 3
+                      ? pengajuanMenunggu?.length
+                      : 3,
                   itemBuilder: (context, index) {
                     final surat = pengajuanMenunggu?[index];
                     Color headerColor = getHeaderColor(surat?.status ?? "");
@@ -639,10 +664,10 @@ class _HomeRTState extends State<HomeRT> {
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: Colors.black26,
-                          width: .2,
-                        ),
+                        // side: BorderSide(
+                        //   color: Colors.black26,
+                        //   width: .2,
+                        // ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
@@ -660,7 +685,7 @@ class _HomeRTState extends State<HomeRT> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.all(12),
+                              padding: EdgeInsets.symmetric(vertical: 12),
                               child: Row(
                                 children: [
                                   CircleAvatar(
@@ -676,14 +701,17 @@ class _HomeRTState extends State<HomeRT> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               child: Text(
                                                 surat?.surat.nama_surat ?? "",
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 2,
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 14),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             Text(

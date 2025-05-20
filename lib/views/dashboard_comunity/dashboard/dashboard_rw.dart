@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+
+import 'package:badges/badges.dart' as badges;
 import 'package:gap/gap.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
@@ -80,6 +83,7 @@ class _HomeRWState extends State<HomeRW> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
+  int jumlahNotifikasi = 0;
 
   Widget berita() {
     final mediaQuery = MediaQuery.of(context);
@@ -134,6 +138,17 @@ class _HomeRWState extends State<HomeRW> {
         )
       ]),
     );
+  }
+
+   void fetchNotifikasi() async {
+    try {
+      List<SuratKeluar> data = await API().getSuratKeluar();
+      setState(() {
+        jumlahNotifikasi = data.length;
+      });
+    } catch (e) {
+      print("Gagal memuat notifikasi: $e");
+    }
   }
 
   @override
@@ -194,10 +209,11 @@ class _HomeRWState extends State<HomeRW> {
     );
   }
 
-  Widget buildHeader() {
+ Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
+
     return Row(
       children: [
         CircleAvatar(
@@ -228,14 +244,28 @@ class _HomeRWState extends State<HomeRW> {
           ],
         ),
         const Spacer(),
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
-          onPressed: () {
+        // Ganti icon notifikasi dengan badge
+        GestureDetector(
+          onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
             );
           },
+          child: badges.Badge(
+            showBadge: jumlahNotifikasi > 0,
+            badgeContent: Text(
+              '$jumlahNotifikasi',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            badgeStyle: const badges.BadgeStyle(
+              badgeColor: Colors.red,
+              elevation: 0,
+              padding: EdgeInsets.all(6),
+            ),
+            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            child: const Icon(Icons.notifications, color: Colors.white),
+          ),
         ),
       ],
     );

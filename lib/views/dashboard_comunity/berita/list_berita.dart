@@ -5,8 +5,8 @@ import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
 class ListBerita extends StatefulWidget {
-  const ListBerita({super.key});
-
+  final bool showAppBar;
+  const ListBerita({super.key, this.showAppBar = false});
   @override
   _ListBeritaState createState() => _ListBeritaState();
 }
@@ -53,8 +53,20 @@ class _ListBeritaState extends State<ListBerita> {
         .where((berita) =>
             berita.judul.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
-
+    print(widget.showAppBar);
     return Scaffold(
+      appBar: widget.showAppBar
+          ? AppBar(
+              title:
+                  const Text("Berita", style: TextStyle(color: Colors.white)),
+              backgroundColor: lightColorScheme.primary,
+              leading: IconButton(
+                icon: const Icon(Icons.chevron_left, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+              automaticallyImplyLeading: false,
+            )
+          : null,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: isLoading
@@ -96,7 +108,7 @@ class _ListBeritaState extends State<ListBerita> {
                         Text(
                           "Rekomendasi untukmu",
                           style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 12),
                         filteredBerita.isEmpty

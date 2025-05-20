@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
+import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -44,32 +45,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? ktpGambar;
   Uint8List? ktpGambarBytes;
 
-  Future<void> pickImage() async {
+  Future<void> pickImage(String jenis) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-        source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear);
+    XFile? image;
+    // Tentukan sumber gambar berdasarkan jenis dokumen
+    if (jenis == 'KTP') {
+      image = await picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+    } else if (jenis == 'KK') {
+      image = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+    } else {
+      debugPrint("Jenis dokumen tidak dikenali.");
+      return;
+    }
 
     if (image == null) {
       debugPrint("Tidak ada gambar yang dipilih.");
       return;
     }
 
+    // Jika platform Web
     if (kIsWeb) {
-      kkGambarBytes = await image.readAsBytes();
-      debugPrint("Gambar berhasil dipilih (Web)");
-    } else {
-      kkGambar = File(image.path);
-      debugPrint("Gambar berhasil dipilih (Mobile)");
-    }
-
-    if (image != null) {
       final bytes = await image.readAsBytes();
       setState(() {
-        ktpGambar = File(image.path);
-        ktpGambarBytes = bytes;
+        if (jenis == 'KTP') {
+          ktpGambarBytes = bytes;
+        } else if (jenis == 'KK') {
+          kkGambarBytes = bytes;
+        }
       });
+      debugPrint("Gambar berhasil dipilih (Web)");
+    } else {
+      final file = File(image.path);
+      final bytes = await image.readAsBytes();
+      setState(() {
+        if (jenis == 'KTP') {
+          ktpGambar = file;
+          ktpGambarBytes = bytes;
+        } else if (jenis == 'KK') {
+          kkGambar = file;
+          kkGambarBytes = bytes;
+        }
+      });
+      debugPrint("Gambar berhasil dipilih (Mobile)");
     }
   }
+
+  void clearImage(String jenis) {
+  setState(() {
+    if (jenis == 'KK') {
+      kkGambar = null;
+      kkGambarBytes = null;
+    } else if (jenis == 'KTP') {
+      ktpGambar = null;
+      ktpGambarBytes = null;
+    }
+  });
+}
 
   void nextPage() {
     if (_formKey.currentState!.validate()) {
@@ -103,6 +139,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Harap unggah gambar KK terlebih dahulu."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (ktpGambar == null && ktpGambarBytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Harap unggah gambar KTP terlebih dahulu."),
           backgroundColor: Colors.red,
         ),
       );
@@ -178,7 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Lengkapi input berikut untuk mendaftarkan data anda",
+                  "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 SizedBox(height: 20),
@@ -186,8 +232,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 500,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.8,
+                        ),
                         child: PageView(
                           controller: _pageController,
                           physics: NeverScrollableScrollPhysics(),
@@ -221,69 +269,76 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ? "Tempat lahir wajib diisi"
                                       : null,
                                 ),
-                                TextFormField(
+                                CustomTextField(
                                   controller: tanggalLahirController,
-                                  decoration: InputDecoration(
-                                    labelText: "Tanggal Lahir",
-                                    hintText: "Pilih tanggal lahir",
-                                  ),
+                                  labelText: "Tanggal Lahir",
+                                  hintText: "Pilih tanggal lahir",
                                   readOnly: true,
-                                  onTap: () async {
+                                  suffixIcon: Icons.calendar_today,
+                                  onSuffixPressed: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(1900),
                                       lastDate: DateTime.now(),
                                     );
+
                                     if (pickedDate != null) {
                                       String formattedDate =
                                           DateFormat('dd-MM-yyyy')
                                               .format(pickedDate);
-                                      setState(() {
-                                        tanggalLahirController.text =
-                                            formattedDate;
-                                      });
+                                      tanggalLahirController.text =
+                                          formattedDate;
                                     }
                                   },
                                 ),
-                                DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    labelText: "Jenis Kelamin",
-                                    hintText: "Pilih jenis kelamin",
-                                  ),
+                                CustomDropdownField(
+                                  labelText: "Jenis Kelamin",
+                                  hintText: "Pilih jenis kelamin",
                                   value: selectedGender,
-                                  items: ["Laki-laki", "Perempuan"]
-                                      .map((e) => DropdownMenuItem(
-                                          value: e, child: Text(e)))
-                                      .toList(),
-                                  onChanged: (value) =>
-                                      setState(() => selectedGender = value),
-                                  validator: (value) => value == null
-                                      ? "Jenis kelamin wajib dipilih"
-                                      : null,
+                                  items: [
+                                    DropdownMenuItem(
+                                        value: "laki-laki",
+                                        child: Text("Laki-laki")),
+                                    DropdownMenuItem(
+                                        value: "perempuan",
+                                        child: Text("Perempuan")),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGender = value;
+                                    });
+                                  },
                                 ),
-                                DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    labelText: "Agama",
-                                    hintText: "Pilih agama",
-                                  ),
+                                CustomDropdownField(
+                                  labelText: "Agama",
+                                  hintText: "Pilih Agama",
                                   value: selectedAgama,
                                   items: [
-                                    "Islam",
-                                    "Kristen",
-                                    "Katolik",
-                                    "Hindu",
-                                    "Buddha",
-                                    "Konghucu"
-                                  ]
-                                      .map((e) => DropdownMenuItem(
-                                          value: e, child: Text(e)))
-                                      .toList(),
-                                  onChanged: (value) =>
-                                      setState(() => selectedAgama = value),
-                                  validator: (value) => value == null
-                                      ? "Agama wajib dipilih"
-                                      : null,
+                                    DropdownMenuItem(
+                                        value: "islam", child: Text("Islam")),
+                                    DropdownMenuItem(
+                                        value: "kristen_protestan",
+                                        child: Text("Kristen")),
+                                    DropdownMenuItem(
+                                        value: "kristen_katolik",
+                                        child: Text("Katholik")),
+                                    DropdownMenuItem(
+                                        value: "hindu", child: Text("Hindu")),
+                                    DropdownMenuItem(
+                                        value: "buddha", child: Text("Buddha")),
+                                    DropdownMenuItem(
+                                        value: "konghucu",
+                                        child: Text("Khonghucu")),
+                                    DropdownMenuItem(
+                                        value: "lainnya",
+                                        child: Text("Lainnya")),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedAgama = value;
+                                    });
+                                  },
                                 ),
                                 CustomTextField(
                                   controller: pekerjaanController,
@@ -405,33 +460,125 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: pickImage,
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text("Upload Foto KK"),
-                                ),
-                                if (kkGambar != null || kkGambarBytes != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(
-                                      "Gambar KK telah dipilih!",
-                                      style: TextStyle(color: Colors.green),
+                                GestureDetector(
+                                  onTap: () => pickImage('KK'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: kkGambarBytes != null
+                                              ? Image.memory(kkGambarBytes!,
+                                                  fit: BoxFit.cover)
+                                              : kkGambar != null
+                                                  ? Image.file(kkGambar!,
+                                                      fit: BoxFit.cover)
+                                                  : Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: const [
+                                                          Icon(
+                                                              Icons.upload_file,
+                                                              size: 30,
+                                                              color:
+                                                                  Colors.grey),
+                                                          SizedBox(height: 8),
+                                                          Text(
+                                                              "Klik untuk unggah Foto KK"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                        ),
+                                        if (kkGambar != null ||
+                                            kkGambarBytes != null)
+                                          Positioned(
+                                            top: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: () => clearImage('KK'),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white,
+                                                    size: 30),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
+                                ),
+
                                 SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: pickImage,
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text("Upload Foto KTP"),
-                                ),
-                                if (ktpGambar != null || ktpGambarBytes != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(
-                                      "Gambar KTP telah dipilih!",
-                                      style: TextStyle(color: Colors.green),
+                                GestureDetector(
+                                  onTap: () => pickImage('KTP'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: ktpGambarBytes != null
+                                              ? Image.memory(ktpGambarBytes!,
+                                                  fit: BoxFit.cover)
+                                              : ktpGambar != null
+                                                  ? Image.file(ktpGambar!,
+                                                      fit: BoxFit.cover)
+                                                  : Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: const [
+                                                          Icon(
+                                                              Icons.upload_file,
+                                                              size: 30,
+                                                              color:
+                                                                  Colors.grey),
+                                                          SizedBox(height: 8),
+                                                          Text(
+                                                              "Klik untuk unggah Foto KTP"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                        ),
+                                        if (ktpGambar != null ||
+                                            ktpGambarBytes != null)
+                                          Positioned(
+                                            top: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: () => clearImage('KTP'),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white,
+                                                    size: 30),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
+                                ),
+
                                 SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: _register,
@@ -446,7 +593,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ],
                         ),
                       ),
-                    ],
+                    ], //disini
                   ),
                 ),
               ],

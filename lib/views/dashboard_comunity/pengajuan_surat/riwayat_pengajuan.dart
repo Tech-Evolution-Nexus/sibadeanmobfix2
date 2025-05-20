@@ -8,8 +8,8 @@ import '/methods/api.dart';
 import '../../../theme/theme.dart';
 
 class PengajuanPage extends StatefulWidget {
-  const PengajuanPage({super.key});
-
+  final bool showAppBar;
+  const PengajuanPage({super.key, this.showAppBar = false});
   @override
   _PengajuanPageState createState() => _PengajuanPageState();
 }
@@ -40,13 +40,15 @@ class _PengajuanPageState extends State<PengajuanPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(
-            Icons.chevron_left,
-            color: Colors.white,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: widget.showAppBar
+            ? IconButton(
+                icon: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         automaticallyImplyLeading: false,
         // backgroundColor: lightColorScheme.primary,
         backgroundColor: lightColorScheme.primary,

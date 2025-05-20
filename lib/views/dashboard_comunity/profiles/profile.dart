@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'informasi_diri.dart';
@@ -12,7 +13,8 @@ import 'ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final bool showAppBar;
+  const ProfilePage({super.key, this.showAppBar = false});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -95,6 +97,19 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: widget.showAppBar
+            ? IconButton(
+                icon: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        backgroundColor: lightColorScheme.primary,
+        automaticallyImplyLeading: false,
+      ),
       body: ListView(
         children: [
           Stack(
