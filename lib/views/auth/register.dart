@@ -8,7 +8,6 @@ import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
 import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
-import 'package:image_picker/image_picker.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -49,7 +48,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> pickImage(String jenis) async {
     final ImagePicker picker = ImagePicker();
     XFile? image;
-
     // Tentukan sumber gambar berdasarkan jenis dokumen
     if (jenis == 'KTP') {
       image = await picker.pickImage(
@@ -97,6 +95,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  void clearImage(String jenis) {
+  setState(() {
+    if (jenis == 'KK') {
+      kkGambar = null;
+      kkGambarBytes = null;
+    } else if (jenis == 'KTP') {
+      ktpGambar = null;
+      ktpGambarBytes = null;
+    }
+  });
+}
 
   void nextPage() {
     if (_formKey.currentState!.validate()) {
@@ -130,6 +139,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Harap unggah gambar KK terlebih dahulu."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (ktpGambar == null && ktpGambarBytes == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Harap unggah gambar KTP terlebih dahulu."),
           backgroundColor: Colors.red,
         ),
       );
@@ -205,7 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Lengkapi input berikut untuk mendaftarkan data anda",
+                  "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 SizedBox(height: 20),
@@ -213,8 +232,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 500,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.8,
+                        ),
                         child: PageView(
                           controller: _pageController,
                           physics: NeverScrollableScrollPhysics(),
@@ -291,12 +312,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 CustomDropdownField(
                                   labelText: "Agama",
-                                  hintText: "Pilih jenis kelamin",
+                                  hintText: "Pilih Agama",
                                   value: selectedAgama,
                                   items: [
                                     DropdownMenuItem(
-                                        value: "islam",
-                                        child: Text("Islam")),
+                                        value: "islam", child: Text("Islam")),
                                     DropdownMenuItem(
                                         value: "kristen_protestan",
                                         child: Text("Kristen")),
@@ -304,11 +324,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         value: "kristen_katolik",
                                         child: Text("Katholik")),
                                     DropdownMenuItem(
-                                        value: "hindu",
-                                        child: Text("Hindu")),
+                                        value: "hindu", child: Text("Hindu")),
                                     DropdownMenuItem(
-                                        value: "buddha",
-                                        child: Text("Buddha")),
+                                        value: "buddha", child: Text("Buddha")),
                                     DropdownMenuItem(
                                         value: "konghucu",
                                         child: Text("Khonghucu")),
@@ -442,33 +460,125 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: () => pickImage('KTP'),
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text('Upload Foto KK (File)'),
-                                ),
-                                if (kkGambar != null || kkGambarBytes != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(
-                                      "Gambar KK telah dipilih!",
-                                      style: TextStyle(color: Colors.green),
+                                GestureDetector(
+                                  onTap: () => pickImage('KK'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: kkGambarBytes != null
+                                              ? Image.memory(kkGambarBytes!,
+                                                  fit: BoxFit.cover)
+                                              : kkGambar != null
+                                                  ? Image.file(kkGambar!,
+                                                      fit: BoxFit.cover)
+                                                  : Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: const [
+                                                          Icon(
+                                                              Icons.upload_file,
+                                                              size: 30,
+                                                              color:
+                                                                  Colors.grey),
+                                                          SizedBox(height: 8),
+                                                          Text(
+                                                              "Klik untuk unggah Foto KK"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                        ),
+                                        if (kkGambar != null ||
+                                            kkGambarBytes != null)
+                                          Positioned(
+                                            top: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: () => clearImage('KK'),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white,
+                                                    size: 30),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
+                                ),
+
                                 SizedBox(height: 10),
-                                ElevatedButton.icon(
-                                  onPressed: () => pickImage('KTP'),
-                                  icon: Icon(Icons.upload_file),
-                                  label: Text('Upload Foto KTP (Kamera)'),
-                                ),
-                                if (ktpGambar != null || ktpGambarBytes != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0),
-                                    child: Text(
-                                      "Gambar KTP telah dipilih!",
-                                      style: TextStyle(color: Colors.green),
+                                GestureDetector(
+                                  onTap: () => pickImage('KTP'),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: ktpGambarBytes != null
+                                              ? Image.memory(ktpGambarBytes!,
+                                                  fit: BoxFit.cover)
+                                              : ktpGambar != null
+                                                  ? Image.file(ktpGambar!,
+                                                      fit: BoxFit.cover)
+                                                  : Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: const [
+                                                          Icon(
+                                                              Icons.upload_file,
+                                                              size: 30,
+                                                              color:
+                                                                  Colors.grey),
+                                                          SizedBox(height: 8),
+                                                          Text(
+                                                              "Klik untuk unggah Foto KTP"),
+                                                        ],
+                                                      ),
+                                                    ),
+                                        ),
+                                        if (ktpGambar != null ||
+                                            ktpGambarBytes != null)
+                                          Positioned(
+                                            top: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: () => clearImage('KTP'),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white,
+                                                    size: 30),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
+                                ),
+
                                 SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: _register,
@@ -483,7 +593,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ],
                         ),
                       ),
-                    ],
+                    ], //disini
                   ),
                 ),
               ],

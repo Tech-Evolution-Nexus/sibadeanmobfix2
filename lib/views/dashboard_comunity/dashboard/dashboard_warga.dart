@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
@@ -27,7 +27,6 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0; //navigasi butoon
-  int jumlahNotifikasi = 0;
   final List<Widget> _pages = [
     DashboardContent(),
     ListBerita(),
@@ -93,7 +92,7 @@ class _DashboardContentState extends State<DashboardContent> {
     super.initState();
     getUserData();
     fetchDash();
-     fetchNotifikasi();
+    fetchNotifikasi();
   }
 
   Future<void> getUserData() async {
@@ -130,19 +129,18 @@ class _DashboardContentState extends State<DashboardContent> {
       setState(() => isLoading = false);
     }
   }
-  
-    void fetchNotifikasi() async {
+
+  void fetchNotifikasi() async {
     try {
-      final listSurat = await API().getSuratKeluar();
+      List<SuratKeluar> data = await API().getSuratKeluar();
       setState(() {
-        jumlahNotifikasi = listSurat.length;
+        jumlahNotifikasi = data.length;
       });
     } catch (e) {
-      setState(() {
-        jumlahNotifikasi = 0;
-      });
+      print("Gagal memuat notifikasi: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -246,23 +244,32 @@ class _DashboardContentState extends State<DashboardContent> {
         ),
         const Spacer(),
         // Ganti icon notifikasi dengan badge
-         badges.Badge(
-          showBadge: jumlahNotifikasi > 0,
-          badgeContent: Text(
-            '$jumlahNotifikasi',
-            style: TextStyle(color: Colors.white, fontSize: 10),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+            );
+          },
+          child: badges.Badge(
+            showBadge: jumlahNotifikasi > 0,
+            badgeContent: Text(
+              '$jumlahNotifikasi',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            badgeStyle: const badges.BadgeStyle(
+              badgeColor: Colors.red,
+              elevation: 0,
+              padding: EdgeInsets.all(6),
+            ),
+            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            child: const Icon(Icons.notifications, color: Colors.white),
           ),
-          badgeStyle: badges.BadgeStyle(
-            badgeColor: Colors.red,
-            elevation: 0,
-            padding: EdgeInsets.all(6),
-          ),
-          child: const Icon(Icons.notifications, color: Colors.white),
         ),
       ],
     );
   }
-  
+
   Widget cardhero() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;

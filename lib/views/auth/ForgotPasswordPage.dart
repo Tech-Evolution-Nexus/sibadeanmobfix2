@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/forgotpasswort.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
