@@ -32,7 +32,7 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
     final nik = userList.first.nik;
     final noHp = noHpController.text.trim();
 
-if (nik.isEmpty || noHp.isEmpty) {
+    if (nik.isEmpty || noHp.isEmpty) {
       _showSnackBar(context, 'NIK dan Nomor HP tidak boleh kosong.');
       return;
     } else if (!RegExp(r'^[0-9]+$').hasMatch(noHp)) {
@@ -42,7 +42,6 @@ if (nik.isEmpty || noHp.isEmpty) {
       _showSnackBar(context, 'Nomor HP harus terdiri dari 12 hingga 13 digit.');
       return;
     }
-
 
     try {
       final response = await API().chgNoHp(nik: nik, noHp: noHp);
@@ -90,9 +89,12 @@ if (nik.isEmpty || noHp.isEmpty) {
               child: ElevatedButton(
                 onPressed: () => chgNoHp(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo[900],
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-                child: const Text("Ubah Nomor HP"),
+                child: const Text(
+                  "Ubah Nomor HP",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             )
           ],

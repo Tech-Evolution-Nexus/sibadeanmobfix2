@@ -70,16 +70,16 @@ class _DashboardRTState extends State<DashboardRT> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: lightColorScheme.primary),
+          backgroundColor: Theme.of(context).colorScheme.primary),
       drawer: Drawer(
         child: Container(
-          // color: lightColorScheme.primary,
+          // color:  Theme.of(context).colorScheme.primary,
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: lightColorScheme.primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,9 +425,9 @@ class _HomeRTState extends State<HomeRT> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            lightColorScheme.primary,
-            lightColorScheme.primary,
-            lightColorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
             Colors.white,
           ],
           stops: [0.0, 0.3, 0.6, 1.0],
@@ -782,14 +782,15 @@ class _HomeRTState extends State<HomeRT> {
               children: [
                 CircleAvatar(
                   radius: width * 0.05,
-                  backgroundColor: lightColorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Icon(Icons.grid_view_outlined, color: Colors.white),
                 ),
                 const SizedBox(height: 1),
                 Text("Lihat Semua",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 12, color: lightColorScheme.primary)),
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           )),
@@ -804,7 +805,7 @@ class _HomeRTState extends State<HomeRT> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: isSmall ? 16 : 18,
-            color: lightColorScheme.primary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 4),

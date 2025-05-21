@@ -134,9 +134,12 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
               child: ElevatedButton(
                 onPressed: () => chgPass(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo[900],
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-                child: const Text("Ubah Password"),
+                child: const Text(
+                  "Ubah Password",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             )
           ],

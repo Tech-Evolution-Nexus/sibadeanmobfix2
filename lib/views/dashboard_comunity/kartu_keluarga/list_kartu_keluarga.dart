@@ -71,7 +71,7 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
           'Daftar Anggota Keluarga',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
-        backgroundColor: lightColorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           icon: const Icon(
             Icons.chevron_left,

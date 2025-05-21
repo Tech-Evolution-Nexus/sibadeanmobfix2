@@ -175,7 +175,7 @@ class _LoginState extends State<Login> {
                             return null;
                           },
                         ),
-                      
+
                         const SizedBox(height: 4),
                         CustomTextField(
                           labelText: "Password",
@@ -244,7 +244,9 @@ class _LoginState extends State<Login> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: isLoading
                                   ? Colors.grey.shade300
-                                  : Color(0xFF052158), // warna biru gelap
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary, // warna biru gelap
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     12), // sudut tombol agak bulat
@@ -287,7 +289,8 @@ class _LoginState extends State<Login> {
                                 'Daftar Sekarang',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: lightColorScheme.primary),
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ),
                             ),
                           ],

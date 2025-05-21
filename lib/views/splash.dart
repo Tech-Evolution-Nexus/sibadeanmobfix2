@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
@@ -21,9 +22,12 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  Pengaturan? pengaturan;
+
   @override
   void initState() {
     super.initState();
+    fetchPengaturan();
 
     Future.delayed(Duration(seconds: 4), () async {
       _checkTokenAndNavigate();
@@ -64,10 +68,17 @@ class _SplashState extends State<Splash> {
     context.go(view);
   }
 
+  Future<void> fetchPengaturan() async {
+    var res = await Pengaturan.getPengaturan();
+    setState(() {
+      pengaturan = res;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBlue,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +90,7 @@ class _SplashState extends State<Splash> {
             ),
             SizedBox(height: 20),
             Text(
-              'E-Surat Badean',
+              pengaturan?.appName ?? "",
               style: TextStyle(
                 color: const Color.fromARGB(255, 255, 255, 255),
                 fontFamily: 'Poppins',

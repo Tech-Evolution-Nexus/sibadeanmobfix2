@@ -127,7 +127,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       height: _currentPage == index ? 12 : 8,
                       decoration: BoxDecoration(
                         color: _currentPage == index
-                            ? const Color(0xFF052158) // biru
+                            ? Theme.of(context).colorScheme.primary // biru
                             : Colors.grey.shade300,
                         shape: BoxShape.circle,
                       ),
@@ -145,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF052158),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

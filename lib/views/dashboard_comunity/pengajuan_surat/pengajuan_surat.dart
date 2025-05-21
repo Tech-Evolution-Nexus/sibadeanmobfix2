@@ -316,7 +316,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           "Pengajuan ${widget.namaSurat ?? ''}",
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
-        backgroundColor: lightColorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
@@ -545,7 +545,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                             ? _submitPengajuan
                                             : nextPage,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: lightColorScheme.primary,
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 24, vertical: 16),
                                       foregroundColor: Colors.white,

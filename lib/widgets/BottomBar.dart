@@ -121,7 +121,7 @@ class _BottomBarState extends State<BottomBar> {
                               Icon(
                                 item['icon'],
                                 color: isActive
-                                    ? lightColorScheme.primary
+                                    ? Theme.of(context).colorScheme.primary
                                     : Colors.grey,
                               ),
                               const SizedBox(height: 4),
@@ -136,7 +136,7 @@ class _BottomBarState extends State<BottomBar> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: isActive
-                                        ? lightColorScheme.primary
+                                        ? Theme.of(context).colorScheme.primary
                                         : Colors.grey,
                                   ),
                                 ),

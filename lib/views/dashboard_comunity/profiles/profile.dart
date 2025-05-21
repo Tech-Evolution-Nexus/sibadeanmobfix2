@@ -107,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => Navigator.pop(context),
               )
             : null,
-        backgroundColor: lightColorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         automaticallyImplyLeading: false,
       ),
       body: ListView(
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Container(
                 height: 320,
                 decoration: BoxDecoration(
-                  color: Color(0xFF052158),
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(12), // Radius hanya bagian bawah
                   ),
@@ -265,7 +265,8 @@ class _ProfilePageState extends State<ProfilePage> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: iconColor ?? Colors.blue.shade900),
+      leading:
+          Icon(icon, color: iconColor ?? Theme.of(context).colorScheme.primary),
       title: Text(
         title,
         style: const TextStyle(fontSize: 16),

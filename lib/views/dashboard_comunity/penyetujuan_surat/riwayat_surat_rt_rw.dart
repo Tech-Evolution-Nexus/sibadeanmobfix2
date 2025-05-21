@@ -45,8 +45,8 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
           onPressed: () => Navigator.pop(context),
         ),
         automaticallyImplyLeading: false,
-        // backgroundColor: lightColorScheme.primary,
-        backgroundColor: lightColorScheme.primary,
+        // backgroundColor:  Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text("Pengajuan Surat",
             style: TextStyle(color: Colors.white, fontSize: 20)),
         bottom: TabBar(

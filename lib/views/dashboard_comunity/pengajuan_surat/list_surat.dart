@@ -79,29 +79,29 @@ class ListSuratState extends State<ListSurat> {
   }
 }
 
-Widget _statusItem(String title, String count, bool isSmall) {
-  return Column(
-    children: [
-      Text(
-        count,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: isSmall ? 16 : 18,
-          color: lightColorScheme.primary,
-        ),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        title,
-        style: TextStyle(
-          color: Colors.black54,
-          fontSize: isSmall ? 11 : 12,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ],
-  );
-}
+// Widget _statusItem(String title, String count, bool isSmall) {
+//   return Column(
+//     children: [
+//       Text(
+//         count,
+//         style: TextStyle(
+//           fontWeight: FontWeight.bold,
+//           fontSize: isSmall ? 16 : 18,
+//           color: Theme.of(context).colorScheme.primary,
+//         ),
+//       ),
+//       const SizedBox(height: 4),
+//       Text(
+//         title,
+//         style: TextStyle(
+//           color: Colors.black54,
+//           fontSize: isSmall ? 11 : 12,
+//         ),
+//         textAlign: TextAlign.center,
+//       ),
+//     ],
+//   );
+// }
 
 Widget _suratButton(
     BuildContext context, Surat item, Color color, double width) {

@@ -31,7 +31,7 @@ class CustomScaffold extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF052158), // Biru tua
+                  Theme.of(context).colorScheme, // Biru tua
                   Color(0xFF0A74DA), // Biru terang
                 ],
               ),

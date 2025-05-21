@@ -14,9 +14,9 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.da
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/detail_riwayat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/detail_riwayat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_email.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_password.dart';
@@ -71,151 +71,188 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-            'SIBADEAN',
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: lightColorScheme.primary),
+        title: Text(
+          'SIBADEAN',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             SizedBox(
-              height: 195,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: lightColorScheme.primary,
-                ),
-                padding: EdgeInsets.only(left: 20, bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: foto.isNotEmpty
-                          ? NetworkImage(foto)
-                          : const AssetImage('assets/images/6.jpg')
-                              as ImageProvider,
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      nama,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+              width: double.infinity,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context); // tutup drawer
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => ProfilePage(
+                              showAppBar: true,
+                            )), // ganti dengan halaman profilmu
+                  );
+                },
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  padding: EdgeInsets.only(left: 20, bottom: 10, right: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: foto.isNotEmpty
+                            ? NetworkImage(foto)
+                            : const AssetImage('assets/images/6.jpg')
+                                as ImageProvider,
                       ),
-                    ),
-                    Text(
-                      nik,
-                      style: TextStyle(
-                        color: Colors.grey.shade200,
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
+                      SizedBox(width: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  nama,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  nik,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade200,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-            _buildDrawerItem(
-              icon: Icons.home_outlined,
-              title: 'Home',
-              onTap: () {
-                setState(() => _currentIndex = 0);
-                Navigator.pop(context);
-              },
+
+            // ===== Bagian Menu =====
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _buildSectionTitle("Layanan Administratif"),
+                  _buildDrawerItem(
+                    icon: Icons.description_outlined,
+                    title: 'Penyetujuan Surat',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.history,
+                    title: 'Riwayat Pengajuan',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => PengajuanPage(showAppBar: true)),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.verified_outlined,
+                    title: 'Verifikasi Masyarakat',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => Verifikasi()),
+                      );
+                    },
+                  ),
+                  Divider(thickness: 1, color: Colors.grey.shade300),
+                  _buildSectionTitle("Profil & Keamanan"),
+                  _buildDrawerItem(
+                    icon: Icons.email_outlined,
+                    title: 'Ganti Email',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => GantiEmailPage()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.phone_android_outlined,
+                    title: 'Ganti No HP',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => GantiNoHpPage()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.lock_outline,
+                    title: 'Ganti Password',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => GantiPasswordPage()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.info_outline,
+                    title: 'Tentang Aplikasi',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => TentangPage()),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-            _buildDrawerItem(
-              icon: Icons.account_circle_outlined,
-              title: 'Informasi Datadiri',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => InformasiDiriPage()),
-                );
-              },
-            ),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-            _buildDrawerItem(
-              icon: Icons.description_outlined,
-              title: 'Penyetujuan Surat',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              icon: Icons.history,
-              title: 'Riwayat Pengajuan',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => PengajuanPage(showAppBar: true)),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              icon: Icons.verified_outlined,
-              title: 'Verifikasi Masyarakat',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => Verifikasi()),
-                );
-              },
-            ),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-            _buildDrawerItem(
-              icon: Icons.email_outlined,
-              title: 'Ganti Email',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => GantiEmailPage()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              icon: Icons.phone_android_outlined,
-              title: 'Ganti No HP',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => GantiNoHpPage()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              icon: Icons.lock_outline,
-              title: 'Ganti Password',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => GantiPasswordPage()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              icon: Icons.info_outline,
-              title: 'Tentang SIBADEAN',
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => TentangPage()),
-                );
-              },
-            ),
-            Divider(thickness: 1, color: Colors.grey.shade300),
-            _buildDrawerItem(
-              icon: Icons.logout_outlined,
-              title: 'Logout',
-              onTap: logout,
-            ),
+
+            // ===== Logout Button di bawah & tengah =====
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.logout_outlined, color: Colors.white),
+                  label: Text("Logout", style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  onPressed: logout,
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -229,15 +266,30 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey),
+      leading: Icon(icon, color: Colors.grey[700]),
       title: Text(
         title,
         style: TextStyle(
-            color: Colors.grey.shade800,
-            fontWeight: FontWeight.w600,
-            fontSize: 14),
+          color: Colors.grey.shade800,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       ),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade800,
+        ),
+      ),
     );
   }
 
@@ -505,9 +557,9 @@ class _HomeRTRWState extends State<HomeRTRW> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            lightColorScheme.primary,
-            lightColorScheme.primary,
-            lightColorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
             Colors.white,
           ],
           stops: [0.0, 0.3, 0.6, 1.0],
@@ -568,14 +620,14 @@ class _HomeRTRWState extends State<HomeRTRW> {
             showBadge: jumlahNotifikasi > 0,
             badgeContent: Text(
               '$jumlahNotifikasi',
-              style: const TextStyle(color: Colors.white, fontSize: 10),
+              style: const TextStyle(color: Colors.white, fontSize: 8),
             ),
             badgeStyle: const badges.BadgeStyle(
               badgeColor: Colors.red,
               elevation: 0,
-              padding: EdgeInsets.all(6),
+              padding: EdgeInsets.all(4),
             ),
-            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            position: badges.BadgePosition.topEnd(top: -4, end: -1),
             child: const Icon(Icons.notifications, color: Colors.white),
           ),
         ),
@@ -931,14 +983,15 @@ class _HomeRTRWState extends State<HomeRTRW> {
               children: [
                 CircleAvatar(
                   radius: width * 0.05,
-                  backgroundColor: lightColorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Icon(Icons.grid_view_outlined, color: Colors.white),
                 ),
                 const SizedBox(height: 1),
                 Text("Lihat Semua",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 12, color: lightColorScheme.primary)),
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           )),
@@ -966,7 +1019,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: isSmall ? 18 : 20,
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(
@@ -977,7 +1030,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 14,
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],

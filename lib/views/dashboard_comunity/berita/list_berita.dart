@@ -59,7 +59,7 @@ class _ListBeritaState extends State<ListBerita> {
           ? AppBar(
               title:
                   const Text("Berita", style: TextStyle(color: Colors.white)),
-              backgroundColor: lightColorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               leading: IconButton(
                 icon: const Icon(Icons.chevron_left, color: Colors.white),
                 onPressed: () => Navigator.pop(context),

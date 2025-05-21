@@ -44,7 +44,6 @@ class API {
     } on DioException catch (e) {
       return e.response;
     }
-  
   }
 
   // === Aktivasi Akun ===
@@ -515,6 +514,22 @@ class API {
     try {
       String? token = await _getToken();
       final response = await _dio.get('cekuser',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ));
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+  Future<dynamic> pengaturan() async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.get('pengaturan',
           options: Options(
             headers: {
               'Authorization': 'Bearer $token',

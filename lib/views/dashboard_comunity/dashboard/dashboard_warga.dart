@@ -48,7 +48,7 @@ class _DashboardPageState extends State<DashboardPage> {
       //     });
       //   },
       //   backgroundColor: Colors.white,
-      //   selectedItemColor: lightColorScheme.primary,
+      //   selectedItemColor:  Theme.of(context).colorScheme.primary,
       //   unselectedItemColor: Colors.grey,
       //   showUnselectedLabels: false,
       //   elevation: 10,
@@ -172,7 +172,6 @@ class _DashboardContentState extends State<DashboardContent> {
             onRefresh: () async {
               getUserData();
               fetchDash();
-              
             },
             child: ListView(
               padding: const EdgeInsets.all(0),
@@ -212,14 +211,14 @@ class _DashboardContentState extends State<DashboardContent> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            lightColorScheme.primary,
-            lightColorScheme.primary,
-            lightColorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
             Colors.white,
           ],
           stops: [0.0, 0.3, 0.6, 1.0],
         ),
-        // color: lightColorScheme.primary,
+        // color:  Theme.of(context).colorScheme.primary,
         // borderRadius: const BorderRadius.only(
         //   bottomLeft: Radius.circular(12),
         //   bottomRight: Radius.circular(12),
@@ -285,9 +284,9 @@ class _DashboardContentState extends State<DashboardContent> {
             badgeStyle: const badges.BadgeStyle(
               badgeColor: Colors.red,
               elevation: 0,
-              padding: EdgeInsets.all(6),
+              padding: EdgeInsets.all(4),
             ),
-            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            position: badges.BadgePosition.topEnd(top: -4, end: -1),
             child: const Icon(Icons.notifications, color: Colors.white),
           ),
         ),
@@ -459,7 +458,7 @@ class _DashboardContentState extends State<DashboardContent> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: isSmall ? 18 : 20,
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             SizedBox(
@@ -470,7 +469,7 @@ class _DashboardContentState extends State<DashboardContent> {
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 14,
-                color: lightColorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],
@@ -594,14 +593,15 @@ class _DashboardContentState extends State<DashboardContent> {
               children: [
                 CircleAvatar(
                   radius: width * 0.05,
-                  backgroundColor: lightColorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Icon(Icons.grid_view_outlined, color: Colors.white),
                 ),
                 const SizedBox(height: 1),
                 Text("Lihat Semua",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 12, color: lightColorScheme.primary)),
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           )),

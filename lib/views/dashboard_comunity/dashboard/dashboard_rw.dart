@@ -57,7 +57,7 @@ class _DashboardRWState extends State<DashboardRW> {
             _currentIndex = index;
           });
         },
-        selectedItemColor: lightColorScheme.primary,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
@@ -216,9 +216,9 @@ class _HomeRWState extends State<HomeRW> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            lightColorScheme.primary,
-            lightColorScheme.primary,
-            lightColorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
             Colors.white,
           ],
           stops: [0.0, 0.3, 0.6, 1.0],
@@ -488,14 +488,15 @@ class _HomeRWState extends State<HomeRW> {
               children: [
                 CircleAvatar(
                   radius: width * 0.05,
-                  backgroundColor: lightColorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: Icon(Icons.grid_view_outlined, color: Colors.white),
                 ),
                 const SizedBox(height: 1),
                 Text("Lihat Semua",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 12, color: lightColorScheme.primary)),
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           )),
@@ -510,7 +511,7 @@ class _HomeRWState extends State<HomeRW> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: isSmall ? 16 : 18,
-            color: lightColorScheme.primary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 4),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: Color(0xFF052158),
+  primary: Color(0xFFFFFFFF),
   onPrimary: Color(0xFFFFFFFF),
   secondary: Color(0xFF6EAEE7),
   onSecondary: Color(0xFFFFFFFF),
@@ -56,3 +56,22 @@ ThemeData darkMode = ThemeData(
   brightness: Brightness.dark,
   colorScheme: darkColorScheme,
 );
+
+ThemeData buildTheme(Color primary, Color secondary, {bool isDark = false}) {
+  return ThemeData(
+    useMaterial3: true,
+    brightness: isDark ? Brightness.dark : Brightness.light,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: secondary,
+      brightness: isDark ? Brightness.dark : Brightness.light,
+    ),
+  );
+}
+
+Color hexToColor(String hex) {
+  hex = hex.replaceAll("#", "");
+  if (hex.length == 6) hex = "FF$hex"; // Tambahkan alpha jika tidak ada
+  return Color(int.parse("0x$hex"));
+}

@@ -91,8 +91,11 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
                   chgEmail(context);
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo[900]),
-                child: const Text("Ubah Email"),
+                    backgroundColor: Theme.of(context).colorScheme.primary),
+                child: const Text(
+                  "Ubah Email",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             )
           ],

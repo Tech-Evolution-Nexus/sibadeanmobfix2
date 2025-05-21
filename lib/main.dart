@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sibadeanmob_v2_fix/helper/GoRouteHelper.dart';
+import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'providers/auth_provider.dart';
 
@@ -19,7 +20,7 @@ void main() async {
 
   // Dapatkan token
   String? token = await messaging.getToken();
-  // print("Token: $token"); 
+  // print("Token: $token");
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
       showDialog(
@@ -38,24 +39,29 @@ void main() async {
     }
   });
   await initializeDateFormatting('id', null);
+  final pengaturan = await Pengaturan.getPengaturan();
+
+  final primaryColor = hexToColor(pengaturan.primaryColor);
+  final secondaryColor = hexToColor(pengaturan.secondaryColor);
+
+  final theme = buildTheme(primaryColor, secondaryColor);
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
-      child: const MyApp(),
+      child: MyApp(theme: theme),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ThemeData theme;
+  const MyApp({super.key, required this.theme});
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      theme: ThemeData.from(
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: lightColorScheme.primary)),
+      theme: theme,
       routerConfig: GoRouteHelper.router,
       debugShowCheckedModeBanner: false,
     );
