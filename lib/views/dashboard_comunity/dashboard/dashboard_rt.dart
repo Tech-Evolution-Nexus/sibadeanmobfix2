@@ -2,6 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
@@ -233,7 +234,25 @@ class _HomeRTState extends State<HomeRT> {
     getUserData();
     fetchBerita();
     fetchData();
+    fetchJumlahSuratKeluar();
     fetchNotifikasi();
+  }
+
+  void fetchJumlahSuratKeluar() async {
+    final suratList = await API().getSuratKeluar();
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    // hanya hitung surat yang belum dibaca
+    final belumDibaca = suratList
+        .where(
+          (surat) => !dibacaIds.contains(surat.id.toString()),
+        )
+        .toList();
+
+    setState(() {
+      jumlahNotifikasi = belumDibaca.length;
+    });
   }
 
   Future<void> fetchBerita() async {
@@ -457,7 +476,12 @@ class _HomeRTState extends State<HomeRT> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca:
+                      fetchJumlahSuratKeluar, // refresh badge setelah dibuka
+                ),
+              ),
             );
           },
           child: badges.Badge(

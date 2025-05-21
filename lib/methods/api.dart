@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 
@@ -39,7 +37,14 @@ class API {
   }
 
   Future<dynamic> registerUser({required FormData formData}) async {
-    return await _dio.post('register', data: formData);
+    try {
+      // print('NIK: $nik');
+      final response = await _dio.post('register', data: formData);
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  
   }
 
   // === Aktivasi Akun ===

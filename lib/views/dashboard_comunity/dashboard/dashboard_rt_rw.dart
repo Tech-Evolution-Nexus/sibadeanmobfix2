@@ -1,11 +1,14 @@
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
@@ -14,6 +17,11 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/detail_riwayat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_email.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_noHp.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_password.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/informasi_diri.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
 
@@ -91,9 +99,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                           : const AssetImage('assets/images/6.jpg')
                               as ImageProvider,
                     ),
-                    SizedBox(
-                      height: 4,
-                    ),
+                    SizedBox(height: 4),
                     Text(
                       nama,
                       style: TextStyle(
@@ -114,7 +120,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
               ),
             ),
             _buildDrawerItem(
-              icon: Icons.person_4_outlined,
+              icon: Icons.home_outlined,
               title: 'Home',
               onTap: () {
                 setState(() => _currentIndex = 0);
@@ -122,25 +128,18 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
               },
             ),
             _buildDrawerItem(
-              icon: Icons.person_4_outlined,
-              title: 'Profil',
+              icon: Icons.account_circle_outlined,
+              title: 'Informasi Datadiri',
               onTap: () {
-                // setState(() => _currentIndex = 3);
                 Navigator.pop(context);
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => ProfilePage(
-                            showAppBar: true,
-                          )),
+                  MaterialPageRoute(builder: (_) => InformasiDiriPage()),
                 );
               },
             ),
-            Divider(
-              thickness: 1,
-              color: Colors.grey.shade300,
-            ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
             _buildDrawerItem(
-              icon: Icons.mark_email_read_outlined,
+              icon: Icons.description_outlined,
               title: 'Penyetujuan Surat',
               onTap: () {
                 Navigator.pop(context);
@@ -156,14 +155,12 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                 Navigator.pop(context);
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (_) => PengajuanPage(
-                            showAppBar: true,
-                          )),
+                      builder: (_) => PengajuanPage(showAppBar: true)),
                 );
               },
             ),
             _buildDrawerItem(
-              icon: Icons.verified_user_outlined,
+              icon: Icons.verified_outlined,
               title: 'Verifikasi Masyarakat',
               onTap: () {
                 Navigator.pop(context);
@@ -172,10 +169,48 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                 );
               },
             ),
-            Divider(
-              thickness: 1,
-              color: Colors.grey.shade300,
+            Divider(thickness: 1, color: Colors.grey.shade300),
+            _buildDrawerItem(
+              icon: Icons.email_outlined,
+              title: 'Ganti Email',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiEmailPage()),
+                );
+              },
             ),
+            _buildDrawerItem(
+              icon: Icons.phone_android_outlined,
+              title: 'Ganti No HP',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiNoHpPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.lock_outline,
+              title: 'Ganti Password',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => GantiPasswordPage()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              icon: Icons.info_outline,
+              title: 'Tentang SIBADEAN',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => TentangPage()),
+                );
+              },
+            ),
+            Divider(thickness: 1, color: Colors.grey.shade300),
             _buildDrawerItem(
               icon: Icons.logout_outlined,
               title: 'Logout',
@@ -232,6 +267,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
   String nama = "User";
   String nik = "";
   String foto = "";
+  int jumlahNotifikasi = 0;
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
@@ -285,12 +321,42 @@ class _HomeRTRWState extends State<HomeRTRW> {
     }
   }
 
+  void fetchJumlahSuratKeluar() async {
+    final suratList = await API().getSuratKeluar();
+    final prefs = await SharedPreferences.getInstance();
+    List<String> dibacaIds = prefs.getStringList('dibaca_surat') ?? [];
+
+    // hanya hitung surat yang belum dibaca
+    final belumDibaca = suratList
+        .where(
+          (surat) => !dibacaIds.contains(surat.id.toString()),
+        )
+        .toList();
+
+    setState(() {
+      jumlahNotifikasi = belumDibaca.length;
+    });
+  }
+
+  void fetchNotifikasi() async {
+    try {
+      List<SuratKeluar> data = await API().getSuratKeluar();
+      setState(() {
+        jumlahNotifikasi = data.length;
+      });
+    } catch (e) {
+      print("Gagal memuat notifikasi: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getUserData();
     fetchBerita();
     fetchData();
+    fetchJumlahSuratKeluar();
+    fetchNotifikasi();
   }
 
   @override
@@ -454,6 +520,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
     final isSmall = width < 360;
+
     return Row(
       children: [
         CircleAvatar(
@@ -484,14 +551,33 @@ class _HomeRTRWState extends State<HomeRTRW> {
           ],
         ),
         const Spacer(),
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
-          onPressed: () {
+        // Ganti icon notifikasi dengan badge
+        GestureDetector(
+          onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => NotifikasiSuratKeluarPage()),
+              MaterialPageRoute(
+                builder: (_) => NotifikasiSuratKeluarPage(
+                  onSuratDibaca:
+                      fetchJumlahSuratKeluar, // refresh badge setelah dibuka
+                ),
+              ),
             );
           },
+          child: badges.Badge(
+            showBadge: jumlahNotifikasi > 0,
+            badgeContent: Text(
+              '$jumlahNotifikasi',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            badgeStyle: const badges.BadgeStyle(
+              badgeColor: Colors.red,
+              elevation: 0,
+              padding: EdgeInsets.all(6),
+            ),
+            position: badges.BadgePosition.topEnd(top: -4, end: -4),
+            child: const Icon(Icons.notifications, color: Colors.white),
+          ),
         ),
       ],
     );
