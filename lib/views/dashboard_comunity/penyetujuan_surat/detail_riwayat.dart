@@ -58,6 +58,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
           idPengajuan: widget.idPengajuan,
           status: status,
           keterangan: keteranganController.text.trim() ?? "");
+      print(response);
       if (response.statusCode == 200) {
         setState(() {
           ScaffoldMessenger.of(context).showSnackBar(
