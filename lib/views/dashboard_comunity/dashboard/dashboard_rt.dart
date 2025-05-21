@@ -235,6 +235,7 @@ class _HomeRTState extends State<HomeRT> {
     fetchBerita();
     fetchData();
     fetchJumlahSuratKeluar();
+    fetchNotifikasi();
   }
 
   void fetchJumlahSuratKeluar() async {

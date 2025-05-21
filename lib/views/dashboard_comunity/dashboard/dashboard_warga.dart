@@ -94,6 +94,7 @@ class _DashboardContentState extends State<DashboardContent> {
     getUserData();
     fetchDash();
     fetchJumlahSuratKeluar();
+    fetchNotifikasi();
   }
 
   void fetchJumlahSuratKeluar() async {
@@ -171,6 +172,7 @@ class _DashboardContentState extends State<DashboardContent> {
             onRefresh: () async {
               getUserData();
               fetchDash();
+              
             },
             child: ListView(
               padding: const EdgeInsets.all(0),

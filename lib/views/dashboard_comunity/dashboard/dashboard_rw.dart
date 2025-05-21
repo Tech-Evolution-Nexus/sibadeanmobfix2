@@ -151,6 +151,7 @@ class _HomeRWState extends State<HomeRW> {
       print("Gagal memuat notifikasi: $e");
     }
   }
+
   void fetchJumlahSuratKeluar() async {
     final suratList = await API().getSuratKeluar();
     final prefs = await SharedPreferences.getInstance();
@@ -167,7 +168,6 @@ class _HomeRWState extends State<HomeRW> {
       jumlahNotifikasi = belumDibaca.length;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -398,6 +398,7 @@ class _HomeRWState extends State<HomeRW> {
     getUserData();
     fetchBerita();
     fetchJumlahSuratKeluar();
+    fetchNotifikasi();
   }
 
   Widget pengajuan() {
