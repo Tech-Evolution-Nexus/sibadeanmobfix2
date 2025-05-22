@@ -56,8 +56,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final ThemeData theme;
-  const MyApp({super.key, required this.theme});
+  final ThemeData? theme;
+  const MyApp({super.key, this.theme});
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
