@@ -44,6 +44,7 @@ class _DashboardRTState extends State<DashboardRT> {
   int _currentIndex = 0;
   int jumlahNotifikasi = 0;
   final List<Widget> _pages = [
+    const HomeRT(key: PageStorageKey('HomeRt')),
     HomeRT(),
     RiwayatSuratRTRW(),
     VerifikasiPage(
@@ -228,14 +229,17 @@ class _HomeRTState extends State<HomeRT> {
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
+  bool isFetched = false;
+
   @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchBerita();
-    fetchData();
-    fetchJumlahSuratKeluar();
-    fetchNotifikasi();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isFetched) {
+      getUserData();
+      fetchBerita();
+      fetchData();
+      fetchJumlahSuratKeluar();
+    }
   }
 
   void fetchJumlahSuratKeluar() async {

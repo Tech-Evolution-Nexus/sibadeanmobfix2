@@ -20,12 +20,10 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/de
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_email.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_password.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/informasi_diri.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
 
-import '../../../theme/theme.dart';
 import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
 
@@ -49,6 +47,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
   String foto = "";
   int _currentIndex = 0;
   final List<Widget> _pages = [
+    const HomeRTRW(key: PageStorageKey('DashboardRtRw')),
     HomeRTRW(),
     RiwayatSuratRTRW(),
     VerifikasiPage(
@@ -321,6 +320,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
   String foto = "";
   int jumlahNotifikasi = 0;
   bool isLoading = true;
+  bool isFetced = false;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
@@ -390,25 +390,15 @@ class _HomeRTRWState extends State<HomeRTRW> {
     });
   }
 
-  void fetchNotifikasi() async {
-    try {
-      List<SuratKeluar> data = await API().getSuratKeluar();
-      setState(() {
-        jumlahNotifikasi = data.length;
-      });
-    } catch (e) {
-      print("Gagal memuat notifikasi: $e");
-    }
-  }
-
   @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchBerita();
-    fetchData();
-    fetchJumlahSuratKeluar();
-    fetchNotifikasi();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isFetced) {
+      getUserData();
+      fetchBerita();
+      fetchData();
+      fetchJumlahSuratKeluar();
+    }
   }
 
   @override

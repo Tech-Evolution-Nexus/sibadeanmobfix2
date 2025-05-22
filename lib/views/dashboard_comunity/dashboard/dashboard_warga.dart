@@ -5,18 +5,15 @@ import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/detail_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import "package:gap/gap.dart";
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import '/methods/api.dart';
-import '../../../theme/theme.dart';
 import '../../../widgets/BottomBar.dart';
 import '../pengajuan_surat/list_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
-import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -29,6 +26,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0; //navigasi butoon
   final List<Widget> _pages = [
+    const DashboardContent(key: PageStorageKey('Dashboard')),
     DashboardContent(),
     ListBerita(),
     PengajuanPage(),
@@ -88,13 +86,15 @@ class _DashboardContentState extends State<DashboardContent> {
   BeritaSuratModel? dataModel;
   int jumlahNotifikasi = 0;
 
+  bool isFetched = false;
   @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchDash();
-    fetchJumlahSuratKeluar();
-    fetchNotifikasi();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isFetched) {
+      getUserData();
+      fetchDash();
+      fetchJumlahSuratKeluar();
+    }
   }
 
   void fetchJumlahSuratKeluar() async {
@@ -149,16 +149,16 @@ class _DashboardContentState extends State<DashboardContent> {
     }
   }
 
-  void fetchNotifikasi() async {
-    try {
-      List<SuratKeluar> data = await API().getSuratKeluar();
-      setState(() {
-        jumlahNotifikasi = data.length;
-      });
-    } catch (e) {
-      print("Gagal memuat notifikasi: $e");
-    }
-  }
+  // void fetchNotifikasi() async {
+  //   try {
+  //     List<SuratKeluar> data = await API().getSuratKeluar();
+  //     setState(() {
+  //       jumlahNotifikasi = data.length;
+  //     });
+  //   } catch (e) {
+  //     print("Gagal memuat notifikasi: $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +172,7 @@ class _DashboardContentState extends State<DashboardContent> {
             onRefresh: () async {
               getUserData();
               fetchDash();
+              fetchJumlahSuratKeluar();
             },
             child: ListView(
               padding: const EdgeInsets.all(0),
