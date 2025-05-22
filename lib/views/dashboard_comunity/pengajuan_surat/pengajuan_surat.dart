@@ -352,7 +352,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       margin: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
+                                          horizontal: 0, vertical: 8),
                                       child: Padding(
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
@@ -403,7 +403,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     margin: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
+                                        horizontal: 0, vertical: 8),
                                     child: Padding(
                                       padding: const EdgeInsets.all(20),
                                       child: Column(
@@ -745,7 +745,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: InkWell(
           onTap: () {
             setState(() {
