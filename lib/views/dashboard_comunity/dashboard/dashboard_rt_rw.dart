@@ -8,6 +8,7 @@ import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
@@ -20,12 +21,10 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/de
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_email.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_password.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/informasi_diri.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/verifikasi.dart';
 
-import '../../../theme/theme.dart';
 import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
 
@@ -46,8 +45,11 @@ class HomeRTRW extends StatefulWidget {
 class _DashboardRTRWState extends State<DashboardRTRW> {
   String nama = "User";
   String nik = "";
+  String role = "";
   String foto = "";
   int _currentIndex = 0;
+  Pengaturan? pengaturan;
+  bool isLoading = true;
   final List<Widget> _pages = [
     HomeRTRW(),
     RiwayatSuratRTRW(),
@@ -64,6 +66,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
     // TODO: implement initState
     super.initState();
     getUserData();
+    fetchPengaturan();
     _currentIndex = widget.initialIndex;
   }
 
@@ -72,7 +75,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'SIBADEAN',
+          pengaturan?.appName ?? "",
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
         iconTheme: IconThemeData(color: Colors.white),
@@ -177,16 +180,17 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                       );
                     },
                   ),
-                  _buildDrawerItem(
-                    icon: Icons.verified_outlined,
-                    title: 'Verifikasi Masyarakat',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => Verifikasi()),
-                      );
-                    },
-                  ),
+                  if (role == "rt")
+                    _buildDrawerItem(
+                      icon: Icons.verified_outlined,
+                      title: 'Verifikasi Masyarakat',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => Verifikasi()),
+                        );
+                      },
+                    ),
                   Divider(thickness: 1, color: Colors.grey.shade300),
                   _buildSectionTitle("Profil & Keamanan"),
                   _buildDrawerItem(
@@ -311,6 +315,15 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
       nama = user['nama'] ?? "User";
       nik = user['nik'] ?? "NIK tidak ditemukan";
       foto = user['foto'] ?? "";
+      role = user['role'] ?? "";
+    });
+  }
+
+  Future<void> fetchPengaturan() async {
+    var res = await Pengaturan.getPengaturan();
+    setState(() {
+      pengaturan = res;
+      isLoading = false;
     });
   }
 }
