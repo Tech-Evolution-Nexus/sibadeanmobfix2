@@ -27,7 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0; //navigasi butoon
   final List<Widget> _pages = [
     const DashboardContent(key: PageStorageKey('Dashboard')),
-    DashboardContent(),
+ 
     ListBerita(),
     PengajuanPage(),
     ProfilePage(),
