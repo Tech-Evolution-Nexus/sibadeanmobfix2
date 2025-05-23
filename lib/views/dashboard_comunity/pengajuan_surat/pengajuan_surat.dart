@@ -322,7 +322,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -330,7 +330,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                   //   "Isi Data Pengajuan:",
                   //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   // ),
-                  SizedBox(height: 10),
+                  // SizedBox(height: 10),
                   Form(
                     key: _formKey,
                     child: Expanded(
@@ -352,7 +352,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       margin: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
+                                          horizontal: 0, vertical: 12),
                                       child: Padding(
                                           padding: const EdgeInsets.all(16),
                                           child: Column(
@@ -373,7 +373,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                     "Masukkan Keterangan Pengajuan Surat",
                                                 controller: ketController,
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.text,
                                                 prefixIcon:
                                                     Icons.card_membership,
                                                 validator: (value) {
@@ -403,7 +403,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     margin: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
+                                        horizontal: 0, vertical: 12),
                                     child: Padding(
                                       padding: const EdgeInsets.all(20),
                                       child: Column(
@@ -570,6 +570,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 20),
                               ],
                             ),
                           ),
@@ -688,6 +689,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                               ],
                             ),
                           ),
+                       const SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -745,7 +747,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
         child: InkWell(
           onTap: () {
             setState(() {

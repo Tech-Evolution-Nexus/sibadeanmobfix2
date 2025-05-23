@@ -138,13 +138,13 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
         child: SingleChildScrollView(
           child: Stack(
             children: [
-              // Background biru
-              Image.asset(
-                'assets/images/6.jpg',
+              Container(
                 width: double.infinity,
                 height: 200,
-                fit: BoxFit.cover,
+                color: Theme.of(context).colorScheme.primary, // warna latar belakang
+               
               ),
+              // Background biru
 
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 60),
@@ -174,30 +174,39 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
                             Text(
                                 "${dataModel?.user?.email ?? 'Email tidak tersedia'} | ${dataModel?.nik ?? 'NIK tidak tersedia'}"),
                             SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Wrap(
+                              spacing: 16, // Jarak horizontal antar item
+                              runSpacing: 8, // Jarak vertikal antar baris
                               children: [
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.work,
-                                        size: 18), // Ikon untuk profesi
+                                    Icon(Icons.work, size: 18),
                                     SizedBox(width: 4),
                                     Text(dataModel?.pekerjaan ??
                                         'Pekerjaan tidak tersedia'),
                                   ],
                                 ),
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.phone,
-                                        size: 18), // Ikon untuk nomor HP
+                                    Icon(Icons.phone, size: 18),
                                     SizedBox(width: 4),
-                                    Text("081238382834"),
+                                    Text(
+                                      (dataModel?.user?.nohp != null &&
+                                              dataModel!.user!.nohp
+                                                  .trim()
+                                                  .isNotEmpty)
+                                          ? dataModel!.user!.nohp
+                                          : 'Belum ada no hp',
+                                    ),
                                   ],
                                 ),
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.phone,
-                                        size: 18), // Ikon untuk agama
+                                    Icon(Icons.mosque,
+                                        size: 18), // Lebih sesuai untuk agama
                                     SizedBox(width: 4),
                                     Text(dataModel?.agama ??
                                         'Agama tidak tersedia'),

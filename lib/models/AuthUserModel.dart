@@ -1,5 +1,3 @@
-import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
-
 class AuthUserModel {
   final int id;
   final String role;
@@ -9,7 +7,7 @@ class AuthUserModel {
   final String nik;
   final String no_kk;
   final String avatar;
-
+  final String? fcm_token;
   AuthUserModel({
     required this.id,
     required this.nama_lengkap,
@@ -18,19 +16,21 @@ class AuthUserModel {
     required this.role,
     required this.nik,
     required this.no_kk,
+    required this.fcm_token,
     this.avatar = '',
   });
 
   factory AuthUserModel.fromJson(Map<String, dynamic> json) {
     return AuthUserModel(
       id: json['id'],
-      role: json['role'],
-      email: json['email'],
-      nama_lengkap: json['masyarakat']['nama_lengkap'],
-      nik: json['masyarakat']['nik'],
-      no_kk: json['masyarakat']['no_kk'],
+      role: json['role'] ?? '',
+      email: json['email'] ?? '',
+      nama_lengkap: json['masyarakat']['nama_lengkap'] ?? '',
+      nik: json['masyarakat']['nik'] ?? '',
+      no_kk: json['masyarakat']['no_kk'] ?? '',
       access_token: json['access_token'] ?? '',
-      avatar: json['avatar'],
+      avatar: json['avatar'] ?? '',
+      fcm_token: json['fcm_token']?.toString(),
     );
   }
 
@@ -44,6 +44,7 @@ class AuthUserModel {
       'no_kk': no_kk,
       'access_token': access_token,
       'avatar': avatar,
+      'fcm_token': fcm_token
     };
   }
 }

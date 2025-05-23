@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -277,6 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: nikController,
                                   labelText: "NIK",
                                   hintText: "Masukkan NIK",
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   keyboardType: TextInputType.number,
                                   validator: (value) => value!.length != 16
                                       ? "NIK harus 16 digit"
@@ -394,6 +395,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   labelText: "No HP",
                                   hintText: "Masukkan nomor HP",
                                   keyboardType: TextInputType.phone,
+                                  maxLength: 13,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   validator: (value) => value!.length < 10
                                       ? "Nomor HP tidak valid"
                                       : null,
@@ -442,7 +445,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: noKkController,
                                   labelText: "No KK",
                                   hintText: "Masukkan No KK",
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   keyboardType: TextInputType.number,
+                                  maxLength: 16,
                                   validator: (value) => value!.length != 16
                                       ? "No KK harus 16 digit"
                                       : null,

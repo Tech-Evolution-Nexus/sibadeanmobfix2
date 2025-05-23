@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sibadeanmob_v2_fix/helper/GoRouteHelper.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'providers/auth_provider.dart';
@@ -18,9 +21,18 @@ void main() async {
   // Minta izin
   await messaging.requestPermission();
 
-  // Dapatkan token
-  String? token = await messaging.getToken();
-  // print("Token: $token");
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+    final user = await Auth.user();
+    if (user != null) {
+      try {
+        await API().saveFcmToken(token: newToken, userId: user['user_id']);
+        await DatabaseHelper().updateFcmToken(user['user_id'], newToken);
+        print("Token baru berhasil dikirim ke server");
+      } catch (e) {
+        print("Gagal mengirim token baru: $e");
+      }
+    }
+  });
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
       showDialog(

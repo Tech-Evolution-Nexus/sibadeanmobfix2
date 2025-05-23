@@ -236,9 +236,11 @@ class _DashboardContentState extends State<DashboardContent> {
       children: [
         CircleAvatar(
           radius: width * 0.07,
-          backgroundImage: foto.isNotEmpty
-              ? NetworkImage(foto)
-              : const AssetImage('assets/images/6.jpg') as ImageProvider,
+          backgroundImage: NetworkImage(
+            (foto != null && foto.trim().isNotEmpty)
+                ? foto
+                : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
+          ),
         ),
         SizedBox(width: width * 0.03),
         Column(

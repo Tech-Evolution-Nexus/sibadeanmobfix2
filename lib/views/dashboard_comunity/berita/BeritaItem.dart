@@ -46,7 +46,7 @@ class _BeritaItemState extends State<BeritaItem> {
                 width: double.infinity,
                 height: 200,
                 child: Image.network(
-                  widget.berita.gambar ?? '',
+                  widget.berita.gambar,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -118,13 +118,20 @@ class _BeritaItemState extends State<BeritaItem> {
                   child: SizedBox.fromSize(
                     size: Size.fromRadius(40), // Image radius
                     child: Image.network(
-                      widget.berita.gambar ?? '', // URL gambar dari data
+                      widget.berita.gambar, // URL gambar dari data
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         // Jika gagal load gambar, tampilkan gambar alternatif online
                         return Image.network(
                           widget.berita.gambar,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.broken_image,
+                                  color: Colors.grey),
+                            );
+                          },
                         );
                       },
                     ),

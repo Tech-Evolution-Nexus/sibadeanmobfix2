@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
-import '../../../theme/theme.dart';
 import '/methods/api.dart';
 
 class ListBerita extends StatefulWidget {

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
-import 'package:sibadeanmob_v2_fix/theme/theme.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'informasi_diri.dart';
 import 'ganti_email.dart';
 import 'ganti_password.dart';
 import 'ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool showAppBar;
@@ -23,6 +21,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String nik = "";
   String nama_lengkap = "";
+  String foto = "";
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         nik = userList.first.nik;
         nama_lengkap = userList.first.nama_lengkap;
+        foto = userList.first.avatar;
       });
     }
   }
@@ -68,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response?.statusCode == 200) {
         print("Logout berhasil, hapus user...");
         await DatabaseHelper().deleteUser();
-
+        await FirebaseMessaging.instance.unsubscribeFromTopic('all_users');
         if (!context.mounted) return;
         context.go('/login');
       } else {
@@ -131,7 +132,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       Center(
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: AssetImage('assets/images/6.jpg'),
+                          backgroundImage: NetworkImage(
+                            (foto != null && foto.trim().isNotEmpty)
+                                ? foto
+                                : 'https://ui-avatars.com/api/?name=${nama_lengkap}&background=fff&color=052158', // Gambar default online
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10),
