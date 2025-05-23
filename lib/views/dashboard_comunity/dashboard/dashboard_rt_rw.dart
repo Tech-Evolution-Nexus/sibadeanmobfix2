@@ -51,6 +51,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
   Pengaturan? pengaturan;
   bool isLoading = true;
   final List<Widget> _pages = [
+    const HomeRTRW(key: PageStorageKey('DashboardRtRw')),
     HomeRTRW(),
     RiwayatSuratRTRW(),
     VerifikasiPage(
@@ -334,6 +335,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
   String foto = "";
   int jumlahNotifikasi = 0;
   bool isLoading = true;
+  bool isFetced = false;
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
@@ -403,25 +405,15 @@ class _HomeRTRWState extends State<HomeRTRW> {
     });
   }
 
-  void fetchNotifikasi() async {
-    try {
-      List<SuratKeluar> data = await API().getSuratKeluar();
-      setState(() {
-        jumlahNotifikasi = data.length;
-      });
-    } catch (e) {
-      print("Gagal memuat notifikasi: $e");
-    }
-  }
-
   @override
-  void initState() {
-    super.initState();
-    getUserData();
-    fetchBerita();
-    fetchData();
-    fetchJumlahSuratKeluar();
-    fetchNotifikasi();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!isFetced) {
+      getUserData();
+      fetchBerita();
+      fetchData();
+      fetchJumlahSuratKeluar();
+    }
   }
 
   @override

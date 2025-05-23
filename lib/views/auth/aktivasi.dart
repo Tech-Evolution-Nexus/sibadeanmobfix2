@@ -166,6 +166,8 @@ class _AktivasiState extends State<Aktivasi> {
                   hintText: "Masukkan Nomor HP",
                   controller: phoneController,
                   prefixIcon: Icons.phone,
+                  keyboardType:
+                                                    TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Nomor HP tidak boleh kosong';
