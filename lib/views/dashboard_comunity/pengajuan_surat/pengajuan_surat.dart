@@ -370,7 +370,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                 labelText:
                                                     "Keterangan Pengajuan Surat",
                                                 hintText:
-                                                    "Masukkan Keterangan Pengajuan Surat",
+                                                    "Masukkan Alasan Pengajuan",
                                                 controller: ketController,
                                                 keyboardType:
                                                     TextInputType.text,

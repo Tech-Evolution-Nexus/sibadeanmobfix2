@@ -26,12 +26,12 @@ class CustomScaffold extends StatelessWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Theme.of(context).colorScheme, // Biru tua
+                  Theme.of(context).colorScheme.primary, // Biru tua
                   Color(0xFF0A74DA), // Biru terang
                 ],
               ),
