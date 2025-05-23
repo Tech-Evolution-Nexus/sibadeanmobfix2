@@ -8,8 +8,8 @@ import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
-  // Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
+      // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+      Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
 
   Future<String?> _getToken() async {
     // SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -72,7 +72,7 @@ class API {
     try {
       return await _dio.post(
         "aktivasi",
-        data: {"nik": nik, "email": email,"no_hp": nohp, "password": pass},
+        data: {"nik": nik, "email": email, "no_hp": nohp, "password": pass},
       );
     } on DioException catch (e) {
       return e.response;
