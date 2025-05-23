@@ -27,6 +27,7 @@ import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/verifikasi_masyakat/
 
 import '../penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import '../profiles/profile.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DashboardRTRW extends StatefulWidget {
   final int initialIndex;
@@ -304,7 +305,7 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
     if (response.statusCode == 200) {
       // Hapus semua data user dari tabel 'user'
       await DatabaseHelper().deleteUser();
-
+      await FirebaseMessaging.instance.unsubscribeFromTopic('all_users');
       // Navigasi ke halaman login
       context.go('/login');
     }
@@ -366,8 +367,6 @@ class _HomeRTRWState extends State<HomeRTRW> {
   Future<void> fetchData() async {
     try {
       // print("test");
-      final user = await Auth.user();
-
       var response = await API().getRiwayatPengajuanMasyarakat();
       // print(response.data["data"]);
       if (response.statusCode == 200) {
@@ -418,10 +417,6 @@ class _HomeRTRWState extends State<HomeRTRW> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final width = mediaQuery.size.width;
-    final isSmall = width < 360;
-
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : RefreshIndicator(
@@ -474,9 +469,6 @@ class _HomeRTRWState extends State<HomeRTRW> {
   Widget berita() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
-    final horizontalPadding = width * 0.04;
-    final verticalPadding = height * 0.02;
     final isSmall = width < 360;
     return Container(
       width: double.infinity,
@@ -537,7 +529,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
           context: context,
           removeTop: true,
           child: ListView.builder(
-            itemCount: dataModel?.berita?.length ?? 0,
+            itemCount: dataModel?.berita.length ?? 0,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
@@ -582,9 +574,11 @@ class _HomeRTRWState extends State<HomeRTRW> {
       children: [
         CircleAvatar(
           radius: width * 0.07,
-          backgroundImage: foto.isNotEmpty
-              ? NetworkImage(foto)
-              : const AssetImage('assets/images/6.jpg') as ImageProvider,
+          backgroundImage: NetworkImage(
+            (foto != null && foto.trim().isNotEmpty)
+                ? foto
+                : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
+          ),
         ),
         SizedBox(width: width * 0.03),
         Column(
@@ -714,7 +708,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
                 mainAxisSpacing: height * 0,
                 childAspectRatio: 1.0,
               ),
-              itemCount: (dataModel?.surat?.length ?? 0) + 1,
+              itemCount: (dataModel?.surat.length ?? 0) + 1,
               itemBuilder: (context, index) {
                 if (index < dataModel!.surat.length) {
                   final item = dataModel!.surat[index];
@@ -734,12 +728,7 @@ class _HomeRTRWState extends State<HomeRTRW> {
   Widget cardshhortcutpengajuan() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
     final isSmall = width < 360;
-
-    final horizontalPadding = width * 0.04;
-    final verticalPadding = height * 0.02;
-
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 16,

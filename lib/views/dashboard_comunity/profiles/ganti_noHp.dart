@@ -76,6 +76,7 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
             const SizedBox(height: 20),
             TextField(
               controller: noHpController,
+              maxLength: 13,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../methods/api.dart';
 import '../../widgets/costum_button.dart';
 import 'register.dart';
@@ -13,6 +14,8 @@ class Verifikasi extends StatefulWidget {
 }
 
 class _VerifikasiState extends State<Verifikasi> {
+  final _formdKey = GlobalKey<FormState>();
+
   final TextEditingController nikController = TextEditingController();
   bool isLoading = false; // Untuk indikator loading
 
@@ -100,66 +103,76 @@ class _VerifikasiState extends State<Verifikasi> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 30.0),
-                  child: Image.asset(
-                    'assets/images/verivikasi.png',
-                    height: deviceWidth * 0.5,
-                    fit: BoxFit.contain,
+            child: Form(
+              key: _formdKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: Image.asset(
+                      'assets/images/verivikasi.png',
+                      height: deviceWidth * 0.5,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
 
-                const Text(
-                  "Verifikasi NIK Anda",
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 0, 0)),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Lengkapi input berikut untuk melihat status keanggotaan kependudukan Anda",
-                  style: TextStyle(
-                      fontSize: 16, color: Color.fromARGB(179, 5, 5, 5)),
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 30.0),
-
-                // 🔹 Input NIK
-                CustomTextField(
-                  labelText: "Nomor Induk Kependudukan",
-                  hintText: "Masukkan NIK",
-                  controller: nikController,
-                  keyboardType: TextInputType.number,
-                  prefixIcon: Icons.card_membership,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Masukkan NIK Anda';
-                    } else if (value.length != 16) {
-                      return 'NIK harus 16 digit';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // 🔹 Tombol Verifikasi
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    text: isLoading ? 'Memverifikasi...' : 'Verifikasi',
-                    onPressed: isLoading ? () {} : verifikasiNIK,
-                    // Disable tombol saat loading
+                  const Text(
+                    "Verifikasi NIK Anda",
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0)),
+                    textAlign: TextAlign.start,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Lengkapi input berikut untuk melihat status keanggotaan kependudukan Anda",
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromARGB(179, 5, 5, 5)),
+                    textAlign: TextAlign.start,
+                  ),
+                  const SizedBox(height: 30.0),
+
+                  // 🔹 Input NIK
+                  CustomTextField(
+                    labelText: "Nomor Induk Kependudukan",
+                    hintText: "Masukkan NIK",
+                    controller: nikController,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Icons.card_membership,
+                    maxLength: 16,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Masukkan NIK Anda';
+                      } else if (value.length != 16) {
+                        return 'NIK harus 16 digit';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // 🔹 Tombol Verifikasi
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      text: isLoading ? 'Memverifikasi...' : 'Verifikasi',
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              if (_formdKey.currentState!.validate()) {
+                                verifikasiNIK();
+                              }
+                            },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ));

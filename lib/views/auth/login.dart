@@ -1,10 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/AuthUserModel.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/ForgotPasswordPage.dart';
 import '../../methods/api.dart';
-import '../../theme/theme.dart';
 import 'verifikasi.dart';
 import '../../widgets/costum_texfield.dart';
 
@@ -23,6 +24,7 @@ class _LoginState extends State<Login> {
 
   final TextEditingController nikController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -34,16 +36,6 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    // Delay 3 detik sebelum berpindah ke Login
-    // () async {
-    //   final user = await Auth.user();
-    //   if (user["user_id"] != null) {
-    //     Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => DashboardPage()),
-    //     );
-    //   }
-    // }();
   }
 
   void loginUser() async {
@@ -59,59 +51,63 @@ class _LoginState extends State<Login> {
       );
       return;
     }
-
     try {
-      final response = await API().loginUser(nik: nik, password: pass);
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        final response =
+            await API().loginUser(nik: nik, password: pass, token: fcmToken);
 
-      final data = response!.data['data'];
-      final userData = data?['user'];
-      final masyarakat = userData?['masyarakat'];
+        final data = response!.data['data'];
+        final userData = data?['user'];
+        final masyarakat = userData?['masyarakat'];
 
-      if (response!.statusCode == 200 && data?['access_token'] != null) {
-        if (userData == null || masyarakat == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Data user tidak lengkap')),
+        if (response!.statusCode == 200 && data?['access_token'] != null) {
+          if (userData == null || masyarakat == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Data user tidak lengkap')),
+            );
+            return;
+          }
+
+          final user = AuthUserModel(
+            id: userData['id'],
+            role: userData['role'],
+            email: userData['email'],
+            nama_lengkap: masyarakat['nama_lengkap'],
+            nik: masyarakat['nik'],
+            no_kk: masyarakat['no_kk'],
+            access_token: data['access_token'],
+            fcm_token: data['fcm_token'],
           );
-          return;
+
+          await DatabaseHelper().insertUser(user);
+          await FirebaseMessaging.instance.subscribeToTopic('all_users');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(response!.data['message'] ?? 'Login berhasil')),
+          );
+
+          // Navigasi sesuai role
+          switch (user.role) {
+            case 'rt':
+              context.go("/dashboard_rt");
+              break;
+            case 'rw':
+              context.go("/dashboard_rw");
+              break;
+            default:
+              context.go("/dashboard_warga");
+              break;
+          }
+        } else {
+          final errorMessage = response.data['message'] ?? 'Login gagal';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login gagal: $errorMessage')),
+          );
+          setState(() {
+            isLoading = false;
+          });
         }
-
-        final user = AuthUserModel(
-          id: userData['id'],
-          role: userData['role'],
-          email: userData['email'],
-          nama_lengkap: masyarakat['nama_lengkap'],
-          nik: masyarakat['nik'],
-          no_kk: masyarakat['no_kk'],
-          access_token: data['access_token'],
-        );
-
-        await DatabaseHelper().insertUser(user);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(response!.data['message'] ?? 'Login berhasil')),
-        );
-
-        // Navigasi sesuai role
-        switch (user.role) {
-          case 'rt':
-            context.go("/dashboard_rt");
-            break;
-          case 'rw':
-            context.go("/dashboard_rw");
-            break;
-          default:
-            context.go("/dashboard_warga");
-            break;
-        }
-      } else {
-        final errorMessage = response.data['message'] ?? 'Login gagal';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login gagal: $errorMessage')),
-        );
-        setState(() {
-          isLoading = false;
-        });
       }
     } catch (e) {
       print(e);
@@ -136,6 +132,7 @@ class _LoginState extends State<Login> {
             Expanded(
               flex: 7,
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 20.0),
                   decoration: const BoxDecoration(
@@ -166,6 +163,8 @@ class _LoginState extends State<Login> {
                           controller: nikController,
                           keyboardType: TextInputType.number,
                           prefixIcon: Icons.card_membership,
+                          maxLength: 16,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Masukkan NIK Anda';
@@ -197,23 +196,8 @@ class _LoginState extends State<Login> {
                         ),
                         const SizedBox(height: 8),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: rememberPassword,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      rememberPassword = value!;
-                                    });
-                                  },
-                                  activeColor: Color.fromARGB(255, 12, 35, 95),
-                                ),
-                                const Text('Ingat Saya',
-                                    style: TextStyle(color: Colors.black45)),
-                              ],
-                            ),
                             GestureDetector(
                               onTap: () {
                                 // Mengarahkan ke halaman ForgotPasswordPage

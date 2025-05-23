@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
@@ -12,7 +13,7 @@ class CustomTextField extends StatefulWidget {
   final IconData? suffixIcon;
   final VoidCallback? onSuffixPressed;
   final String? Function(String?)? validator;
-
+  final List<TextInputFormatter>? inputFormatters;
   const CustomTextField({
     super.key,
     required this.labelText,
@@ -26,6 +27,7 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.validator,
     this.maxLength,
+    this.inputFormatters,
   });
 
   @override
@@ -35,7 +37,6 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -70,6 +71,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       width: deviceWidth * 0.9,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
+        inputFormatters: widget.inputFormatters,
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         readOnly: widget.readOnly,

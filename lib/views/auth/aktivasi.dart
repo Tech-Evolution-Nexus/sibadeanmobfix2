@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sibadeanmob_v2_fix/widgets/costum_button.dart';
 import '../../methods/api.dart';
 import 'login.dart';
 import '../../widgets/costum_texfield.dart';
@@ -47,6 +50,7 @@ class _AktivasiState extends State<Aktivasi> {
         final response = await API().aktivasiAkun(
           nik: widget.nik,
           email: email,
+          nohp: phone,
           pass: password,
         );
 
@@ -56,16 +60,11 @@ class _AktivasiState extends State<Aktivasi> {
         }
 
         if (response.statusCode == 200) {
-          
           _showAlertDialog(
             "Aktivasi Berhasil",
             "Akun Anda berhasil diaktivasi. Silakan login.",
             onConfirm: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const Login()),
-                (route) => false,
-              );
+              context.go("/login");
             },
           );
         } else {
@@ -150,6 +149,7 @@ class _AktivasiState extends State<Aktivasi> {
                   labelText: "Email",
                   hintText: "Masukkan Email Aktif",
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -160,14 +160,14 @@ class _AktivasiState extends State<Aktivasi> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 15),
                 CustomTextField(
                   labelText: "No HP",
                   hintText: "Masukkan Nomor HP",
+                  maxLength: 13,
                   controller: phoneController,
+                  keyboardType: TextInputType.number,
                   prefixIcon: Icons.phone,
-                  keyboardType:
-                                                    TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Nomor HP tidak boleh kosong';
@@ -177,10 +177,9 @@ class _AktivasiState extends State<Aktivasi> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 15),
                 CustomTextField(
                   labelText: "Password",
-                  hintText: "Masukkan Password Baru",
+                  hintText: "Masukkan Password",
                   controller: passwordController,
                   prefixIcon: Icons.lock,
                   obscureText: true,
@@ -193,22 +192,16 @@ class _AktivasiState extends State<Aktivasi> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 25),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 0, 78, 141),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: _isLoading ? null : aktivasiAkun,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          "Aktivasi Akun",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
+                const SizedBox(height: 20),
+                CustomButton(
+                  text: _isLoading ? 'Mengaktifasi...' : 'Aktifasi',
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          if (_formKey.currentState!.validate()) {
+                            aktivasiAkun();
+                          }
+                        },
                 ),
               ],
             ),

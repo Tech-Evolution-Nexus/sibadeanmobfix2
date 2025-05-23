@@ -45,8 +45,8 @@ class DatabaseHelper {
         nik TEXT,
         no_kk TEXT,
         access_token TEXT,
-        avatar TEXT
-
+        avatar TEXT,
+        fcm_token TEXT
       )
     ''');
   }
@@ -74,6 +74,7 @@ class DatabaseHelper {
         nik: maps[i]['nik'],
         no_kk: maps[i]['no_kk'],
         access_token: maps[i]['access_token'],
+        fcm_token: maps[i]['fcm_token'],
         avatar: maps[i]['avatar'],
       );
     });
@@ -82,5 +83,15 @@ class DatabaseHelper {
   Future<void> deleteUser() async {
     final db = await database;
     await db.delete('user');
+  }
+
+  Future<void> updateFcmToken(int userId, String newToken) async {
+    final db = await database;
+    await db.update(
+      'users',
+      {'fcm_token': newToken},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
   }
 }
