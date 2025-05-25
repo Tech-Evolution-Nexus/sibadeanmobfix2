@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import '../../methods/api.dart';
 import '../../widgets/costum_button.dart';
 import 'register.dart';
@@ -54,6 +55,10 @@ class _VerifikasiState extends State<Verifikasi> {
             );
           },
         );
+      } else if (response.statusCode == 409) {
+        _showAlertDialog("sudah terdaftar", onConfirm: () {
+          context.go("/login");
+        }, "Akun Anda Telah Terdaftar");
       } else if (response.statusCode == 404) {
         _showAlertDialog("NIK Tidak Ditemukan", onConfirm: () {
           Navigator.pushReplacement(
