@@ -97,6 +97,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
     return Scaffold(
       appBar: AppBar(
         leading: widget.showAppBar
@@ -116,11 +118,18 @@ class _ProfilePageState extends State<ProfilePage> {
           Stack(
             children: [
               Container(
-                height: 320,
+                height: width * 1.5,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(12), // Radius hanya bagian bawah
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary,
+                      Colors.white,
+                    ],
+                    stops: [0.0, 0.3, 0.6, 1.0],
                   ),
                 ),
               ),

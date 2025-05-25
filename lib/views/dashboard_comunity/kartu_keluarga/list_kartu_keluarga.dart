@@ -69,7 +69,7 @@ class _DaftarAnggotaKeluargaViewState extends State<DaftarAnggotaKeluargaView> {
       appBar: AppBar(
         title: const Text(
           'Daftar Anggota Keluarga',
-          style: TextStyle(fontSize: 20, color: Colors.white),
+          style: TextStyle(fontSize: 18, color: Colors.white),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(

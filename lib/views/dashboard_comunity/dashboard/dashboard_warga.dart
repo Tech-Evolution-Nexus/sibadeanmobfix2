@@ -1,20 +1,21 @@
-import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter/material.dart';
+import "package:gap/gap.dart";
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
-import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
+import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
-import "package:gap/gap.dart";
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/surat_keluar/notifikasi_suratkeluar_page.dart';
+
 import '/methods/api.dart';
 import '../../../widgets/BottomBar.dart';
 import '../pengajuan_surat/list_surat.dart';
 import '../profiles/profile.dart' show ProfilePage;
-import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -27,7 +28,6 @@ class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0; //navigasi butoon
   final List<Widget> _pages = [
     const DashboardContent(key: PageStorageKey('Dashboard')),
- 
     ListBerita(),
     PengajuanPage(),
     ProfilePage(),
@@ -85,7 +85,8 @@ class _DashboardContentState extends State<DashboardContent> {
   bool isLoading = true;
   BeritaSuratModel? dataModel;
   int jumlahNotifikasi = 0;
-
+  List<PengajuanSurat> pengajuanMenunggu = [];
+  List<PengajuanSurat> pengajuanSelesai = [];
   bool isFetched = false;
   @override
   void didChangeDependencies() {
@@ -149,6 +150,28 @@ class _DashboardContentState extends State<DashboardContent> {
     }
   }
 
+  Future<void> fetchData() async {
+    try {
+      // print("test");
+      var response = await API().getRiwayatPengajuanMasyarakat();
+      // print(response.data["data"]);
+      if (response.statusCode == 200) {
+        setState(() {
+          pengajuanMenunggu =
+              (response.data["data"]["pengajuanMenunggu"] as List)
+                  .map((item) => PengajuanSurat.fromJson(item))
+                  .toList();
+          pengajuanSelesai = (response.data["data"]["pengajuanSelesai"] as List)
+              .map((item) => PengajuanSurat.fromJson(item))
+              .toList();
+          // isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      // setState(() => isLoading = false);
+    }
+  }
   // void fetchNotifikasi() async {
   //   try {
   //     List<SuratKeluar> data = await API().getSuratKeluar();
@@ -321,17 +344,13 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem(
-                    'Menunggu persetujuan',
-                    dataModel!.dash.totalMenungguPersetujuan.toString(),
-                    isSmall),
+                child: _statusItem('Menunggu persetujuan',
+                    pengajuanMenunggu.length.toString(), isSmall),
               ),
               Expanded(
                 flex: 3,
                 child: _statusItem(
-                    'Selesai',
-                    dataModel!.dash.totalPersetujuanSelesai.toString(),
-                    isSmall),
+                    'Selesai', pengajuanSelesai.length.toString(), isSmall),
               ),
             ],
           ),

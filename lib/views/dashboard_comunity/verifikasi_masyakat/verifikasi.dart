@@ -49,7 +49,7 @@ class _VerifikasiState extends State<Verifikasi>
         // backgroundColor:  Theme.of(context).colorScheme.primary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text("Verifikasi Masyarakat",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
+            style: TextStyle(color: Colors.white, fontSize: 18)),
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,

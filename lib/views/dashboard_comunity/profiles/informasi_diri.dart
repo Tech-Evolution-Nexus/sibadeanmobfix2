@@ -133,91 +133,119 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width;
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Stack(
             children: [
               Container(
                 width: double.infinity,
-                height: 200,
-                color: Theme.of(context).colorScheme.primary, // warna latar belakang
-               
+                height: width * 1.5,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary,
+                      Colors.white,
+                    ],
+                    stops: [0.0, 0.3, 0.6, 1.0],
+                  ),
+                ),
               ),
+
               // Background biru
 
               Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 60),
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 30),
                 child: Column(
                   children: [
-                    Gap(100),
+                    Gap(0),
 
                     /// --- Informasi Umum ---
-                    Card(
-                      color: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.black26, width: 0.2),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              dataModel?.namaLengkap ?? "Nama tidak tersedia",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                                "${dataModel?.user?.email ?? 'Email tidak tersedia'} | ${dataModel?.nik ?? 'NIK tidak tersedia'}"),
-                            SizedBox(height: 16),
-                            Wrap(
-                              spacing: 16, // Jarak horizontal antar item
-                              runSpacing: 8, // Jarak vertikal antar baris
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.work, size: 18),
-                                    SizedBox(width: 4),
-                                    Text(dataModel?.pekerjaan ??
-                                        'Pekerjaan tidak tersedia'),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.phone, size: 18),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      (dataModel?.user?.nohp != null &&
-                                              dataModel!.user!.nohp
-                                                  .trim()
-                                                  .isNotEmpty)
-                                          ? dataModel!.user!.nohp
-                                          : 'Belum ada no hp',
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.mosque,
-                                        size: 18), // Lebih sesuai untuk agama
-                                    SizedBox(width: 4),
-                                    Text(dataModel?.agama ??
-                                        'Agama tidak tersedia'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 16),
-                            Text(dataModel?.kartuKeluarga?.alamat ??
-                                'Alamat tidak tersedia'),
-                          ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: Card(
+                        color: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Colors.black26, width: 0.2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dataModel?.namaLengkap ?? "Nama tidak tersedia",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                  "${dataModel?.user?.email ?? 'Email tidak tersedia'} | ${dataModel?.nik ?? 'NIK tidak tersedia'}"),
+                              SizedBox(height: 16),
+                              Wrap(
+                                spacing: 16, // Jarak horizontal antar item
+                                runSpacing: 8, // Jarak vertikal antar baris
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.work, size: 18),
+                                      SizedBox(width: 4),
+                                      Text(dataModel?.pekerjaan ??
+                                          'Pekerjaan tidak tersedia'),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.phone, size: 18),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        (dataModel?.user?.nohp != null &&
+                                                dataModel!.user!.nohp
+                                                    .trim()
+                                                    .isNotEmpty)
+                                            ? dataModel!.user!.nohp
+                                            : 'Belum ada no hp',
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.mosque,
+                                          size: 18), // Lebih sesuai untuk agama
+                                      SizedBox(width: 4),
+                                      Text(dataModel?.agama ??
+                                          'Agama tidak tersedia'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                              Text(dataModel?.kartuKeluarga?.alamat ??
+                                  'Alamat tidak tersedia'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -285,14 +313,14 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
               ),
 
               // Tombol kembali
-              Positioned(
-                top: 10,
-                left: 16,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.arrow_back, color: Colors.white),
-                ),
-              ),
+              // Positioned(
+              //   top: 10,
+              //   left: 16,
+              //   child: GestureDetector(
+              //     onTap: () => Navigator.pop(context),
+              //     child: const Icon(Icons.chevron_left, color: Colors.white),
+              //   ),
+              // ),
             ],
           ),
         ),
