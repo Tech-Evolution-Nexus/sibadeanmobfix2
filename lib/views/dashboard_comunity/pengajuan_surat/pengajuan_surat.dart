@@ -293,7 +293,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       if (response.statusCode == 200) {
         var role = await Auth.user();
         print("Arahkan ke dashboard: ${role['role']}");
-
+        Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
       } else {
