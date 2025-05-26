@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
@@ -21,6 +22,12 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
   final passwordController = TextEditingController();
   final newPassController = TextEditingController();
   final confirmController = TextEditingController();
+  
+  
+  //state utk show/hide password
+  bool _obscureOldPass = true;
+  bool _obscureNewPass = true;
+  bool _obscureConfirmPass = true;
 
   Future<void> chgPass(BuildContext context) async {
     final userList = await DatabaseHelper().getUser();
@@ -101,32 +108,80 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-                "Harap masukkan Kata Sandi baru untuk\nmemperbarui informasi Anda"),
-            TextField(
+                "Harap masukkan Kata Sandi baru untuk emperbarui informasi Anda"),
+                SizedBox(height: 16,),
+                 CustomTextField(
               controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _obscureOldPass,
+              keyboardType: TextInputType.text,
+                          prefixIcon: Icons.lock,
+                          suffixIcon: _obscureOldPass
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          onSuffixPressed: () {
+                            setState(() {
+                              _obscureOldPass = !_obscureOldPass;
+                            });
+                          },
                 labelText: "Kata Sandi Sekarang",
-                border: OutlineInputBorder(),
-              ),
+                hintText: "Kata Sandi Sekarang",
+
+            
             ),
+            // TextField(
+            //   controller: passwordController,
+            //   obscureText: _obscureOldPass,
+            //   decoration:  InputDecoration(
+            //     labelText: "Kata Sandi Sekarang",
+            //     border: OutlineInputBorder(),
+            //     suffixIcon: IconButton(
+            //       icon: Icon(_obscureOldPass ? Icons.visibility : Icons.visibility_off),
+            //       onPressed: () {
+            //         setState(() {
+            //           _obscureOldPass = !_obscureOldPass;
+            //         });
+            //       },
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 20),
-            TextField(
+             CustomTextField(
               controller: newPassController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _obscureNewPass,
+              keyboardType: TextInputType.text,
+                          prefixIcon: Icons.lock,
+                          suffixIcon: _obscureNewPass
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          onSuffixPressed: () {
+                            setState(() {
+                              _obscureNewPass = !_obscureNewPass;
+                            });
+                          },
                 labelText: "Kata Sandi Baru",
-                border: OutlineInputBorder(),
-              ),
+                hintText: " Kata Sandi Baru",
+
+            
             ),
+          
             const SizedBox(height: 15),
-            TextField(
+            CustomTextField(
               controller: confirmController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: _obscureConfirmPass,
+              keyboardType: TextInputType.text,
+                          prefixIcon: Icons.lock,
+                          suffixIcon: _obscureConfirmPass
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          onSuffixPressed: () {
+                            setState(() {
+                              _obscureConfirmPass = !_obscureConfirmPass;
+                            });
+                          },
                 labelText: "Konfirmasi Kata Sandi Baru",
-                border: OutlineInputBorder(),
-              ),
+                hintText: "Konfirmasi Kata Sandi Baru",
+
+            
             ),
             const SizedBox(height: 20),
             SizedBox(
