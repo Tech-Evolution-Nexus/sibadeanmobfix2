@@ -18,6 +18,7 @@ class DetailRiwayat extends StatefulWidget {
 class _DetailRiwayatState extends State<DetailRiwayat> {
   PengajuanSurat? pengajuanData;
   bool isLoading = true;
+  bool canCancel = false;
 
   @override
   void initState() {
@@ -26,20 +27,27 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   }
 
   Future<void> fetchData() async {
+    final user = await Auth.user();
     try {
       final response = await API()
           .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
-
       if (response.statusCode == 200) {
         setState(() {
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
-          print(pengajuanData);
           isLoading = false;
+          if(user["role"] == "masyarakat" && pengajuanData?.status == "pending"){
+            canCancel = true;
+          }else if(user["role"] == "rt" && pengajuanData?.status == "di_terima_rt"){
+            canCancel = true;
+          }else if(user["role"] == "rw" && pengajuanData?.status == "di_terima_rw"){
+            canCancel = true;
+          }
         });
       } else {
         setState(() => isLoading = false);
       }
     } catch (e) {
+      print(e);
       setState(() => isLoading = false);
     }
   }
@@ -128,174 +136,163 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
           ? Center(child: CircularProgressIndicator())
           : pengajuanData == null
               ? Center(child: Text("Data tidak tersedia."))
-              : SizedBox(
-                  width: double.infinity,
-                  child: ListView(
+             :SizedBox(
+  width: double.infinity,
+  child: ListView(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            if (pengajuanData != null) ...[
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: Colors.black26,
+                    width: 0.2,
+                  ),
+                ),
+                elevation: 0,
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: _warnaStatus(pengajuanData?.status??""),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _iconStatus(pengajuanData?.status??""),
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              formatStatus(pengajuanData?.status??""),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Informasi Pengajuan",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          _infoItem("Nama Surat",
+                              pengajuanData?.surat.nama_surat ?? "-"),
+                          _infoItem("Nomor Surat",
+                              pengajuanData?.nomorSurat ?? "-"),
+                          ...?pengajuanData?.fieldValues?.map((item) {
+                            return _infoItem(item.namaField, item.value);
+                          }),
+                          _infoItem(
+                            "Tanggal Pengajuan",
+                            formatTanggal(pengajuanData?.createdAt??""),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 12),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: Colors.black26,
+                    width: 0.2,
+                  ),
+                ),
+                elevation: 0,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  side: BorderSide(
-                                    color: Colors.black26,
-                                    width: 0.2,
-                                  ),
-                                ),
-                                elevation: 0,
-                                color: Colors.white,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color:
-                                            _warnaStatus(pengajuanData!.status),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(12),
-                                          topRight: Radius.circular(12),
-                                        ),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            _iconStatus(pengajuanData!.status),
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              formatStatus(
-                                                  pengajuanData!.status),
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Informasi Pengajuan",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          SizedBox(height: 16),
-                                          _infoItem("Nama Surat",
-                                              pengajuanData!.surat.nama_surat),
-                                          _infoItem("Nomor Surat",
-                                              pengajuanData!.nomorSurat ?? ""),
-                                          // SizedBox(height: 8),
-                                          ...pengajuanData!.fieldValues!
-                                              .map((item) {
-                                            return _infoItem(
-                                                item.namaField, item.value);
-                                          }),
-                                          _infoItem(
-                                            "Tanggal Pengajuan",
-                                            formatTanggal(
-                                                pengajuanData!.createdAt),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Gap(12),
-                              Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  side: BorderSide(
-                                    color: Colors.black26,
-                                    width: .2,
-                                  ),
-                                ),
-                                elevation: 0,
-                                color: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text("Data Masyarakat",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600)),
-                                      SizedBox(height: 16),
-                                      _infoItem(
-                                          "Nama Lengkap",
-                                          pengajuanData!
-                                              .masyarakat.namaLengkap),
-                                      _infoItem(
-                                          "NIK", pengajuanData!.masyarakat.nik),
-                                      _infoItem(
-                                          "Jenis Kelamin",
-                                          pengajuanData!
-                                              .masyarakat.jenisKelamin),
-                                      _infoItem(
-                                          "Tempat Lahir",
-                                          pengajuanData!
-                                              .masyarakat.tempatLahir),
-                                      _infoItem(
-                                          "Tanggal Lahir",
-                                          formatTanggal(pengajuanData!
-                                              .masyarakat.tanggalLahir)),
-                                      _infoItem("Agama",
-                                          pengajuanData!.masyarakat.agama),
-                                      _infoItem("Pendidikan",
-                                          pengajuanData!.masyarakat.pendidikan),
-                                      _infoItem("Pekerjaan",
-                                          pengajuanData!.masyarakat.pekerjaan),
-                                      _infoItem(
-                                          "Status Perkawinan",
-                                          pengajuanData!
-                                              .masyarakat.statusPerkawinan),
-                                      _infoItem(
-                                          "Kewarganegaraan",
-                                          pengajuanData!
-                                              .masyarakat.kewarganegaraan),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: submit,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                  child: Text("Batalkan"),
-                                ),
-                              ),
-                            ],
-                          )),
+                      Text("Data Masyarakat",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600)),
+                      SizedBox(height: 16),
+                      _infoItem("Nama Lengkap",
+                          pengajuanData?.masyarakat.namaLengkap ?? "-"),
+                      _infoItem("NIK", pengajuanData?.masyarakat.nik ?? "-"),
+                      _infoItem("Jenis Kelamin",
+                          pengajuanData?.masyarakat.jenisKelamin ?? "-"),
+                      _infoItem("Tempat Lahir",
+                          pengajuanData?.masyarakat.tempatLahir ?? "-"),
+                      _infoItem(
+                          "Tanggal Lahir",
+                          formatTanggal(
+                              pengajuanData?.masyarakat.tanggalLahir??"")),
+                      _infoItem(
+                          "Agama", pengajuanData?.masyarakat.agama ?? "-"),
+                      _infoItem("Pendidikan",
+                          pengajuanData?.masyarakat.pendidikan ?? "-"),
+                      _infoItem("Pekerjaan",
+                          pengajuanData?.masyarakat.pekerjaan ?? "-"),
+                      _infoItem("Status Perkawinan",
+                          pengajuanData?.masyarakat.statusPerkawinan ?? "-"),
+                      _infoItem("Kewarganegaraan",
+                          pengajuanData?.masyarakat.kewarganegaraan ?? "-"),
                     ],
                   ),
                 ),
-    );
+              ),
+              SizedBox(height: 12),
+            Visibility(
+              visible: canCancel,
+              child:   SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: Text("Batalkan"),
+                ),
+              )),
+            ] else ...[
+              Center(child: CircularProgressIndicator()),
+              SizedBox(height: 16),
+              Text("Memuat data pengajuan...", textAlign: TextAlign.center),
+            ],
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+);
   }
 
   Widget _infoItem(String label, String value, {bool isBold = false}) {

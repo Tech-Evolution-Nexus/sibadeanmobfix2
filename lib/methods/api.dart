@@ -228,9 +228,9 @@ class API {
       // Mengambil data dari API
       var response = await _dio.get("riwayat-pengajuan-detail/$idPengajuan",
           options: Options(headers: {'Authorization': 'Bearer $token'}));
-
       return response;
     } on DioException catch (e) {
+      print(e);
       // Menampilkan error jika ada
       if (kDebugMode) {
         debugPrint('Error: ${e.response}');
