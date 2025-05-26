@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_noHp.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/ganti_password.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/profiles/tentang_apk.dart';
 import 'informasi_diri.dart';
 import 'ganti_email.dart';
-import 'ganti_password.dart';
-import 'ganti_noHp.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
