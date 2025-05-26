@@ -53,6 +53,7 @@ dependencies:
   go_router: ^15.1.2
   flutter_html: ^3.0.0
   webview_flutter: ^4.11.0
+  flutter_downloader:
 
 
 dev_dependencies:
