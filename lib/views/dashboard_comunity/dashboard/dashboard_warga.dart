@@ -35,31 +35,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: Colors.white,
+    return Scaffold(    
       body: _pages[_currentIndex],
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor:  Theme.of(context).colorScheme.primary,
-      //   unselectedItemColor: Colors.grey,
-      //   showUnselectedLabels: false,
-      //   elevation: 10,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.home_rounded), label: "Home"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.person_rounded), label: "Profil"),
-      //   ],
-      // ),
-      bottomNavigationBar: BottomBar(
+       bottomNavigationBar: BottomBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -84,8 +62,7 @@ class _DashboardContentState extends State<DashboardContent> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
-  int jumlahNotifikasi = 0;
-
+  int jumlahNotifikasi = 0;  //umlah surat keluar yang belum dibaca, tampil sebagai badge di ikon notifikas
   bool isFetched = false;
   @override
   void didChangeDependencies() {
