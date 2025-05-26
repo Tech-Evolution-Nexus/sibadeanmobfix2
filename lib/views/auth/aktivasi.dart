@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_button.dart';
 import '../../methods/api.dart';
-import 'login.dart';
 import '../../widgets/costum_texfield.dart';
 
 class Aktivasi extends StatefulWidget {
@@ -45,7 +44,7 @@ class _AktivasiState extends State<Aktivasi> {
       }
 
       setState(() => _isLoading = true);
-
+      print(widget.nik);
       try {
         final response = await API().aktivasiAkun(
           nik: widget.nik,
@@ -64,10 +63,11 @@ class _AktivasiState extends State<Aktivasi> {
             "Aktivasi Berhasil",
             "Akun Anda berhasil diaktivasi. Silakan login.",
             onConfirm: () {
-              context.go("/login");
+              Navigator.pop(context);
             },
           );
         } else {
+          print(response);
           _showSnackBar(
             "Aktivasi gagal. Kode: ${response.statusCode}",
             isError: true,
