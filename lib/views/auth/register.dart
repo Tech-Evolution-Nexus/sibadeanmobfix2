@@ -21,7 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
+  bool _obscurePassword = true;
   // Controllers
   TextEditingController fullNameController = TextEditingController();
   TextEditingController nikController = TextEditingController();
@@ -198,8 +198,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context.go('/login');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Gagal registrasi")),
-      );
+          SnackBar(content: Text("Gagal registrasi")),
+        );
       }
       // var jsonResponse = jsonDecode(response.body);
       // String message = jsonResponse['message'] ??
@@ -277,8 +277,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: nikController,
                                   labelText: "NIK",
                                   hintText: "Masukkan NIK",
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   keyboardType: TextInputType.number,
+                                  maxLength: 16,
                                   validator: (value) => value!.length != 16
                                       ? "NIK harus 16 digit"
                                       : null,
@@ -396,7 +399,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   hintText: "Masukkan nomor HP",
                                   keyboardType: TextInputType.phone,
                                   maxLength: 13,
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   validator: (value) => value!.length < 10
                                       ? "Nomor HP tidak valid"
                                       : null,
@@ -405,7 +410,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: passwordController,
                                   labelText: "Password",
                                   hintText: "Masukkan password",
-                                  obscureText: true,
+                                  obscureText: _obscurePassword,
+                                  prefixIcon: Icons.lock,
+                                  suffixIcon: _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  onSuffixPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
                                   validator: (value) => value!.length < 6
                                       ? "Password minimal 6 karakter"
                                       : null,
@@ -445,7 +459,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: noKkController,
                                   labelText: "No KK",
                                   hintText: "Masukkan No KK",
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   keyboardType: TextInputType.number,
                                   maxLength: 16,
                                   validator: (value) => value!.length != 16
