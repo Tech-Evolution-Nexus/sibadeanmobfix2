@@ -35,9 +35,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(    
+    return Scaffold(
       body: _pages[_currentIndex],
-       bottomNavigationBar: BottomBar(
+      bottomNavigationBar: BottomBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -62,8 +62,8 @@ class _DashboardContentState extends State<DashboardContent> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
-  int jumlahNotifikasi = 0;  //umlah surat keluar yang belum dibaca, tampil sebagai badge di ikon notifika
-  int jumlahNotifikasi = 0;
+  int jumlahNotifikasi =
+      0; //umlah surat keluar yang belum dibaca, tampil sebagai badge di ikon notifika
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
   bool isFetched = false;
