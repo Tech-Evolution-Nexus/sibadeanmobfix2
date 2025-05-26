@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/riwayat_surat_rt_rw.dart';
 
 import '/methods/api.dart';
 
@@ -39,6 +41,35 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
       }
     } catch (e) {
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> submit() async {
+    try {
+      final user = await Auth.user();
+      final response = await API().updateStatusPengajuan(
+          idPengajuan: widget.idPengajuan,
+          status: "dibatalkan",
+          keterangan: "");
+      if (response.statusCode == 200) {
+        setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pengajuan berhasil dibatalkan')),
+          );
+
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+            (Route<dynamic> route) => route.isFirst,
+          );
+          // isLoading = false;
+        });
+      } else {
+        // setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print(e);
+
+      // setState(() => isLoading = false);
     }
   }
 
@@ -244,6 +275,19 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                               .masyarakat.kewarganegaraan),
                                     ],
                                   ),
+                                ),
+                              ),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: submit,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  child: Text("Batalkan"),
                                 ),
                               ),
                             ],

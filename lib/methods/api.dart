@@ -578,7 +578,6 @@ class API {
   Future<List<SuratKeluar>> getSuratKeluar() async {
     try {
       final response = await _dio.get('/surat-keluar');
-      print('Response data: ${response.data}'); // debug
 
       if (response.statusCode == 200) {
         final List data;

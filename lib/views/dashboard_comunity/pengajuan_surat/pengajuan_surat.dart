@@ -295,6 +295,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         print("Arahkan ke dashboard: ${role['role']}");
 
         Navigator.pop(context);
+        Navigator.pop(context);
       } else {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -689,7 +690,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                               ],
                             ),
                           ),
-                       const SizedBox(height: 16),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),

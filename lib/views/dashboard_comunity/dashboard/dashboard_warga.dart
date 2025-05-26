@@ -38,27 +38,6 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       // backgroundColor: Colors.white,
       body: _pages[_currentIndex],
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor:  Theme.of(context).colorScheme.primary,
-      //   unselectedItemColor: Colors.grey,
-      //   showUnselectedLabels: false,
-      //   elevation: 10,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.home_rounded), label: "Home"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.person_rounded), label: "Profil"),
-      //   ],
-      // ),
       bottomNavigationBar: BottomBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -95,6 +74,7 @@ class _DashboardContentState extends State<DashboardContent> {
       getUserData();
       fetchDash();
       fetchJumlahSuratKeluar();
+      fetchData();
     }
   }
 
@@ -154,7 +134,7 @@ class _DashboardContentState extends State<DashboardContent> {
     try {
       // print("test");
       var response = await API().getRiwayatPengajuanMasyarakat();
-      // print(response.data["data"]);
+      print(response.data["data"]);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
@@ -344,13 +324,17 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem('Menunggu persetujuan',
-                    pengajuanMenunggu.length.toString(), isSmall),
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModel!.dash?.totalMenungguPersetujuan.toString() ?? "0",
+                    isSmall),
               ),
               Expanded(
                 flex: 3,
                 child: _statusItem(
-                    'Selesai', pengajuanSelesai.length.toString(), isSmall),
+                    'Selesai',
+                    dataModel!.dash?.totalPersetujuanSelesai.toString() ?? "0",
+                    isSmall),
               ),
             ],
           ),
