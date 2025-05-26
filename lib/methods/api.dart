@@ -10,7 +10,7 @@ class API {
   final Dio _dio =
       // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
       Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
-
+  final String baseUrl = "https://sibadean.kholzt.com";
   Future<String?> _getToken() async {
     // SharedPreferences preferences = await SharedPreferences.getInstance();
     final user = await Auth.user();
@@ -18,18 +18,34 @@ class API {
     return user["token"];
   }
 
+  Future<dynamic> refreshToken(String refreshToken) async {
+    try {
+      final response = await _dio.post('/auth/refresh', data: {
+        'refresh_token': refreshToken,
+      });
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
   // === Login User ===
   Future<dynamic> loginUser({
     required String nik,
     required String password,
+    String? token,
   }) async {
     try {
       // print('NIK: $nik');
+      /// The new access token should be stored in the user object
+      ///
+      /// The user object should be updated with the new access token
       final response = await _dio.post(
         'login',
-        data: {'nik': nik, 'password': password},
+        data: {'nik': nik, 'password': password, "token": token},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
+      print(response.data);
       return response;
     } on DioException catch (e) {
       return e.response;
@@ -50,12 +66,13 @@ class API {
   Future<dynamic> aktivasiAkun({
     required String nik,
     required String email,
+    required String nohp,
     required String pass,
   }) async {
     try {
       return await _dio.post(
         "aktivasi",
-        data: {"nik": nik, "email": email, "password": pass},
+        data: {"nik": nik, "email": email, "no_hp": nohp, "password": pass},
       );
     } on DioException catch (e) {
       return e.response;
@@ -533,6 +550,22 @@ class API {
           options: Options(
             headers: {
               'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ));
+      return response;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
+
+  Future<dynamic> saveFcmToken(
+      {required String token, required int userId}) async {
+    try {
+      // String? token = await _getToken();
+      final response = await _dio.get('fcm/save-token',
+          options: Options(
+            headers: {
               'Accept': 'application/json',
             },
           ));

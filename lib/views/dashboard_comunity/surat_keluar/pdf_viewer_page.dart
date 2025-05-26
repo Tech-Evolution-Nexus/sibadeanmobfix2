@@ -60,20 +60,37 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Loading ${widget.title}')),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
+            title: Text('Loading ${widget.title}',
+                style: TextStyle(color: Colors.white, fontSize: 18))),
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: Text('Error')),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
+            title: Text('Error',
+                style: TextStyle(color: Colors.white, fontSize: 18))),
         body: Center(child: Text(errorMessage!)),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(widget.title,
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+      ),
       body: SfPdfViewer.file(File(localFilePath!)),
     );
   }

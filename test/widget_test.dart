@@ -13,6 +13,7 @@ import 'package:sibadeanmob_v2_fix/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
+    final ThemeData theme;
     await tester.pumpWidget(const MyApp());
 
     // Verify that our counter starts at 0.

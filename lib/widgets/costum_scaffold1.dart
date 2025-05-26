@@ -26,7 +26,7 @@ class CustomScaffold extends StatelessWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: BoxDecoration(
+            decoration:  BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,

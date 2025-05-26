@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaModel.dart';
-import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
-import '../../../theme/theme.dart';
 import '/methods/api.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -84,7 +82,7 @@ class _DetailBeritaState extends State<DetailBerita>
                               borderRadius:
                                   BorderRadius.circular(6), // Sesuaikan radius
                               child: Image.network(
-                                dataModel!.gambar ?? '', // URL gambar dari data
+                                dataModel!.gambar, // URL gambar dari data
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   // Jika gagal load gambar, tampilkan gambar alternatif online

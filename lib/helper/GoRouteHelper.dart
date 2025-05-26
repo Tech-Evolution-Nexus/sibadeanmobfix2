@@ -3,7 +3,6 @@ import 'package:sibadeanmob_v2_fix/views/auth/ResetPassword.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/login.dart';
 import 'package:sibadeanmob_v2_fix/views/auth/welcome.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_warga.dart';
 import 'package:sibadeanmob_v2_fix/views/splash.dart';
 

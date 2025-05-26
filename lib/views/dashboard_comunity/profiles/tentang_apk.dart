@@ -36,7 +36,7 @@ class _TentangPageState extends State<TentangPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text("Tentang",
-            style: TextStyle(color: Colors.black, fontSize: 16)),
+            style: TextStyle(color: Colors.black, fontSize: 18)),
         backgroundColor: Colors.white,
       ),
       body: isLoading

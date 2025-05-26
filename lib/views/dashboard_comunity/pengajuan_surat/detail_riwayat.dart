@@ -171,6 +171,11 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                           _infoItem("Nomor Surat",
                                               pengajuanData!.nomorSurat ?? ""),
                                           // SizedBox(height: 8),
+                                          ...pengajuanData!.fieldValues!
+                                              .map((item) {
+                                            return _infoItem(
+                                                item.namaField, item.value);
+                                          }),
                                           _infoItem(
                                             "Tanggal Pengajuan",
                                             formatTanggal(

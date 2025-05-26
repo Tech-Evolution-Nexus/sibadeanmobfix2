@@ -4,15 +4,8 @@ import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/register.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rt_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_rw.dart';
-import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/dashboard/dashboard_warga.dart';
-import 'package:sibadeanmob_v2_fix/views/auth/ResetPassword.dart';
 
-import '../widgets/costum_color.dart';
 import '../widgets/custom_icon_button.dart';
-import 'auth/welcome.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

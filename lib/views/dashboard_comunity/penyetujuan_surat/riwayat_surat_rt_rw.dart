@@ -48,7 +48,7 @@ class _RiwayatSuratRTRWState extends State<RiwayatSuratRTRW>
         // backgroundColor:  Theme.of(context).colorScheme.primary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text("Pengajuan Surat",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
+            style: TextStyle(color: Colors.white, fontSize: 18)),
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
