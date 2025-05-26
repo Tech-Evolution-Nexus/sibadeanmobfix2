@@ -11,12 +11,17 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/theme/theme.dart';
 import 'providers/auth_provider.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 void main() async {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await FlutterDownloader.initialize(
+    debug: true, // true untuk logging saat debugging
+    ignoreSsl: true, // bisa diset false kalau pakai HTTPS yang valid
+  );
 
   // Minta izin
   await messaging.requestPermission();

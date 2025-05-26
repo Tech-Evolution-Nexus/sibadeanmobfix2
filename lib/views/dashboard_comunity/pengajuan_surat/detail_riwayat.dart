@@ -97,12 +97,12 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               pengajuanData!.masyarakat.namaLengkap +
               ".pdf"));
 
-      if (response) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Surat disimpan di /storage/emulated/0/Download')),
-        );
-      }
+      // if (response) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //         content: Text('Surat disimpan di /storage/emulated/0/Download')),
+      //   );
+      // }
     } catch (e) {
       setState(() => isLoading = false);
     }
