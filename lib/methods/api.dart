@@ -12,7 +12,6 @@ class API {
       // Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
   final String baseUrl = "https://sibadean.kholzt.com";
   Future<String?> _getToken() async {
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
     final user = await Auth.user();
     print(user["token"]);
     return user["token"];
@@ -309,7 +308,7 @@ class API {
       String? token = await _getToken();
 
       final response = await _dio.post(
-        'chgPass',
+        'ubhpass',
         data: {
           'nik': nik,
           'password': password,
@@ -330,11 +329,9 @@ class API {
   Future<dynamic> chgNoHp({required String nik, required String noHp}) async {
     try {
       String? token = await _getToken();
-
-      print('NIK: $nik');
       final response = await _dio.post(
-        'ubhNoHp',
-        data: {'nik': nik, 'no_kitap': noHp},
+        'ubhnohp',
+        data: {'nik': nik, 'no_hp': noHp},
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -353,7 +350,7 @@ class API {
 
       print('NIK: $nik');
       final response = await _dio.post(
-        'chgEmail',
+        'ubhemail',
         data: {'nik': nik, 'email': email},
         options: Options(headers: {
           'Content-Type': 'application/json',
