@@ -60,6 +60,14 @@ class _InformasiDiriPageState extends State<InformasiDiriPage> {
 
     if (result != null) {
       File file = File(result.files.single.path!);
+      final fileSize = await file.length(); // ukuran dalam bytes
+
+      if (fileSize > 2048 * 1024) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ukuran file maksimal 2 MB')),
+        );
+        return;
+      }
       String name = result.files.single.name;
 
       setState(() {

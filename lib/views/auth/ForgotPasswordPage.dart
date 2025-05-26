@@ -12,7 +12,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void _sendResetLink() async {
     try {
       var response = await API().forgotPassword(email: _emailController.text);
-      print(response);
+      // print(response);
       if (response.statusCode == 200) {
         // Success, handle response
         ScaffoldMessenger.of(context).showSnackBar(
@@ -20,6 +20,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         );
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (_) => Login()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  response.data['message'] ?? 'Gagal mengirim link reset')),
+        );
       }
     } catch (e) {
       // Error handling
