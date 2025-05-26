@@ -7,15 +7,19 @@ class CustomDropdownField<T> extends StatefulWidget {
   final String? hintText;
   final ValueChanged<T?>? onChanged;
   final FormFieldValidator<T>? validator;
+  final IconData? icon; // Tambahkan parameter ikon
+  final Color? iconColor;
 
   const CustomDropdownField({
     Key? key,
     required this.items,
     required this.value,
-    this.labelText, 
+    this.labelText,
     this.hintText,
     this.onChanged,
     this.validator,
+    this.icon, // Tambahkan parameter ikon
+    this.iconColor,
   }) : super(key: key);
 
   @override
@@ -53,6 +57,9 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
         decoration: InputDecoration(
           labelText: widget.labelText,
           hintText: widget.hintText,
+          prefixIcon: widget.icon != null
+              ? Icon(widget.icon, color: widget.iconColor ?? const Color.fromRGBO(5, 3, 88, 1))
+              : null, // Tambahkan ikon di sini
           contentPadding: EdgeInsets.symmetric(
               horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
           border: OutlineInputBorder(
@@ -65,7 +72,7 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.blue, width: 1),
+            borderSide: const BorderSide(color: Color.fromRGBO(5, 3, 88, 1), width: 2),
           ),
         ),
       ),
