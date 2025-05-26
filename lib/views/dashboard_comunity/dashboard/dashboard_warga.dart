@@ -74,6 +74,7 @@ class _DashboardContentState extends State<DashboardContent> {
       getUserData();
       fetchDash();
       fetchJumlahSuratKeluar();
+      fetchData();
     }
   }
 
@@ -133,7 +134,7 @@ class _DashboardContentState extends State<DashboardContent> {
     try {
       // print("test");
       var response = await API().getRiwayatPengajuanMasyarakat();
-      // print(response.data["data"]);
+      print(response.data["data"]);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
@@ -323,13 +324,17 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem('Menunggu persetujuan',
-                    pengajuanMenunggu.length.toString(), isSmall),
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModel!.dash?.totalMenungguPersetujuan.toString() ?? "0",
+                    isSmall),
               ),
               Expanded(
                 flex: 3,
                 child: _statusItem(
-                    'Selesai', pengajuanSelesai.length.toString(), isSmall),
+                    'Selesai',
+                    dataModel!.dash?.totalPersetujuanSelesai.toString() ?? "0",
+                    isSmall),
               ),
             ],
           ),
