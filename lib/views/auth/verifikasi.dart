@@ -63,7 +63,7 @@ class _VerifikasiState extends State<Verifikasi> {
         _showAlertDialog("NIK Tidak Ditemukan", onConfirm: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => RegisterScreen()),
+            MaterialPageRoute(builder: (context) => RegisterScreen(nik: nik)),
           );
         }, "Silakan lakukan registrasi terlebih dahulu.");
       } else {

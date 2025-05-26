@@ -7,6 +7,7 @@ import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/DashModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/models/Pengaturan.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
@@ -340,12 +341,14 @@ class _HomeRTRWState extends State<HomeRTRW> {
   BeritaSuratModel? dataModel;
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
+  DashModel? dataModeldash;
   Future<void> fetchBerita() async {
     try {
       var response = await API().getdatadashboard();
       if (response.statusCode == 200) {
         setState(() {
           dataModel = BeritaSuratModel.fromJson(response.data['data']);
+          dataModeldash = DashModel.fromJson(response.data['data']["dash"]);
           isLoading = false;
         });
       }
@@ -658,13 +661,15 @@ class _HomeRTRWState extends State<HomeRTRW> {
             children: [
               Expanded(
                 flex: 5,
-                child: _statusItem('Menunggu persetujuan',
-                    pengajuanMenunggu.length.toString(), isSmall),
+                child: _statusItem(
+                    'Menunggu persetujuan',
+                    dataModeldash!.totalMenungguPersetujuan.toString(),
+                    isSmall),
               ),
               Expanded(
                 flex: 3,
-                child: _statusItem(
-                    'Selesai', pengajuanSelesai.length.toString(), isSmall),
+                child: _statusItem('Selesai',
+                    dataModeldash!.totalPersetujuanSelesai.toString(), isSmall),
               ),
             ],
           ),

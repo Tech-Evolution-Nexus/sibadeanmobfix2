@@ -11,7 +11,8 @@ import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String nik;
+  const RegisterScreen({required this.nik, super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -22,7 +23,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _obscurePassword = true;
-  // Controllers
   TextEditingController fullNameController = TextEditingController();
   TextEditingController nikController = TextEditingController();
   TextEditingController noKkController = TextEditingController();
@@ -194,8 +194,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       var response = await API().registerUser(formData: formData);
+      print(response.statusCode);
+      print(response.data);
+
       if (response.statusCode == 200) {
-        context.go('/login');
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Gagal registrasi")),
