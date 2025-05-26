@@ -72,7 +72,7 @@ class MasyarakatModel {
       namaLengkap: json['nama_lengkap'] ?? '',
       jenisKelamin: json['jenis_kelamin'] ?? '',
       tempatLahir: json['tempat_lahir'] ?? '',
-      tanggalLahir: tanggalLahir ?? '',
+      tanggalLahir: tanggalLahir,
       agama: json['agama'] ?? '',
       pendidikan: json['pendidikan'] ?? '',
       pekerjaan: json['pekerjaan'] ?? '',

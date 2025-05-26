@@ -4,6 +4,7 @@ import "package:gap/gap.dart";
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/models/BeritaSuratModel.dart';
+import 'package:sibadeanmob_v2_fix/models/DashModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
@@ -66,6 +67,7 @@ class _DashboardContentState extends State<DashboardContent> {
       0; //umlah surat keluar yang belum dibaca, tampil sebagai badge di ikon notifika
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
+  DashModel? dataModeldash;
   bool isFetched = false;
   @override
   void didChangeDependencies() {
@@ -101,9 +103,9 @@ class _DashboardContentState extends State<DashboardContent> {
     if (userList.isNotEmpty) {
       final user = userList.first;
       setState(() {
-        nama = user.nama_lengkap ?? "User";
-        nik = user.nik ?? "NIK tidak ditemukan";
-        foto = user.avatar ?? ""; // pastikan model punya field `foto`
+        nama = user.nama_lengkap;
+        nik = user.nik;
+        foto = user.avatar; // pastikan model punya field `foto`
       });
     } else {
       setState(() {
@@ -121,6 +123,7 @@ class _DashboardContentState extends State<DashboardContent> {
       if (response.statusCode == 200) {
         setState(() {
           dataModel = BeritaSuratModel.fromJson(response.data['data']);
+          dataModeldash = DashModel.fromJson(response.data['data']["dash"]);
           isLoading = false;
         });
       }
@@ -165,10 +168,6 @@ class _DashboardContentState extends State<DashboardContent> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
-    final isSmall = width < 360;
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : RefreshIndicator(
@@ -241,7 +240,7 @@ class _DashboardContentState extends State<DashboardContent> {
         CircleAvatar(
           radius: width * 0.07,
           backgroundImage: NetworkImage(
-            (foto != null && foto.trim().isNotEmpty)
+            (foto.trim().isNotEmpty)
                 ? foto
                 : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
           ),
@@ -331,6 +330,7 @@ class _DashboardContentState extends State<DashboardContent> {
               ),
               Expanded(
                 flex: 3,
+
                 child: _statusItem(
                     'Selesai',
                     dataModel!.dash?.totalPersetujuanSelesai.toString() ?? "0",
@@ -377,9 +377,6 @@ class _DashboardContentState extends State<DashboardContent> {
   Widget berita() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
-    final height = mediaQuery.size.height;
-    final horizontalPadding = width * 0.04;
-    final verticalPadding = height * 0.02;
     final isSmall = width < 360;
     return Container(
       width: double.infinity,
