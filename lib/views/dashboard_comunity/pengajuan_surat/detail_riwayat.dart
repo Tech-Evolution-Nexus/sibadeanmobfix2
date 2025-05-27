@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/riwayat_surat_rt_rw.dart';
 
 import '/methods/api.dart';
 
@@ -16,6 +18,7 @@ class DetailRiwayat extends StatefulWidget {
 class _DetailRiwayatState extends State<DetailRiwayat> {
   PengajuanSurat? pengajuanData;
   bool isLoading = true;
+  bool canCancel = false;
 
   @override
   void initState() {
@@ -24,21 +27,60 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   }
 
   Future<void> fetchData() async {
+    final user = await Auth.user();
     try {
       final response = await API()
           .getRiwayatPengajuanDetail(idPengajuan: widget.idPengajuan);
-
       if (response.statusCode == 200) {
         setState(() {
           pengajuanData = PengajuanSurat.fromJson(response.data["data"]);
-          print(pengajuanData);
           isLoading = false;
+          if (user["role"] == "masyarakat" &&
+              pengajuanData?.status == "pending") {
+            canCancel = true;
+          } else if (user["role"] == "rt" &&
+              pengajuanData?.status == "di_terima_rt") {
+            canCancel = true;
+          } else if (user["role"] == "rw" &&
+              pengajuanData?.status == "di_terima_rw") {
+            canCancel = true;
+          }
         });
       } else {
         setState(() => isLoading = false);
       }
     } catch (e) {
+      print(e);
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> submit() async {
+    try {
+      final user = await Auth.user();
+      final response = await API().updateStatusPengajuan(
+          idPengajuan: widget.idPengajuan,
+          status: "dibatalkan",
+          keterangan: "");
+      if (response.statusCode == 200) {
+        setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Pengajuan berhasil dibatalkan')),
+          );
+
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
+            (Route<dynamic> route) => route.isFirst,
+          );
+          // isLoading = false;
+        });
+      } else {
+        // setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print(e);
+
+      // setState(() => isLoading = false);
     }
   }
 
@@ -55,12 +97,12 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
               pengajuanData!.masyarakat.namaLengkap +
               ".pdf"));
 
-      if (response) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Surat disimpan di /storage/emulated/0/Download')),
-        );
-      }
+      // if (response) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //         content: Text('Surat disimpan di /storage/emulated/0/Download')),
+      //   );
+      // }
     } catch (e) {
       setState(() => isLoading = false);
     }
@@ -102,9 +144,10 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                   child: ListView(
                     children: [
                       Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            if (pengajuanData != null) ...[
                               Card(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -121,8 +164,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color:
-                                            _warnaStatus(pengajuanData!.status),
+                                        color: _warnaStatus(
+                                            pengajuanData?.status ?? ""),
                                         borderRadius: BorderRadius.only(
                                           topLeft: Radius.circular(12),
                                           topRight: Radius.circular(12),
@@ -133,7 +176,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                       child: Row(
                                         children: [
                                           Icon(
-                                            _iconStatus(pengajuanData!.status),
+                                            _iconStatus(
+                                                pengajuanData?.status ?? ""),
                                             color: Colors.white,
                                             size: 18,
                                           ),
@@ -141,7 +185,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                           Expanded(
                                             child: Text(
                                               formatStatus(
-                                                  pengajuanData!.status),
+                                                  pengajuanData?.status ?? ""),
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.normal,
@@ -166,20 +210,21 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                             ),
                                           ),
                                           SizedBox(height: 16),
-                                          _infoItem("Nama Surat",
-                                              pengajuanData!.surat.nama_surat),
+                                          _infoItem(
+                                              "Nama Surat",
+                                              pengajuanData?.surat.nama_surat ??
+                                                  "-"),
                                           _infoItem("Nomor Surat",
-                                              pengajuanData!.nomorSurat ?? ""),
-                                          // SizedBox(height: 8),
-                                          ...pengajuanData!.fieldValues!
-                                              .map((item) {
+                                              pengajuanData?.nomorSurat ?? "-"),
+                                          ...?pengajuanData?.fieldValues
+                                              ?.map((item) {
                                             return _infoItem(
                                                 item.namaField, item.value);
                                           }),
                                           _infoItem(
                                             "Tanggal Pengajuan",
                                             formatTanggal(
-                                                pengajuanData!.createdAt),
+                                                pengajuanData?.createdAt ?? ""),
                                           ),
                                         ],
                                       ),
@@ -187,13 +232,13 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   ],
                                 ),
                               ),
-                              Gap(12),
+                              SizedBox(height: 12),
                               Card(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   side: BorderSide(
                                     color: Colors.black26,
-                                    width: .2,
+                                    width: 0.2,
                                   ),
                                 ),
                                 elevation: 0,
@@ -203,7 +248,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text("Data Masyarakat",
                                           style: TextStyle(
@@ -212,42 +256,80 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                                       SizedBox(height: 16),
                                       _infoItem(
                                           "Nama Lengkap",
-                                          pengajuanData!
-                                              .masyarakat.namaLengkap),
-                                      _infoItem(
-                                          "NIK", pengajuanData!.masyarakat.nik),
+                                          pengajuanData
+                                                  ?.masyarakat.namaLengkap ??
+                                              "-"),
+                                      _infoItem("NIK",
+                                          pengajuanData?.masyarakat.nik ?? "-"),
                                       _infoItem(
                                           "Jenis Kelamin",
-                                          pengajuanData!
-                                              .masyarakat.jenisKelamin),
+                                          pengajuanData
+                                                  ?.masyarakat.jenisKelamin ??
+                                              "-"),
                                       _infoItem(
                                           "Tempat Lahir",
-                                          pengajuanData!
-                                              .masyarakat.tempatLahir),
+                                          pengajuanData
+                                                  ?.masyarakat.tempatLahir ??
+                                              "-"),
                                       _infoItem(
                                           "Tanggal Lahir",
-                                          formatTanggal(pengajuanData!
-                                              .masyarakat.tanggalLahir)),
-                                      _infoItem("Agama",
-                                          pengajuanData!.masyarakat.agama),
-                                      _infoItem("Pendidikan",
-                                          pengajuanData!.masyarakat.pendidikan),
-                                      _infoItem("Pekerjaan",
-                                          pengajuanData!.masyarakat.pekerjaan),
+                                          formatTanggal(pengajuanData
+                                                  ?.masyarakat.tanggalLahir ??
+                                              "")),
+                                      _infoItem(
+                                          "Agama",
+                                          pengajuanData?.masyarakat.agama ??
+                                              "-"),
+                                      _infoItem(
+                                          "Pendidikan",
+                                          pengajuanData
+                                                  ?.masyarakat.pendidikan ??
+                                              "-"),
+                                      _infoItem(
+                                          "Pekerjaan",
+                                          pengajuanData?.masyarakat.pekerjaan ??
+                                              "-"),
                                       _infoItem(
                                           "Status Perkawinan",
-                                          pengajuanData!
-                                              .masyarakat.statusPerkawinan),
+                                          pengajuanData?.masyarakat
+                                                  .statusPerkawinan ??
+                                              "-"),
                                       _infoItem(
                                           "Kewarganegaraan",
-                                          pengajuanData!
-                                              .masyarakat.kewarganegaraan),
+                                          pengajuanData?.masyarakat
+                                                  .kewarganegaraan ??
+                                              "-"),
                                     ],
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 12),
+                              Visibility(
+                                  visible: canCancel,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: submit,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                      ),
+                                      child: Text("Batalkan"),
+                                    ),
+                                  )),
+                            ] else ...[
+                              Center(child: CircularProgressIndicator()),
+                              SizedBox(height: 16),
+                              Text("Memuat data pengajuan...",
+                                  textAlign: TextAlign.center),
                             ],
-                          )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

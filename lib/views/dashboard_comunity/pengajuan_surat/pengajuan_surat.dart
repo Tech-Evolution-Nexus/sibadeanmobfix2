@@ -296,6 +296,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         print("Arahkan ke dashboard: ${user['role']}");
         Navigator.pop(context);
         Navigator.pop(context);
+        Navigator.pop(context);
       } else {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

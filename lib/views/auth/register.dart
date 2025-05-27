@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../methods/api.dart';
 import '../../widgets/costum_texfield.dart';
 import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   final String nik;
@@ -23,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   TextEditingController fullNameController = TextEditingController();
   TextEditingController nikController = TextEditingController();
   TextEditingController noKkController = TextEditingController();
@@ -274,6 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   validator: (value) => value!.isEmpty
                                       ? "Nama wajib diisi"
                                       : null,
+                                  prefixIcon: Icons.person,
                                 ),
                                 SizedBox(height: 10),
                                 CustomTextField(
@@ -288,6 +291,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   validator: (value) => value!.length != 16
                                       ? "NIK harus 16 digit"
                                       : null,
+                                  prefixIcon: Icons.badge, // contoh icon
                                 ),
                                 CustomTextField(
                                   controller: tempatLahirController,
@@ -296,14 +300,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   validator: (value) => value!.isEmpty
                                       ? "Tempat lahir wajib diisi"
                                       : null,
+                                  prefixIcon:
+                                      Icons.location_city, // contoh icon
                                 ),
+
                                 CustomTextField(
                                   controller: tanggalLahirController,
                                   labelText: "Tanggal Lahir",
                                   hintText: "Pilih tanggal lahir",
                                   readOnly: true,
-                                  suffixIcon: Icons.calendar_today,
-                                  onSuffixPressed: () async {
+                                  prefixIcon: Icons.calendar_today,
+                                  onTap: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -320,11 +327,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     }
                                   },
                                 ),
+
                                 CustomDropdownField(
                                   labelText: "Jenis Kelamin",
                                   hintText: "Pilih jenis kelamin",
                                   value: selectedGender,
-                                  items: [
+                                  items: const [
                                     DropdownMenuItem(
                                         value: "laki-laki",
                                         child: Text("Laki-laki")),
@@ -337,24 +345,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       selectedGender = value;
                                     });
                                   },
+                                  icon: Icons.male,
+                                  validator: (value) => value == null
+                                      ? "Jenis kelamin wajib dipilih"
+                                      : null,
                                 ),
                                 CustomDropdownField(
                                   labelText: "Agama",
                                   hintText: "Pilih Agama",
                                   value: selectedAgama,
-                                  items: [
+                                  items: const [
                                     DropdownMenuItem(
-                                        value: "islam", child: Text("Islam")),
+                                        value: "islam",
+                                        child: Text("Islam")),
                                     DropdownMenuItem(
                                         value: "kristen_protestan",
-                                        child: Text("Kristen")),
+                                        child: Text("Kristen Protestan")),
                                     DropdownMenuItem(
                                         value: "kristen_katolik",
-                                        child: Text("Katholik")),
+                                        child: Text("Kristen Katholik")),
                                     DropdownMenuItem(
-                                        value: "hindu", child: Text("Hindu")),
+                                        value: "hindu",
+                                        child: Text("Hindu")),
                                     DropdownMenuItem(
-                                        value: "buddha", child: Text("Buddha")),
+                                        value: "buddha",
+                                        child: Text("Buddha")),
                                     DropdownMenuItem(
                                         value: "konghucu",
                                         child: Text("Khonghucu")),
@@ -367,6 +382,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       selectedAgama = value;
                                     });
                                   },
+                                  icon: Icons.check_outlined,
+                                  validator: (value) => value == null
+                                      ? "Jenis kelamin wajib dipilih"
+                                      : null,
                                 ),
                                 CustomTextField(
                                   controller: pekerjaanController,
@@ -375,11 +394,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   validator: (value) => value!.isEmpty
                                       ? "Pekerjaan wajib diisi"
                                       : null,
+                                  prefixIcon: Icons.work,
                                 ),
                                 SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: nextPage,
-                                  child: Text("Selanjutnya"),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: nextPage,
+                                    child: const Text(
+                                      "Selanjutnya",
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -391,6 +430,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: emailController,
                                   labelText: "Email",
                                   hintText: "Masukkan email",
+                                  prefixIcon: Icons.mail,
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) => !value!.contains('@')
                                       ? "Email tidak valid"
@@ -400,12 +440,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: phoneController,
                                   labelText: "No HP",
                                   hintText: "Masukkan nomor HP",
+                                  prefixIcon: Icons.phone_android,
                                   keyboardType: TextInputType.phone,
                                   maxLength: 13,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly
                                   ],
-                                  validator: (value) => value!.length < 10
+                                  validator: (value) => value!.length < 12
                                       ? "Nomor HP tidak valid"
                                       : null,
                                 ),
@@ -431,9 +472,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: confirmPasswordController,
                                   labelText: "Konfirmasi Password",
                                   hintText: "Masukkan ulang password",
-                                  obscureText: true,
+                                  obscureText: _obscureConfirmPassword,
+                                  prefixIcon: Icons.lock,
+                                  suffixIcon: _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  onSuffixPressed: () {
+                                    setState(() {
+                                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                                    });
+                                  },
                                   validator: (value) =>
-                                      value != passwordController.text
+                                      value != confirmPasswordController.text
                                           ? "Password tidak cocok"
                                           : null,
                                 ),
@@ -442,17 +492,76 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: prevPage,
-                                      child: Text("Kembali"),
+                                    // Tombol Kembali (ikon kiri)
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 50,
+                                        child: ElevatedButton.icon(
+                                          onPressed: prevPage,
+                                          icon: const Icon(Icons.arrow_back,
+                                              color: Colors.white),
+                                          label: const Text(
+                                            "Kembali",
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: nextPage,
-                                      child: Text("Selanjutnya"),
+                                    const SizedBox(
+                                        width: 16), // Jarak antar tombol
+
+                                    // Tombol Selanjutnya (ikon kanan)
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 50,
+                                        child: Directionality(
+                                          textDirection: TextDirection.rtl, // Membalik posisi icon dan label
+                                          child: ElevatedButton.icon(
+                                            onPressed: nextPage,
+                                            icon: const Icon(
+                                                Icons.arrow_back,
+                                                color: Colors.white),
+                                            label: const Text(
+                                              "Selanjutnya",
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
+                                        
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
+                              
                             ),
 
                             // STEP 3: Alamat dan Upload KK
@@ -462,6 +571,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: noKkController,
                                   labelText: "No KK",
                                   hintText: "Masukkan No KK",
+                                  prefixIcon: Icons.pin,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly
                                   ],
@@ -475,6 +585,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: alamatController,
                                   labelText: "Alamat",
                                   hintText: "Masukkan alamat lengkap",
+                                  prefixIcon: Icons.pin_drop,
                                   validator: (value) => value!.isEmpty
                                       ? "Alamat wajib diisi"
                                       : null,
@@ -485,7 +596,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       child: CustomTextField(
                                         controller: rtController,
                                         labelText: "RT",
-                                        hintText: "Rt",
+                                        hintText: "RT",
+                                        prefixIcon: Icons.person_2,
                                         validator: (value) => value!.isEmpty
                                             ? "RT wajib diisi"
                                             : null,
@@ -496,7 +608,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       child: CustomTextField(
                                         controller: rwController,
                                         labelText: "RW",
-                                        hintText: "Rw",
+                                        hintText: "RW",
+                                        prefixIcon: Icons.person_3,
                                         validator: (value) => value!.isEmpty
                                             ? "RW wajib diisi"
                                             : null,
@@ -623,13 +736,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
                                 SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: _register,
-                                  child: Text("Daftar"),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: _register,
+                                    child: const Text(
+                                      "Daftar",
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                TextButton(
-                                  onPressed: prevPage,
-                                  child: Text("Kembali"),
+                                SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: prevPage,
+                                    child: const Text(
+                                      "Kembali",
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

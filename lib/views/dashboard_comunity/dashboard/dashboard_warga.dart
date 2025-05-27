@@ -37,29 +37,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
       body: _pages[_currentIndex],
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor:  Theme.of(context).colorScheme.primary,
-      //   unselectedItemColor: Colors.grey,
-      //   showUnselectedLabels: false,
-      //   elevation: 10,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.home_rounded), label: "Home"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.mail_rounded), label: "Pengajuan"),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(Icons.person_rounded), label: "Profil"),
-      //   ],
-      // ),
       bottomNavigationBar: BottomBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -85,7 +63,8 @@ class _DashboardContentState extends State<DashboardContent> {
   String foto = "";
   bool isLoading = true;
   BeritaSuratModel? dataModel;
-  int jumlahNotifikasi = 0;
+  int jumlahNotifikasi =
+      0; //umlah surat keluar yang belum dibaca, tampil sebagai badge di ikon notifika
   List<PengajuanSurat> pengajuanMenunggu = [];
   List<PengajuanSurat> pengajuanSelesai = [];
   DashModel? dataModeldash;
@@ -97,6 +76,7 @@ class _DashboardContentState extends State<DashboardContent> {
       getUserData();
       fetchDash();
       fetchJumlahSuratKeluar();
+      fetchData();
     }
   }
 
@@ -157,7 +137,7 @@ class _DashboardContentState extends State<DashboardContent> {
     try {
       // print("test");
       var response = await API().getRiwayatPengajuanMasyarakat();
-      // print(response.data["data"]);
+      print(response.data["data"]);
       if (response.statusCode == 200) {
         setState(() {
           pengajuanMenunggu =
@@ -345,13 +325,16 @@ class _DashboardContentState extends State<DashboardContent> {
                 flex: 5,
                 child: _statusItem(
                     'Menunggu persetujuan',
-                    dataModeldash!.totalMenungguPersetujuan.toString(),
+                    dataModel!.dash?.totalMenungguPersetujuan.toString() ?? "0",
                     isSmall),
               ),
               Expanded(
                 flex: 3,
-                child: _statusItem('Selesai',
-                    dataModeldash!.totalPersetujuanSelesai.toString(), isSmall),
+
+                child: _statusItem(
+                    'Selesai',
+                    dataModel!.dash?.totalPersetujuanSelesai.toString() ?? "0",
+                    isSmall),
               ),
             ],
           ),
