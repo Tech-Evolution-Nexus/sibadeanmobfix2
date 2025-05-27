@@ -34,7 +34,7 @@ class API {
     String? token,
   }) async {
     try {
-      // print('NIK: $nik');
+      // print('NIK: $token');
       /// The new access token should be stored in the user object
       ///
       /// The user object should be updated with the new access token
@@ -43,7 +43,7 @@ class API {
         data: {'nik': nik, 'password': password, "fcm_token": token},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
-      print(response.data);
+      // print(response.data);
       return response;
     } on DioException catch (e) {
       return e.response;
