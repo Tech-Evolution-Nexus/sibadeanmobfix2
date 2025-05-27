@@ -12,8 +12,11 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
   final IconData? suffixIcon;
   final VoidCallback? onSuffixPressed;
+  final VoidCallback? onTap;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
+  
+
   const CustomTextField({
     super.key,
     required this.labelText,
@@ -28,6 +31,7 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.maxLength,
     this.inputFormatters,
+    this.onTap,
   });
 
   @override
@@ -37,6 +41,7 @@ class CustomTextField extends StatefulWidget {
 class _CustomTextFieldState extends State<CustomTextField> {
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -77,11 +82,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
         readOnly: widget.readOnly,
         obscureText: widget.obscureText,
         maxLength: widget.maxLength,
+        onTap: widget.onTap,
         obscuringCharacter: '*',
         validator: widget.validator,
-        focusNode: _focusNode, // Tambahkan FocusNode
+        focusNode: _focusNode,
         style: TextStyle(fontSize: deviceWidth * 0.03),
-
         decoration: InputDecoration(
           prefixIcon: widget.prefixIcon != null
               ? Icon(widget.prefixIcon,
@@ -95,12 +100,27 @@ class _CustomTextFieldState extends State<CustomTextField> {
               : null,
           labelText: widget.labelText,
           hintText: widget.hintText,
-          labelStyle: TextStyle(fontSize: 14),
-          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+          labelStyle: const TextStyle(fontSize: 14),
+          hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
           contentPadding: EdgeInsets.symmetric(
-              horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
+            horizontal: deviceWidth * 0.04,
+            vertical: deviceWidth * 0.035,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color:
+                  Theme.of(context).primaryColor, // <- warna border saat fokus
+              width: 2.0,
+            ),
           ),
         ),
       ),
