@@ -40,7 +40,7 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
     final noHp = noHpController.text.trim();
 
     if (nik.isEmpty || noHp.isEmpty) {
-      _showSnackBar('NIK dan Nomor HP tidak boleh kosong.');
+      _showSnackBar('Nomor HP tidak boleh kosong.');
       return;
     } else if (!RegExp(r'^[0-9]+$').hasMatch(noHp)) {
       _showSnackBar('Nomor HP hanya boleh berisi angka.');
@@ -56,9 +56,10 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
 
       if (response.statusCode == 200) {
         _showSnackBar(response.data['message'] ?? 'Nomor HP berhasil diubah');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DashboardPage()),
-        );
+        Navigator.pop(context);
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => const DashboardPage()),
+        // );
       } else {
         final errorMessage =
             response.data['message'] ?? 'Gagal mengubah nomor HP';
