@@ -455,7 +455,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   labelText: "Password",
                                   hintText: "Masukkan password",
                                   obscureText: _obscurePassword,
-                                  prefixIcon: Icons.lock,
+                                  prefixIcon: Icons.password_rounded,
                                   suffixIcon: _obscurePassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
@@ -473,7 +473,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   labelText: "Konfirmasi Password",
                                   hintText: "Masukkan ulang password",
                                   obscureText: _obscureConfirmPassword,
-                                  prefixIcon: Icons.lock,
+                                  prefixIcon: Icons.password_rounded,
                                   suffixIcon: _obscureConfirmPassword
                                       ? Icons.visibility_off
                                       : Icons.visibility,
@@ -585,7 +585,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   controller: alamatController,
                                   labelText: "Alamat",
                                   hintText: "Masukkan alamat lengkap",
-                                  prefixIcon: Icons.pin_drop,
+                                  prefixIcon: Icons.home,
                                   validator: (value) => value!.isEmpty
                                       ? "Alamat wajib diisi"
                                       : null,
@@ -618,122 +618,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 10),
-                                GestureDetector(
+                                _buildUploadCard(
+                                  label: "Klik untuk unggah Foto KK",
+                                  imageFile: kkGambar,
+                                  imageBytes: kkGambarBytes,
                                   onTap: () => pickImage('KK'),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 150,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: kkGambarBytes != null
-                                              ? Image.memory(kkGambarBytes!,
-                                                  fit: BoxFit.cover)
-                                              : kkGambar != null
-                                                  ? Image.file(kkGambar!,
-                                                      fit: BoxFit.cover)
-                                                  : Center(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: const [
-                                                          Icon(
-                                                              Icons.upload_file,
-                                                              size: 30,
-                                                              color:
-                                                                  Colors.grey),
-                                                          SizedBox(height: 8),
-                                                          Text(
-                                                              "Klik untuk unggah Foto KK"),
-                                                        ],
-                                                      ),
-                                                    ),
-                                        ),
-                                        if (kkGambar != null ||
-                                            kkGambarBytes != null)
-                                          Positioned(
-                                            top: 4,
-                                            right: 4,
-                                            child: GestureDetector(
-                                              onTap: () => clearImage('KK'),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: const Icon(Icons.delete,
-                                                    color: Colors.white,
-                                                    size: 30),
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
+                                  onClear: () => clearImage('KK'),
                                 ),
                                 SizedBox(height: 10),
-                                GestureDetector(
+                                _buildUploadCard(
+                                  label:
+                                      "Klik untuk unggah Foto KTP (opsional)",
+                                  imageFile: ktpGambar,
+                                  imageBytes: ktpGambarBytes,
                                   onTap: () => pickImage('KTP'),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 150,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: ktpGambarBytes != null
-                                              ? Image.memory(ktpGambarBytes!,
-                                                  fit: BoxFit.cover)
-                                              : ktpGambar != null
-                                                  ? Image.file(ktpGambar!,
-                                                      fit: BoxFit.cover)
-                                                  : Center(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: const [
-                                                          Icon(
-                                                              Icons.upload_file,
-                                                              size: 30,
-                                                              color:
-                                                                  Colors.grey),
-                                                          SizedBox(height: 8),
-                                                          Text(
-                                                              "Klik untuk unggah Foto KTP (opsional)"),
-                                                        ],
-                                                      ),
-                                                    ),
-                                        ),
-                                        if (ktpGambar != null ||
-                                            ktpGambarBytes != null)
-                                          Positioned(
-                                            top: 4,
-                                            right: 4,
-                                            child: GestureDetector(
-                                              onTap: () => clearImage('KTP'),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: const Icon(Icons.delete,
-                                                    color: Colors.white,
-                                                    size: 30),
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
+                                  onClear: () => clearImage('KTP'),
                                 ),
                                 SizedBox(height: 16),
                                 SizedBox(
@@ -798,3 +697,83 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+Widget _buildUploadCard({
+  required String label,
+  required File? imageFile,
+  required Uint8List? imageBytes,
+  required VoidCallback onTap,
+  required VoidCallback onClear,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: double.infinity,
+      height: 160,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: imageBytes != null
+                  ? Image.memory(imageBytes, fit: BoxFit.cover)
+                  : imageFile != null
+                      ? Image.file(imageFile, fit: BoxFit.cover)
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.cloud_upload,
+                                  size: 40, color: Colors.grey),
+                              SizedBox(height: 10),
+                              Text(
+                                "Klik untuk unggah gambar",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+            ),
+          ),
+          if (imageFile != null || imageBytes != null)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: onClear,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    size: 20,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
