@@ -250,11 +250,12 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           return; //
         }
       }
-
+      var user = await Auth.user();
       FormData formData = FormData();
       formData = FormData.fromMap({
         'id_surat': widget.idsurat,
         'nik': widget.nik,
+        'nik_pemohon': user['nik'],
       });
       if (_selectedFile != null) {
         formData.files.add(
@@ -291,8 +292,8 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
 
       var response = await API().kirimKeDio(formData: formData);
       if (response.statusCode == 200) {
-        var role = await Auth.user();
-        print("Arahkan ke dashboard: ${role['role']}");
+      
+        print("Arahkan ke dashboard: ${user['role']}");
         Navigator.pop(context);
         Navigator.pop(context);
       } else {
