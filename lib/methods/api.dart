@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -42,7 +42,7 @@ class API {
       /// The user object should be updated with the new access token
       final response = await _dio.post(
         'login',
-        data: {'nik': nik, 'password': password, "token": token},
+        data: {'nik': nik, 'password': password, "fcm_token": token},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
       print(response.data);
@@ -504,7 +504,6 @@ class API {
   Future<dynamic> verifikasiMasyarakat() async {
     try {
       String? token = await _getToken();
-      print("token $token");
       final response = await _dio.get(
         '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -613,6 +612,23 @@ class API {
       }
     } catch (e) {
       throw Exception('Error fetching surat keluar: $e');
+    }
+  }
+
+  Future<dynamic> ttd(FormData form) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.post('ttdup',
+          data: form,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ));
+      return response;
+    } on DioException catch (e) {
+      return e.response;
     }
   }
 }

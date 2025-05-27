@@ -14,6 +14,7 @@ import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/BeritaItem.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/berita/list_berita.dart';
+import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/ttd.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/formRt/verivikasi_rt.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/kartu_keluarga/list_kartu_keluarga.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/list_surat.dart';
@@ -111,10 +112,11 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage: foto.isNotEmpty
-                            ? NetworkImage(foto)
-                            : const AssetImage('assets/images/6.jpg')
-                                as ImageProvider,
+                        backgroundImage: NetworkImage(
+                          (foto != null && foto.trim().isNotEmpty)
+                              ? foto
+                              : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
+                        ),
                       ),
                       SizedBox(width: 12),
                       Row(
@@ -196,6 +198,16 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
                     ),
                   Divider(thickness: 1, color: Colors.grey.shade300),
                   _buildSectionTitle("Profil & Keamanan"),
+                  _buildDrawerItem(
+                    icon: Icons.description_outlined,
+                    title: 'Tanda Tangan',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => TtdPage()),
+                      );
+                    },
+                  ),
                   _buildDrawerItem(
                     icon: Icons.email_outlined,
                     title: 'Ganti Email',
