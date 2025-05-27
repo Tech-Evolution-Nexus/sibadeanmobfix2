@@ -125,9 +125,9 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
     try {
       var response =
           await API().getdatadetailpengajuansurat(idsurat: widget.idsurat);
-      ();
+      // ();
       if (response.statusCode == 200) {
-        // print(response.data['data']);
+        print(response.data['data']['surat']['fields']);
         setState(() {
           dataModel =
               SuratLampiranModel.fromJson(response.data['data']['surat']);
@@ -138,6 +138,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
               (_) => TextEditingController(),
             );
           }
+          print(dataModel?.fields);
         });
       }
     } catch (e) {
@@ -292,11 +293,16 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
 
       var response = await API().kirimKeDio(formData: formData);
       if (response.statusCode == 200) {
-      
-        print("Arahkan ke dashboard: ${user['role']}");
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
+        // print("Arahkan ke dashboard: ${user['role']}");
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+
+        // if (Navigator.of(context).canPop()) {
+        //   Navigator.of(context).pop();
+        // } else {
+        //   // Jika tidak bisa pop, arahkan ke halaman utama atau gunakan goRouter pushReplacement
+        //   context.go('/beranda'); // atau sesuai dengan rute utama kamu
+        // }
       } else {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -576,66 +582,66 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                               ],
                             ),
                           ),
-
-                          // Halaman 2
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                if (isLoading ||
-                                    (dataModel?.fields?.isEmpty ?? true))
-                                  Center(child: CircularProgressIndicator())
-                                else
-                                  Column(
-                                    children: List.generate(
-                                        dataModel!.fields.length, (i) {
-                                      final item = dataModel!.fields[i];
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 12.0),
-                                        child: CustomTextField(
-                                          controller:
-                                              fieldControllers.length > i
-                                                  ? fieldControllers[i]
-                                                  : TextEditingController(),
-                                          labelText: item.namaField ?? "data",
-                                          hintText:
-                                              "Masukkan ${item.namaField ?? 'data'}",
-                                          keyboardType: TextInputType.text,
-                                          validator: (value) => value == null ||
-                                                  value.isEmpty
-                                              ? 'Field ini tidak boleh kosong'
-                                              : null,
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: prevPage,
-                                      child: const Text("Kembali"),
+                          if ((dataModel?.fields?.isNotEmpty ?? false))
+                            SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  if (isLoading ||
+                                      (dataModel?.fields?.isEmpty ?? true))
+                                    Center(child: CircularProgressIndicator())
+                                  else
+                                    Column(
+                                      children: List.generate(
+                                          dataModel!.fields.length, (i) {
+                                        final item = dataModel!.fields[i];
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 12.0),
+                                          child: CustomTextField(
+                                            controller:
+                                                fieldControllers.length > i
+                                                    ? fieldControllers[i]
+                                                    : TextEditingController(),
+                                            labelText: item.namaField ?? "data",
+                                            hintText:
+                                                "Masukkan ${item.namaField ?? 'data'}",
+                                            keyboardType: TextInputType.text,
+                                            validator: (value) => value ==
+                                                        null ||
+                                                    value.isEmpty
+                                                ? 'Field ini tidak boleh kosong'
+                                                : null,
+                                          ),
+                                        );
+                                      }),
                                     ),
-                                    ElevatedButton(
-                                      onPressed:
+                                  SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: prevPage,
+                                        child: const Text("Kembali"),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: (dataModel
+                                                    ?.lampiransurat?.isEmpty ??
+                                                true)
+                                            ? _submitPengajuan
+                                            : nextPage,
+                                        child: Text(
                                           (dataModel?.lampiransurat?.isEmpty ??
                                                   true)
-                                              ? _submitPengajuan
-                                              : nextPage,
-                                      child: Text(
-                                        (dataModel?.lampiransurat?.isEmpty ??
-                                                true)
-                                            ? "Ajukan Surat"
-                                            : "Selanjutnya",
+                                              ? "Ajukan Surat"
+                                              : "Selanjutnya",
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
 
                           // Halaman 3
                           SingleChildScrollView(

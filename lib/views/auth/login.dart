@@ -56,7 +56,7 @@ class _LoginState extends State<Login> {
       if (fcmToken != null) {
         final response =
             await API().loginUser(nik: nik, password: pass, token: fcmToken);
-
+        print(response!.data['data']);
         final data = response!.data['data'];
         final userData = data?['user'];
         final masyarakat = userData?['masyarakat'];
@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
             nik: masyarakat['nik'],
             no_kk: masyarakat['no_kk'],
             access_token: data['access_token'],
-            fcm_token: data['fcm_token'],
+            // fcm_token: data['fcm_token'],
           );
 
           await DatabaseHelper().insertUser(user);
@@ -164,7 +164,9 @@ class _LoginState extends State<Login> {
                           keyboardType: TextInputType.number,
                           prefixIcon: Icons.card_membership,
                           maxLength: 16,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Masukkan NIK Anda';

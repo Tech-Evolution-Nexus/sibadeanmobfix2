@@ -22,8 +22,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
   final passwordController = TextEditingController();
   final newPassController = TextEditingController();
   final confirmController = TextEditingController();
-  
-  
+
   //state utk show/hide password
   bool _obscureOldPass = true;
   bool _obscureNewPass = true;
@@ -36,16 +35,13 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
     final newPass = newPassController.text.trim();
     final confPass = confirmController.text.trim();
 
-    print(
-        'DEBUG: newPass="$newPass" (${newPass.length}), confPass="$confPass" (${confPass.length})');
-
-    if (newPass.isEmpty || confPass.isEmpty) {
-      _showSnackBar(context, 'Kolom tidak boleh kosong.');
+    if (currentPass.isEmpty || newPass.isEmpty || confPass.isEmpty) {
+      _showSnackBar(context, 'Semua kolom harus diisi.');
       return;
     }
 
     if (newPass.length < 6) {
-      _showSnackBar(context, 'Password harus terdiri dari minimal 6 karakter.');
+      _showSnackBar(context, 'Password harus minimal 6 karakter.');
       return;
     }
 
@@ -54,15 +50,13 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
       return;
     }
 
-// Proceed with API call
-
     try {
       final response = await API().chgPass(
-          nik: nik,
-          password: currentPass,
-          newPass: newPass,
-          confPass: confPass);
-      print(response.data);
+        nik: nik,
+        password: currentPass,
+        newPass: newPass,
+        confPass: confPass,
+      );
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -78,16 +72,36 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
         final errorMessage =
             response.data['message'] ?? 'Gagal mengubah password';
         print("Gagal: $errorMessage");
-        print(response.data);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal: $errorMessage')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Gagal'),
+            content: Text(errorMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
         );
       }
     } catch (e) {
       print("Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Kesalahan'),
+          content: Text('Terjadi kesalahan: ${e.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tutup'),
+            ),
+          ],
+        ),
       );
     }
   }
@@ -109,24 +123,23 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
           children: [
             const Text(
                 "Harap masukkan Kata Sandi baru untuk emperbarui informasi Anda"),
-                SizedBox(height: 16,),
-                 CustomTextField(
+            SizedBox(
+              height: 16,
+            ),
+            CustomTextField(
               controller: passwordController,
               obscureText: _obscureOldPass,
               keyboardType: TextInputType.text,
-                          prefixIcon: Icons.lock,
-                          suffixIcon: _obscureOldPass
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          onSuffixPressed: () {
-                            setState(() {
-                              _obscureOldPass = !_obscureOldPass;
-                            });
-                          },
-                labelText: "Kata Sandi Sekarang",
-                hintText: "Kata Sandi Sekarang",
-
-            
+              prefixIcon: Icons.lock,
+              suffixIcon:
+                  _obscureOldPass ? Icons.visibility_off : Icons.visibility,
+              onSuffixPressed: () {
+                setState(() {
+                  _obscureOldPass = !_obscureOldPass;
+                });
+              },
+              labelText: "Kata Sandi Sekarang",
+              hintText: "Kata Sandi Sekarang",
             ),
             // TextField(
             //   controller: passwordController,
@@ -145,43 +158,37 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
             //   ),
             // ),
             const SizedBox(height: 20),
-             CustomTextField(
+            CustomTextField(
               controller: newPassController,
               obscureText: _obscureNewPass,
               keyboardType: TextInputType.text,
-                          prefixIcon: Icons.lock,
-                          suffixIcon: _obscureNewPass
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          onSuffixPressed: () {
-                            setState(() {
-                              _obscureNewPass = !_obscureNewPass;
-                            });
-                          },
-                labelText: "Kata Sandi Baru",
-                hintText: " Kata Sandi Baru",
-
-            
+              prefixIcon: Icons.lock,
+              suffixIcon:
+                  _obscureNewPass ? Icons.visibility_off : Icons.visibility,
+              onSuffixPressed: () {
+                setState(() {
+                  _obscureNewPass = !_obscureNewPass;
+                });
+              },
+              labelText: "Kata Sandi Baru",
+              hintText: " Kata Sandi Baru",
             ),
-          
+
             const SizedBox(height: 15),
             CustomTextField(
               controller: confirmController,
               obscureText: _obscureConfirmPass,
               keyboardType: TextInputType.text,
-                          prefixIcon: Icons.lock,
-                          suffixIcon: _obscureConfirmPass
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          onSuffixPressed: () {
-                            setState(() {
-                              _obscureConfirmPass = !_obscureConfirmPass;
-                            });
-                          },
-                labelText: "Konfirmasi Kata Sandi Baru",
-                hintText: "Konfirmasi Kata Sandi Baru",
-
-            
+              prefixIcon: Icons.lock,
+              suffixIcon:
+                  _obscureConfirmPass ? Icons.visibility_off : Icons.visibility,
+              onSuffixPressed: () {
+                setState(() {
+                  _obscureConfirmPass = !_obscureConfirmPass;
+                });
+              },
+              labelText: "Konfirmasi Kata Sandi Baru",
+              hintText: "Konfirmasi Kata Sandi Baru",
             ),
             const SizedBox(height: 20),
             SizedBox(
