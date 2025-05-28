@@ -4,6 +4,7 @@ import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '/methods/api.dart';
 
@@ -312,6 +313,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ...pengajuanData!.fieldValues!.map((item) {
                   return _infoItem(item.namaField, item.value);
                 }),
+                _infoItem("Surat Pengantar", pengajuanData!.keterangan,
+                    isPengantar: true),
                 _infoItem(
                   "Tanggal Pengajuan",
                   formatTanggal(pengajuanData!.createdAt),
@@ -439,7 +442,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     );
   }
 
-  Widget _infoItem(String label, String value, {bool isBold = false}) {
+  Widget _infoItem(String label, String value,
+      {bool isBold = false, bool isPengantar = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Row(
@@ -459,14 +463,51 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
           SizedBox(width: 16),
           Expanded(
             flex: 5,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-                color: isBold ? Colors.black : Colors.grey[800],
-              ),
-            ),
+            child: isPengantar
+                ? ((pengajuanData?.status != "pending" &&
+                        pengajuanData?.status != "dibatalkan" &&
+                        pengajuanData?.status != "di_tolak_rt")
+                    ? GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: InteractiveViewer(
+                                  child: pengajuanData?.pengantarRt != "-"
+                                      ? Image.network(
+                                          pengajuanData?.pengantarRt ?? "",
+                                          fit: BoxFit.contain,
+                                        )
+                                      : SfPdfViewer.network(
+                                          API().baseUrl +
+                                              "/surat-pengantar/" +
+                                              pengajuanData!.id
+                                                  .toString(), // Ganti dengan URL Laravel Anda
+                                          canShowScrollHead: true,
+                                          canShowScrollStatus: true,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Icon(Icons.visibility),
+                        ),
+                      )
+                    : Text("-"))
+                : Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+                      color: isBold ? Colors.black : Colors.grey[800],
+                    ),
+                  ),
           ),
         ],
       ),

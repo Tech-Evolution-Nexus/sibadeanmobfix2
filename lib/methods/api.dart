@@ -1,7 +1,6 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
 import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 
@@ -35,16 +34,16 @@ class API {
     String? token,
   }) async {
     try {
-      // print('NIK: $nik');
+      // print('NIK: $token');
       /// The new access token should be stored in the user object
       ///
       /// The user object should be updated with the new access token
       final response = await _dio.post(
         'login',
-        data: {'nik': nik, 'password': password, "token": token},
+        data: {'nik': nik, 'password': password, "fcm_token": token},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
-      print(response.data);
+      // print(response.data);
       return response;
     } on DioException catch (e) {
       return e.response;
@@ -239,48 +238,68 @@ class API {
     }
   }
 
-  Future<dynamic> downloadPengajuan(
+  Future<void> downloadPengajuan(
       {required int idPengajuan, String name = "pengajuan surat.pdf"}) async {
     try {
-      // Tentukan direktori simpan
-      Directory? downloadDir;
-      if (Platform.isAndroid) {
-        downloadDir = Directory(
-          "/storage/emulated/0/Download",
-        ); // folder Downloads umum
-      } else if (Platform.isIOS) {
-        downloadDir = await getApplicationDocumentsDirectory(); // fallback iOS
-      }
-
-      // Nama file (bisa juga dari API)
-      String fileName = name;
-      String savePath = "${downloadDir!.path}/$fileName";
-
-      String? token = await _getToken();
-
-      // Unduh file
-      var response = await _dio.download(
-        "riwayat-pengajuan/$idPengajuan/download",
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-        savePath,
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            debugPrint(
-              "Progress: ${(received / total * 100).toStringAsFixed(0)}%",
-            );
-          }
+      final res = await FlutterDownloader.enqueue(
+        url: "$baseUrl/api/riwayat-pengajuan/$idPengajuan/download",
+        headers: {
+          'Authorization': 'Bearer ${await _getToken()}',
         },
+        savedDir: "/storage/emulated/0/Download",
+        fileName: name,
+        showNotification:
+            true, // tampilkan notifikasi progress dan selesai otomatis
+        openFileFromNotification: true, // buka file jika tap notifikasi selesai
       );
-
-      return true;
-    } on DioException catch (e) {
-      debugPrint('Download error: ${e.message}');
-      return 'Gagal mengunduh file.';
+      print(res);
     } catch (e) {
-      debugPrint('Error umum: $e');
-      return 'Terjadi kesalahan.';
+      print(e);
     }
   }
+
+  // Future<dynamic> downloadPengajuan(
+  //     {required int idPengajuan, String name = "pengajuan surat.pdf"}) async {
+  //   try {
+  //     // Tentukan direktori simpan
+  //     Directory? downloadDir;
+  //     if (Platform.isAndroid) {
+  //       downloadDir = Directory(
+  //         "/storage/emulated/0/Download",
+  //       ); // folder Downloads umum
+  //     } else if (Platform.isIOS) {
+  //       downloadDir = await getApplicationDocumentsDirectory(); // fallback iOS
+  //     }
+
+  //     // Nama file (bisa juga dari API)
+  //     String fileName = name;
+  //     String savePath = "${downloadDir!.path}/$fileName";
+
+  //     String? token = await _getToken();
+
+  //     // Unduh file
+  //     var response = await _dio.download(
+  //       "riwayat-pengajuan/$idPengajuan/download",
+  //       options: Options(headers: {'Authorization': 'Bearer $token'}),
+  //       savePath,
+  //       onReceiveProgress: (received, total) {
+  //         if (total != -1) {
+  //           debugPrint(
+  //             "Progress: ${(received / total * 100).toStringAsFixed(0)}%",
+  //           );
+  //         }
+  //       },
+  //     );
+
+  //     return true;
+  //   } on DioException catch (e) {
+  //     debugPrint('Download error: ${e.message}');
+  //     return 'Gagal mengunduh file.';
+  //   } catch (e) {
+  //     debugPrint('Error umum: $e');
+  //     return 'Terjadi kesalahan.';
+  //   }
+  // }
 
   Future<dynamic> getAnggotaKeluarga({required String nokk}) async {
     try {
@@ -483,7 +502,6 @@ class API {
   Future<dynamic> verifikasiMasyarakat() async {
     try {
       String? token = await _getToken();
-      print("token $token");
       final response = await _dio.get(
         '/verifikasi', // Ganti dengan endpoint sesuai backend Laravel Anda
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -592,6 +610,23 @@ class API {
       }
     } catch (e) {
       throw Exception('Error fetching surat keluar: $e');
+    }
+  }
+
+  Future<dynamic> ttd(FormData form) async {
+    try {
+      String? token = await _getToken();
+      final response = await _dio.post('ttdup',
+          data: form,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Accept': 'application/json',
+            },
+          ));
+      return response;
+    } on DioException catch (e) {
+      return e.response;
     }
   }
 }

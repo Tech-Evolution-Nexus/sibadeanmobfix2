@@ -8,6 +8,7 @@ class AuthUserModel {
   final String no_kk;
   final String avatar;
   final String? fcm_token;
+  // final String? fcm_token;
   AuthUserModel({
     required this.id,
     required this.nama_lengkap,
@@ -16,7 +17,9 @@ class AuthUserModel {
     required this.role,
     required this.nik,
     required this.no_kk,
-    required this.fcm_token,
+    this.fcm_token,
+
+    // required this.fcm_token,
     this.avatar = '',
   });
 
@@ -30,7 +33,8 @@ class AuthUserModel {
       no_kk: json['masyarakat']['no_kk'] ?? '',
       access_token: json['access_token'] ?? '',
       avatar: json['avatar'] ?? '',
-      fcm_token: json['fcm_token']?.toString(),
+      fcm_token: json['fcm_token'] ?? '',
+      // fcm_token: json['fcm_token']?.toString(),
     );
   }
 
@@ -44,7 +48,7 @@ class AuthUserModel {
       'no_kk': no_kk,
       'access_token': access_token,
       'avatar': avatar,
-      'fcm_token': fcm_token
+      // 'fcm_token': fcm_token
     };
   }
 }

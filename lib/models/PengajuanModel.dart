@@ -48,7 +48,6 @@ class PengajuanSurat {
   factory PengajuanSurat.fromJson(Map<String, dynamic> json) {
     DateTime date = DateTime.parse(json["created_at"]);
     String dateFormat = DateFormat('dd/MM/yyyy').format(date);
-    print("halo");
     return PengajuanSurat(
       id: json['id'] ?? 0,
       nik: json['nik']?.toString() ?? '-',
