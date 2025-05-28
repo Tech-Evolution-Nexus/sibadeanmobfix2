@@ -77,7 +77,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         dataModelUser?.kartuKeluarga?.kkgambar == "";
 
     // Validasi file KK dan KTP wajib ada
-    if (isKtpKosong || isKkKosong) {
+    if ( isKkKosong) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
