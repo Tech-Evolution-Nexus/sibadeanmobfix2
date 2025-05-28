@@ -327,12 +327,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     }
                                   },
                                 ),
-<<<<<<< HEAD
-                               
-=======
-
->>>>>>> b44bea0284575e4c266c86c1736cc9564cba8af4
-                                CustomDropdownField(
+    CustomDropdownField(
                                   labelText: "Jenis Kelamin",
                                   hintText: "Pilih jenis kelamin",
                                   value: selectedGender,
