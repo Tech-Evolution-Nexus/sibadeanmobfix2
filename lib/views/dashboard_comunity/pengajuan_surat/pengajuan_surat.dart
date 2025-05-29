@@ -77,7 +77,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         dataModelUser?.kartuKeluarga?.kkgambar == "";
 
     // Validasi file KK dan KTP wajib ada
-    if ( isKkKosong) {
+    if (isKkKosong) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -257,6 +257,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         'id_surat': widget.idsurat,
         'nik': widget.nik,
         'nik_pemohon': user['nik'],
+        'keterangan': ketController.text.trim()
       });
       if (_selectedFile != null) {
         formData.files.add(

@@ -116,7 +116,7 @@ class _DashboardContentState extends State<DashboardContent> {
     }
   }
 
-  Future<void> fetchDash() async {
+  Future<void> fetchDash() async { //data dashboard,
     try {
       var response = await API().getdatadashboard();
       // print(response.data['data']);
@@ -133,7 +133,8 @@ class _DashboardContentState extends State<DashboardContent> {
     }
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchData() async { // data pengajuan
+
     try {
       // print("test");
       var response = await API().getRiwayatPengajuanMasyarakat();
@@ -155,16 +156,7 @@ class _DashboardContentState extends State<DashboardContent> {
       // setState(() => isLoading = false);
     }
   }
-  // void fetchNotifikasi() async {
-  //   try {
-  //     List<SuratKeluar> data = await API().getSuratKeluar();
-  //     setState(() {
-  //       jumlahNotifikasi = data.length;
-  //     });
-  //   } catch (e) {
-  //     print("Gagal memuat notifikasi: $e");
-  //   }
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +221,7 @@ class _DashboardContentState extends State<DashboardContent> {
       ),
     );
   }
-
+//bagian profileats
   Widget buildHeader() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
@@ -299,6 +291,7 @@ class _DashboardContentState extends State<DashboardContent> {
     );
   }
 
+//status pengajuan
   Widget cardhero() {
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;

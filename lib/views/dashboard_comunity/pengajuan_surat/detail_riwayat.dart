@@ -369,6 +369,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Widget _infoItem(String label, String value,
       {bool isBold = false, bool isPengantar = false}) {
+    print(pengajuanData?.pengantarRt);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Row(

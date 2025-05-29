@@ -10,7 +10,6 @@ import '../../widgets/costum_texfield.dart';
 import '../../widgets/CustomDropdownField.dart';
 import 'package:dio/dio.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   final String nik;
   const RegisterScreen({required this.nik, super.key});
@@ -228,454 +227,358 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30.0),
-                    child: Image.asset(
-                      'assets/images/register.png',
-                      height: deviceWidth * 0.5,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                Text(
-                  "Registrasi",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-                SizedBox(height: 20),
-                Form(
-                  key: _formKey,
-                  child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Form(
+            key: _formKey,
+            child: 
+               PageView(
+                    controller: _pageController,
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * 0.8,
-                        ),
-                        child: PageView(
-                          controller: _pageController,
-                          physics: NeverScrollableScrollPhysics(),
+                      // STEP 1: Identitas Diri
+                      SingleChildScrollView(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
                           children: [
-                            // STEP 1: Identitas Diri
                             Column(
-                              children: [
-                                CustomTextField(
-                                  controller: fullNameController,
-                                  labelText: "Nama Lengkap",
-                                  hintText: "Masukkan nama lengkap",
-                                  validator: (value) => value!.isEmpty
-                                      ? "Nama wajib diisi"
-                                      : null,
-                                  prefixIcon: Icons.person,
-                                ),
-                                SizedBox(height: 10),
-                                CustomTextField(
-                                  controller: nikController,
-                                  labelText: "NIK",
-                                  hintText: "Masukkan NIK",
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 16,
-                                  validator: (value) => value!.length != 16
-                                      ? "NIK harus 16 digit"
-                                      : null,
-                                  prefixIcon: Icons.badge, // contoh icon
-                                ),
-                                CustomTextField(
-                                  controller: tempatLahirController,
-                                  labelText: "Tempat Lahir",
-                                  hintText: "Masukkan tempat lahir",
-                                  validator: (value) => value!.isEmpty
-                                      ? "Tempat lahir wajib diisi"
-                                      : null,
-                                  prefixIcon:
-                                      Icons.location_city, // contoh icon
-                                ),
-
-                                CustomTextField(
-                                  controller: tanggalLahirController,
-                                  labelText: "Tanggal Lahir",
-                                  hintText: "Pilih tanggal lahir",
-                                  readOnly: true,
-                                  prefixIcon: Icons.calendar_today,
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(1900),
-                                      lastDate: DateTime.now(),
-                                    );
-
-                                    if (pickedDate != null) {
-                                      String formattedDate =
-                                          DateFormat('dd-MM-yyyy')
-                                              .format(pickedDate);
-                                      tanggalLahirController.text =
-                                          formattedDate;
-                                    }
-                                  },
-                                ),
-    CustomDropdownField(
-                                  labelText: "Jenis Kelamin",
-                                  hintText: "Pilih jenis kelamin",
-                                  value: selectedGender,
-                                  items: const [
-                                    DropdownMenuItem(
-                                        value: "laki-laki",
-                                        child: Text("Laki-laki")),
-                                    DropdownMenuItem(
-                                        value: "perempuan",
-                                        child: Text("Perempuan")),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedGender = value;
-                                    });
-                                  },
-                                  icon: Icons.male,
-                                  validator: (value) => value == null
-                                      ? "Jenis kelamin wajib dipilih"
-                                      : null,
-                                ),
-                                CustomDropdownField(
-                                  labelText: "Agama",
-                                  hintText: "Pilih Agama",
-                                  value: selectedAgama,
-                                  items: const [
-                                    DropdownMenuItem(
-                                        value: "islam",
-                                        child: Text("Islam")),
-                                    DropdownMenuItem(
-                                        value: "kristen_protestan",
-                                        child: Text("Kristen Protestan")),
-                                    DropdownMenuItem(
-                                        value: "kristen_katolik",
-                                        child: Text("Kristen Katholik")),
-                                    DropdownMenuItem(
-                                        value: "hindu",
-                                        child: Text("Hindu")),
-                                    DropdownMenuItem(
-                                        value: "buddha",
-                                        child: Text("Buddha")),
-                                    DropdownMenuItem(
-                                        value: "konghucu",
-                                        child: Text("Khonghucu")),
-                                    DropdownMenuItem(
-                                        value: "lainnya",
-                                        child: Text("Lainnya")),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedAgama = value;
-                                    });
-                                  },
-                                  icon: Icons.check_outlined,
-                                  validator: (value) => value == null
-                                      ? "Jenis kelamin wajib dipilih"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: pekerjaanController,
-                                  labelText: "Pekerjaan",
-                                  hintText: "Masukkan pekerjaan",
-                                  validator: (value) => value!.isEmpty
-                                      ? "Pekerjaan wajib diisi"
-                                      : null,
-                                  prefixIcon: Icons.work,
-                                ),
-                                SizedBox(height: 10),
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30.0),
+                                      child: Image.asset(
+                                        'assets/images/register.png',
+                                        height: deviceWidth * 0.5,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
-                                    onPressed: nextPage,
-                                    child: const Text(
-                                      "Selanjutnya",
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                  ),
+                                  Text(
+                                    "Registrasi",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black54),
+                                  ),
+                                  SizedBox(height: 20),
+                                ]),
+                            
+                            CustomTextField(
+                              controller: fullNameController,
+                              labelText: "Nama Lengkap",
+                              hintText: "Masukkan nama lengkap",
+                              validator: (value) =>
+                                  value!.isEmpty ? "Nama wajib diisi" : null,
+                              prefixIcon: Icons.person,
+                            ),
+                            SizedBox(height: 10),
+                            CustomTextField(
+                              controller: nikController,
+                              labelText: "NIK",
+                              hintText: "Masukkan NIK",
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              keyboardType: TextInputType.number,
+                              maxLength: 16,
+                              validator: (value) => value!.length != 16
+                                  ? "NIK harus 16 digit"
+                                  : null,
+                              prefixIcon: Icons.badge, // contoh icon
+                            ),
+                            CustomTextField(
+                              controller: tempatLahirController,
+                              labelText: "Tempat Lahir",
+                              hintText: "Masukkan tempat lahir",
+                              validator: (value) => value!.isEmpty
+                                  ? "Tempat lahir wajib diisi"
+                                  : null,
+                              prefixIcon: Icons.location_city, // contoh icon
+                            ),
+                            CustomTextField(
+                              controller: tanggalLahirController,
+                              labelText: "Tanggal Lahir",
+                              hintText: "Pilih tanggal lahir",
+                              readOnly: true,
+                              prefixIcon: Icons.calendar_today,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+
+                                if (pickedDate != null) {
+                                  String formattedDate =
+                                      DateFormat('dd-MM-yyyy')
+                                          .format(pickedDate);
+                                  tanggalLahirController.text = formattedDate;
+                                }
+                              },
+                            ),
+                            CustomDropdownField(
+                              labelText: "Jenis Kelamin",
+                              hintText: "Pilih jenis kelamin",
+                              value: selectedGender,
+                              items: const [
+                                DropdownMenuItem(
+                                    value: "laki-laki",
+                                    child: Text("Laki-laki")),
+                                DropdownMenuItem(
+                                    value: "perempuan",
+                                    child: Text("Perempuan")),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedGender = value;
+                                });
+                              },
+                              icon: Icons.male,
+                              validator: (value) => value == null
+                                  ? "Jenis kelamin wajib dipilih"
+                                  : null,
+                            ),
+                            CustomDropdownField(
+                              labelText: "Agama",
+                              hintText: "Pilih Agama",
+                              value: selectedAgama,
+                              items: const [
+                                DropdownMenuItem(
+                                    value: "islam", child: Text("Islam")),
+                                DropdownMenuItem(
+                                    value: "kristen_protestan",
+                                    child: Text("Kristen Protestan")),
+                                DropdownMenuItem(
+                                    value: "kristen_katolik",
+                                    child: Text("Kristen Katholik")),
+                                DropdownMenuItem(
+                                    value: "hindu", child: Text("Hindu")),
+                                DropdownMenuItem(
+                                    value: "buddha", child: Text("Buddha")),
+                                DropdownMenuItem(
+                                    value: "konghucu",
+                                    child: Text("Khonghucu")),
+                                DropdownMenuItem(
+                                    value: "lainnya", child: Text("Lainnya")),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedAgama = value;
+                                });
+                              },
+                              icon: Icons.check_outlined,
+                              validator: (value) => value == null
+                                  ? "Jenis kelamin wajib dipilih"
+                                  : null,
+                            ),
+                            CustomTextField(
+                              controller: pekerjaanController,
+                              labelText: "Pekerjaan",
+                              hintText: "Masukkan pekerjaan",
+                              validator: (value) => value!.isEmpty
+                                  ? "Pekerjaan wajib diisi"
+                                  : null,
+                              prefixIcon: Icons.work,
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: nextPage,
+                                child: const Text(
+                                  "Selanjutnya",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // STEP 2: Akun
+                      SingleChildScrollView(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                             Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30.0),
+                                      child: Image.asset(
+                                        'assets/images/register.png',
+                                        height: deviceWidth * 0.5,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Registrasi",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black54),
+                                  ),
+                                  SizedBox(height: 20),
+                                ]),
+                            
+                            CustomTextField(
+                              controller: emailController,
+                              labelText: "Email",
+                              hintText: "Masukkan email",
+                              prefixIcon: Icons.mail,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) => !value!.contains('@')
+                                  ? "Email tidak valid"
+                                  : null,
+                            ),
+                            CustomTextField(
+                              controller: phoneController,
+                              labelText: "No HP",
+                              hintText: "Masukkan nomor HP",
+                              prefixIcon: Icons.phone_android,
+                              keyboardType: TextInputType.phone,
+                              maxLength: 13,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              validator: (value) => value!.length < 12
+                                  ? "Nomor HP tidak valid"
+                                  : null,
+                            ),
+                            CustomTextField(
+                              controller: passwordController,
+                              labelText: "Password",
+                              hintText: "Masukkan password",
+                              obscureText: _obscurePassword,
+                              prefixIcon: Icons.password_rounded,
+                              suffixIcon: _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              onSuffixPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                              validator: (value) => value!.length < 8
+                                  ? "Password minimal 8 karakter"
+                                  : null,
+                            ),
+                            CustomTextField(
+                              controller: confirmPasswordController,
+                              labelText: "Konfirmasi Password",
+                              hintText: "Masukkan ulang password",
+                              obscureText: _obscureConfirmPassword,
+                              prefixIcon: Icons.password_rounded,
+                              suffixIcon: _obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              onSuffixPressed: () {
+                                setState(() {
+                                  _obscureConfirmPassword =
+                                      !_obscureConfirmPassword;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Konfirmasi password tidak boleh kosong";
+                                } else if (value != passwordController.text) {
+                                  return "Password tidak cocok";
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Tombol Kembali (ikon kiri)
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 50,
+                                    child: ElevatedButton.icon(
+                                      onPressed: prevPage,
+                                      icon: const Icon(Icons.arrow_back,
+                                          color: Colors.white),
+                                      label: const Text(
+                                        "Kembali",
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                                const SizedBox(width: 16), // Jarak antar tombol
 
-                            // STEP 2: Akun
-                            Column(
-                              children: [
-                                CustomTextField(
-                                  controller: emailController,
-                                  labelText: "Email",
-                                  hintText: "Masukkan email",
-                                  prefixIcon: Icons.mail,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) => !value!.contains('@')
-                                      ? "Email tidak valid"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: phoneController,
-                                  labelText: "No HP",
-                                  hintText: "Masukkan nomor HP",
-                                  prefixIcon: Icons.phone_android,
-                                  keyboardType: TextInputType.phone,
-                                  maxLength: 13,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  validator: (value) => value!.length < 12
-                                      ? "Nomor HP tidak valid"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: passwordController,
-                                  labelText: "Password",
-                                  hintText: "Masukkan password",
-                                  obscureText: _obscurePassword,
-                                  prefixIcon: Icons.password_rounded,
-                                  suffixIcon: _obscurePassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  onSuffixPressed: () {
-                                    setState(() {
-                                      _obscurePassword = !_obscurePassword;
-                                    });
-                                  },
-                                  validator: (value) => value!.length < 6
-                                      ? "Password minimal 6 karakter"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: confirmPasswordController,
-                                  labelText: "Konfirmasi Password",
-                                  hintText: "Masukkan ulang password",
-                                  obscureText: _obscureConfirmPassword,
-                                  prefixIcon: Icons.password_rounded,
-                                  suffixIcon: _obscureConfirmPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  onSuffixPressed: () {
-                                    setState(() {
-                                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                                    });
-                                  },
-                                  validator: (value) =>
-                                      value != confirmPasswordController.text
-                                          ? "Password tidak cocok"
-                                          : null,
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Tombol Kembali (ikon kiri)
-                                    Expanded(
-                                      child: SizedBox(
-                                        height: 50,
-                                        child: ElevatedButton.icon(
-                                          onPressed: prevPage,
-                                          icon: const Icon(Icons.arrow_back,
-                                              color: Colors.white),
-                                          label: const Text(
-                                            "Kembali",
-                                            style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
+                                // Tombol Selanjutnya (ikon kanan)
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 50,
+                                    child: Directionality(
+                                      textDirection: TextDirection
+                                          .rtl, // Membalik posisi icon dan label
+                                      child: ElevatedButton.icon(
+                                        onPressed: nextPage,
+                                        icon: const Icon(Icons.arrow_back,
+                                            color: Colors.white),
+                                        label: const Text(
+                                          "Selanjutnya",
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                        width: 16), // Jarak antar tombol
-
-                                    // Tombol Selanjutnya (ikon kanan)
-                                    Expanded(
-                                      child: SizedBox(
-                                        height: 50,
-                                        child: Directionality(
-                                          textDirection: TextDirection.rtl, // Membalik posisi icon dan label
-                                          child: ElevatedButton.icon(
-                                            onPressed: nextPage,
-                                            icon: const Icon(
-                                                Icons.arrow_back,
-                                                color: Colors.white),
-                                            label: const Text(
-                                              "Selanjutnya",
-                                              style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
-                                        
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                              
-                            ),
-
-                            // STEP 3: Alamat dan Upload KK
-                            Column(
-                              children: [
-                                CustomTextField(
-                                  controller: noKkController,
-                                  labelText: "No KK",
-                                  hintText: "Masukkan No KK",
-                                  prefixIcon: Icons.pin,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 16,
-                                  validator: (value) => value!.length != 16
-                                      ? "No KK harus 16 digit"
-                                      : null,
-                                ),
-                                CustomTextField(
-                                  controller: alamatController,
-                                  labelText: "Alamat",
-                                  hintText: "Masukkan alamat lengkap",
-                                  prefixIcon: Icons.home,
-                                  validator: (value) => value!.isEmpty
-                                      ? "Alamat wajib diisi"
-                                      : null,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        controller: rtController,
-                                        labelText: "RT",
-                                        hintText: "RT",
-                                        prefixIcon: Icons.person_2,
-                                        validator: (value) => value!.isEmpty
-                                            ? "RT wajib diisi"
-                                            : null,
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Expanded(
-                                      child: CustomTextField(
-                                        controller: rwController,
-                                        labelText: "RW",
-                                        hintText: "RW",
-                                        prefixIcon: Icons.person_3,
-                                        validator: (value) => value!.isEmpty
-                                            ? "RW wajib diisi"
-                                            : null,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                _buildUploadCard(
-                                  label: "Klik untuk unggah Foto KK",
-                                  imageFile: kkGambar,
-                                  imageBytes: kkGambarBytes,
-                                  onTap: () => pickImage('KK'),
-                                  onClear: () => clearImage('KK'),
-                                ),
-                                SizedBox(height: 10),
-                                _buildUploadCard(
-                                  label:
-                                      "Klik untuk unggah Foto KTP (opsional)",
-                                  imageFile: ktpGambar,
-                                  imageBytes: ktpGambarBytes,
-                                  onTap: () => pickImage('KTP'),
-                                  onClear: () => clearImage('KTP'),
-                                ),
-                                SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    onPressed: _register,
-                                    child: const Text(
-                                      "Daftar",
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    onPressed: prevPage,
-                                    child: const Text(
-                                      "Kembali",
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -685,17 +588,176 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ],
                         ),
                       ),
-                    ], //disini
+                      // STEP 3: Alamat dan Upload KK
+                      SingleChildScrollView(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                             Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 30.0),
+                                      child: Image.asset(
+                                        'assets/images/register.png',
+                                        height: deviceWidth * 0.5,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "Registrasi",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Lengkapi data anda sebelum mendaftar di Aplikasi E-Surat Badean.",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.black54),
+                                  ),
+                                  SizedBox(height: 20),
+                                ]),
+                            
+                            CustomTextField(
+                              controller: noKkController,
+                              labelText: "No KK",
+                              hintText: "Masukkan No KK",
+                              prefixIcon: Icons.pin,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              keyboardType: TextInputType.number,
+                              maxLength: 16,
+                              validator: (value) => value!.length != 16
+                                  ? "No KK harus 16 digit"
+                                  : null,
+                            ),
+                            CustomTextField(
+                              controller: alamatController,
+                              labelText: "Alamat",
+                              hintText: "Masukkan alamat lengkap",
+                              prefixIcon: Icons.home,
+                              validator: (value) =>
+                                  value!.isEmpty ? "Alamat wajib diisi" : null,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    controller: rtController,
+                                    labelText: "RT",
+                                    hintText: "RT",
+                                    prefixIcon: Icons.person_2,
+                                    validator: (value) => value!.isEmpty
+                                        ? "RT wajib diisi"
+                                        : null,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: CustomTextField(
+                                    controller: rwController,
+                                    labelText: "RW",
+                                    hintText: "RW",
+                                    prefixIcon: Icons.person_3,
+                                    validator: (value) => value!.isEmpty
+                                        ? "RW wajib diisi"
+                                        : null,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10),
+                                Text('Upload foto KK'),
+                                SizedBox(height: 10),
+                                _buildUploadCard(
+                                  label: "Klik untuk unggah Foto KK",
+                                  imageFile: kkGambar,
+                                  imageBytes: kkGambarBytes,
+                                  onTap: () => pickImage('KK'),
+                                  onClear: () => clearImage('KK'),
+                                ),
+                                SizedBox(height: 10),
+                                Text('Upload foto KTP'),
+                                SizedBox(height: 10),
+                                _buildUploadCard(
+                                  label:
+                                      "Klik untuk unggah Foto KTP (opsional)",
+                                  imageFile: ktpGambar,
+                                  imageBytes: ktpGambarBytes,
+                                  onTap: () => pickImage('KTP'),
+                                  onClear: () => clearImage('KTP'),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: _register,
+                                child: const Text(
+                                  "Daftar",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: prevPage,
+                                child: const Text(
+                                  "Kembali",
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                ),
-              ],
+                //disini
             ),
           ),
         ),
-      ),
+      
     );
   }
 }
+
 Widget _buildUploadCard({
   required String label,
   required File? imageFile,
@@ -775,4 +837,3 @@ Widget _buildUploadCard({
     ),
   );
 }
-

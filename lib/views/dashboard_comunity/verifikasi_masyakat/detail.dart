@@ -37,7 +37,7 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
         setState(() {
           pengajuanData = MasyarakatModel.fromJson(response.data["data"]);
           isLoading = false;
-          
+
           pengajuanData?.user?.status == 0 ? canEdit = true : "";
         });
       } else {
@@ -217,54 +217,54 @@ class _DetailVerifikasiState extends State<DetailVerifikasi> {
             Text("Data Lampiran",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             SizedBox(height: 16),
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Text(
-            //       pengajuanData!.kartuKeluarga!.kkgambar,
-            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            //     ),
-            //     SizedBox(height: 8),
-            //     GestureDetector(
-            //       onTap: () {
-            //         showDialog(
-            //           context: context,
-            //           builder: (_) => Dialog(
-            //             backgroundColor: Colors.transparent,
-            //             child: GestureDetector(
-            //               onTap: () => Navigator.pop(context),
-            //               child: InteractiveViewer(
-            //                 child: Image.network(
-            //                   pengajuanData!.kartuKeluarga!.kkgambar,
-            //                   fit: BoxFit.contain,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         );
-            //       },
-            //       child: Card(
-            //         elevation: 0,
-            //         color: Colors.white,
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(12),
-            //           side: BorderSide(
-            //             color: Colors.black26,
-            //             width: .2,
-            //           ),
-            //         ),
-            //         // clipBehavior: Clip.antiAlias,
-            //         child: Image.network(
-            //           pengajuanData!.kartuKeluarga!.kkgambar,
-            //           height: 150,
-            //           width: double.infinity,
-            //           fit: BoxFit.contain,
-            //         ),
-            //       ),
-            //     ),
-            //     SizedBox(height: 20),
-            //   ],
-            // )
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pengajuanData!.kartuKeluarga!.kkgambar,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: InteractiveViewer(
+                            child: Image.network(
+                              pengajuanData!.kartuKeluarga!.kkgambar,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Colors.black26,
+                        width: .2,
+                      ),
+                    ),
+                    // clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      pengajuanData!.kartuKeluarga!.kkgambar,
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            )
           ],
         ),
       ),
