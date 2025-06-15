@@ -7,9 +7,11 @@ import 'package:sibadeanmob_v2_fix/models/SuratKeluar.dart';
 class API {
   // === Login User ===2
   final Dio _dio =
-      // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
-      Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
-  final String baseUrl = "https://sibadean.kholzt.com";
+      Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
+  // Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
+  // final String baseUrl = "https://sibadean.kholzt.com";
+  final String baseUrl = "  http://192.168.100.205:8000";
+
   Future<String?> _getToken() async {
     final user = await Auth.user();
     print(user["token"]);
@@ -394,8 +396,8 @@ class API {
           }),
           data: formData);
       return response;
-    } catch (e) {
-      print("Terjadi error saat mengirim data: $e");
+    } on DioException catch (e) {
+      return e.response;
     }
   }
 
@@ -429,7 +431,7 @@ class API {
           data: formData);
       return response;
     } on DioException catch (e) {
-      print("Terjadi error saat mengirim data: $e");
+      return e.response;
     }
   }
 
