@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
@@ -55,9 +56,15 @@ class _SplashState extends State<Splash> {
         view = "/welcome";
       }
     } else {
-      view = "/welcome";
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool? seen = prefs.getBool('seenOnboarding') ?? false;
+      if (seen) {
+        view = "/login";
+      } else {
+        view = "/welcome";
+      }
     }
-
+    print(view);
     context.go(view);
   }
 

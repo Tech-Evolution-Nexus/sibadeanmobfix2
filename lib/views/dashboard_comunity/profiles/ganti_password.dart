@@ -27,6 +27,7 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
   bool _obscureOldPass = true;
   bool _obscureNewPass = true;
   bool _obscureConfirmPass = true;
+  final _formKey = GlobalKey<FormState>(); // Tambahkan ini
 
   Future<void> chgPass(BuildContext context) async {
     final userList = await DatabaseHelper().getUser();
@@ -34,21 +35,6 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
     final currentPass = passwordController.text.trim();
     final newPass = newPassController.text.trim();
     final confPass = confirmController.text.trim();
-
-    if (currentPass.isEmpty || newPass.isEmpty || confPass.isEmpty) {
-      _showSnackBar(context, 'Semua kolom harus diisi.');
-      return;
-    }
-
-    if (newPass.length < 6) {
-      _showSnackBar(context, 'Password harus minimal 6 karakter.');
-      return;
-    }
-
-    if (newPass != confPass) {
-      _showSnackBar(context, 'Konfirmasi password tidak sesuai.');
-      return;
-    }
 
     try {
       final response = await API().chgPass(
@@ -115,96 +101,128 @@ class _GantiPasswordPageState extends State<GantiPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ganti Password")),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Ganti kata sandi",
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-                "Harap masukkan Kata Sandi baru untuk emperbarui informasi Anda"),
-            SizedBox(
-              height: 16,
-            ),
-            CustomTextField(
-              controller: passwordController,
-              obscureText: _obscureOldPass,
-              keyboardType: TextInputType.text,
-              prefixIcon: Icons.lock,
-              suffixIcon:
-                  _obscureOldPass ? Icons.visibility_off : Icons.visibility,
-              onSuffixPressed: () {
-                setState(() {
-                  _obscureOldPass = !_obscureOldPass;
-                });
-              },
-              labelText: "Kata Sandi Sekarang",
-              hintText: "Kata Sandi Sekarang",
-            ),
-            // TextField(
-            //   controller: passwordController,
-            //   obscureText: _obscureOldPass,
-            //   decoration:  InputDecoration(
-            //     labelText: "Kata Sandi Sekarang",
-            //     border: OutlineInputBorder(),
-            //     suffixIcon: IconButton(
-            //       icon: Icon(_obscureOldPass ? Icons.visibility : Icons.visibility_off),
-            //       onPressed: () {
-            //         setState(() {
-            //           _obscureOldPass = !_obscureOldPass;
-            //         });
-            //       },
-            //     ),
-            //   ),
-            // ),
-            const SizedBox(height: 20),
-            CustomTextField(
-              controller: newPassController,
-              obscureText: _obscureNewPass,
-              keyboardType: TextInputType.text,
-              prefixIcon: Icons.lock,
-              suffixIcon:
-                  _obscureNewPass ? Icons.visibility_off : Icons.visibility,
-              onSuffixPressed: () {
-                setState(() {
-                  _obscureNewPass = !_obscureNewPass;
-                });
-              },
-              labelText: "Kata Sandi Baru",
-              hintText: " Kata Sandi Baru",
-            ),
-
-            const SizedBox(height: 15),
-            CustomTextField(
-              controller: confirmController,
-              obscureText: _obscureConfirmPass,
-              keyboardType: TextInputType.text,
-              prefixIcon: Icons.lock,
-              suffixIcon:
-                  _obscureConfirmPass ? Icons.visibility_off : Icons.visibility,
-              onSuffixPressed: () {
-                setState(() {
-                  _obscureConfirmPass = !_obscureConfirmPass;
-                });
-              },
-              labelText: "Konfirmasi Kata Sandi Baru",
-              hintText: "Konfirmasi Kata Sandi Baru",
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => chgPass(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                child: const Text(
-                  "Ubah Password",
-                  style: TextStyle(color: Colors.white),
-                ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                  "Silakan masukkan kata sandi baru untuk memperbarui akun Anda."),
+              SizedBox(
+                height: 16,
               ),
-            )
-          ],
+              CustomTextField(
+                controller: passwordController,
+                obscureText: _obscureOldPass,
+                keyboardType: TextInputType.text,
+                prefixIcon: Icons.lock,
+                suffixIcon:
+                    _obscureOldPass ? Icons.visibility_off : Icons.visibility,
+                onSuffixPressed: () {
+                  setState(() {
+                    _obscureOldPass = !_obscureOldPass;
+                  });
+                },
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Kata sandi  wajib diisi";
+                  }
+                  return null;
+                },
+                labelText: "Kata sandi sekarang",
+                hintText: "Kata sandi sekarang",
+              ),
+              const SizedBox(height: 0),
+              CustomTextField(
+                controller: newPassController,
+                obscureText: _obscureNewPass,
+                keyboardType: TextInputType.text,
+                prefixIcon: Icons.lock,
+                suffixIcon:
+                    _obscureNewPass ? Icons.visibility_off : Icons.visibility,
+                onSuffixPressed: () {
+                  setState(() {
+                    _obscureNewPass = !_obscureNewPass;
+                  });
+                },
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Kata sandi baru wajib diisi";
+                  } else if (val.length < 6) {
+                    return " Kata sandi tidak minimal 6 karakter";
+                  }
+                  return null;
+                },
+                labelText: "Kata sandi baru",
+                hintText: " Kata sandi baru",
+              ),
+              const SizedBox(height: 0),
+              CustomTextField(
+                controller: confirmController,
+                obscureText: _obscureConfirmPass,
+                keyboardType: TextInputType.text,
+                prefixIcon: Icons.lock,
+                suffixIcon: _obscureConfirmPass
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                onSuffixPressed: () {
+                  setState(() {
+                    _obscureConfirmPass = !_obscureConfirmPass;
+                  });
+                },
+                validator: (val) {
+                  final newPass = newPassController.text.trim();
+                  final confPass = confirmController.text.trim();
+                  if (val == null || val.isEmpty) {
+                    return "Konfirmasi Kata sandi baru wajib diisi";
+                  } else if (val.length < 6) {
+                    return "Konfirmasi Kata sandi minimal 6 karakter";
+                  } else if (newPass != confPass) {
+                    return "Konfirmasi Kata sandi tidak sama";
+                  }
+                  return null;
+                },
+                labelText: "Konfirmasi kata sandi baru",
+                hintText: "Konfirmasi kata sandi baru",
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 50,
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      chgPass(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // sudut tombol agak bulat
+                      )),
+                  child: const Text(
+                    "Simpan",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

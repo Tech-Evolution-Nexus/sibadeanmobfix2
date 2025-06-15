@@ -8,6 +8,7 @@ import 'package:sibadeanmob_v2_fix/views/auth/ForgotPasswordPage.dart';
 import '../../methods/api.dart';
 import 'verifikasi.dart';
 import '../../widgets/costum_texfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -36,6 +37,12 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    _markWelcome();
+  }
+
+  void _markWelcome() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('seenOnboarding', true);
   }
 
   void loginUser() async {

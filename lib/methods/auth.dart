@@ -1,9 +1,7 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
 
 class Auth {
   static Future<Map<String, dynamic>> user() async {
-
     final userList = await DatabaseHelper().getUser();
     if (userList.isEmpty) {
       return {
