@@ -214,8 +214,9 @@ class _LoginState extends State<Login> {
                                 'Lupa Password?',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors
-                                      .blue, // Sesuaikan dengan warna Anda
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary, // Sesuaikan dengan warna Anda
                                 ),
                               ),
                             )

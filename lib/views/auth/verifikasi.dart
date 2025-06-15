@@ -56,11 +56,11 @@ class _VerifikasiState extends State<Verifikasi> {
           },
         );
       } else if (response.statusCode == 409) {
-        _showAlertDialog("sudah terdaftar", onConfirm: () {
+        _showAlertDialog("Sudah Terdaftar", onConfirm: () {
           context.go("/login");
-        }, "Akun Anda Telah Terdaftar");
+        }, "Akun dengan nik $nik telah terdaftar");
       } else if (response.statusCode == 404) {
-        _showAlertDialog("NIK Tidak Ditemukan", onConfirm: () {
+        _showAlertDialog("NIK tidak ditemukan", onConfirm: () {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => RegisterScreen(nik: nik)),

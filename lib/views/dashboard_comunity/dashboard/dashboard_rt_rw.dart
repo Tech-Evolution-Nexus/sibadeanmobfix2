@@ -86,193 +86,199 @@ class _DashboardRTRWState extends State<DashboardRTRW> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       drawer: Drawer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: InkWell(
-                onTap: () {
-                  Navigator.pop(context); // tutup drawer
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => ProfilePage(
-                              showAppBar: true,
-                            )), // ganti dengan halaman profilmu
-                  );
-                },
-                child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  padding: EdgeInsets.only(left: 20, bottom: 10, right: 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                          (foto != null && foto.trim().isNotEmpty)
-                              ? foto
-                              : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context); // tutup drawer
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => ProfilePage(
+                                showAppBar: true,
+                              )), // ganti dengan halaman profilmu
+                    );
+                  },
+                  child: DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    padding: EdgeInsets.only(left: 20, bottom: 10, right: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: NetworkImage(
+                            (foto != null && foto.trim().isNotEmpty)
+                                ? foto
+                                : 'https://ui-avatars.com/api/?name=${nama}&background=fff&color=052158', // Gambar default online
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  nama,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
+                        SizedBox(width: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    nama,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  nik,
-                                  style: TextStyle(
-                                    color: Colors.grey.shade200,
-                                    fontSize: 12,
+                                  Text(
+                                    nik,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade200,
+                                      fontSize: 12,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ],
-                      )
-                    ],
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // ===== Bagian Menu =====
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  _buildSectionTitle("Layanan Administratif"),
-                  _buildDrawerItem(
-                    icon: Icons.description_outlined,
-                    title: 'Penyetujuan Surat',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
-                      );
-                    },
-                  ),
-                  _buildDrawerItem(
-                    icon: Icons.history,
-                    title: 'Riwayat Pengajuan',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (_) => PengajuanPage(showAppBar: true)),
-                      );
-                    },
-                  ),
-                  if (role == "rt")
+              // ===== Bagian Menu =====
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _buildSectionTitle("Layanan Administratif"),
                     _buildDrawerItem(
-                      icon: Icons.verified_outlined,
-                      title: 'Verifikasi Masyarakat',
+                      icon: Icons.description_outlined,
+                      title: 'Penyetujuan Surat',
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => Verifikasi()),
+                          MaterialPageRoute(builder: (_) => RiwayatSuratRTRW()),
                         );
                       },
                     ),
-                  Divider(thickness: 1, color: Colors.grey.shade300),
-                  _buildSectionTitle("Profil & Keamanan"),
-                  _buildDrawerItem(
-                    icon: Icons.description_outlined,
-                    title: 'Tanda Tangan',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => TtdPage()),
-                      );
-                    },
-                  ),
-                  _buildDrawerItem(
-                    icon: Icons.email_outlined,
-                    title: 'Ganti Email',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => GantiEmailPage()),
-                      );
-                    },
-                  ),
-                  _buildDrawerItem(
-                    icon: Icons.phone_android_outlined,
-                    title: 'Ganti No HP',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => GantiNoHpPage()),
-                      );
-                    },
-                  ),
-                  _buildDrawerItem(
-                    icon: Icons.lock_outline,
-                    title: 'Ganti Password',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => GantiPasswordPage()),
-                      );
-                    },
-                  ),
-                  _buildDrawerItem(
-                    icon: Icons.info_outline,
-                    title: 'Tentang Aplikasi',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => TentangPage()),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            // ===== Logout Button di bawah & tengah =====
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-              child: Container(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.logout_outlined, color: Colors.white),
-                  label: Text("Logout", style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                    _buildDrawerItem(
+                      icon: Icons.history,
+                      title: 'Riwayat Pengajuan',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => PengajuanPage(showAppBar: true)),
+                        );
+                      },
                     ),
-                  ),
-                  onPressed: logout,
+                    if (role == "rt")
+                      _buildDrawerItem(
+                        icon: Icons.verified_outlined,
+                        title: 'Verifikasi Masyarakat',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => Verifikasi()),
+                          );
+                        },
+                      ),
+                    Divider(thickness: 1, color: Colors.grey.shade300),
+                    _buildSectionTitle("Profil & Keamanan"),
+                    _buildDrawerItem(
+                      icon: Icons.description_outlined,
+                      title: 'Tanda Tangan',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => TtdPage()),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      icon: Icons.email_outlined,
+                      title: 'Ganti Email',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => GantiEmailPage()),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      icon: Icons.phone_android_outlined,
+                      title: 'Ganti No HP',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => GantiNoHpPage()),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      icon: Icons.lock_outline,
+                      title: 'Ganti Password',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => GantiPasswordPage()),
+                        );
+                      },
+                    ),
+                    _buildDrawerItem(
+                      icon: Icons.info_outline,
+                      title: 'Tentang Aplikasi',
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => TentangPage()),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-            )
-          ],
+
+              // ===== Logout Button di bawah & tengah =====
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+                child: Container(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.logout_outlined, color: Colors.white),
+                    label:
+                        Text("Logout", style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: logout,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
       body: _pages[_currentIndex],
@@ -793,8 +799,8 @@ class _HomeRTRWState extends State<HomeRTRW> {
                   padding: const EdgeInsets.all(16),
                   child: Center(
                     child: Text(
-                      "Tidak ada surat",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                      "Tidak ada pengajuan surat",
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
                 )

@@ -107,7 +107,7 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
                       child: ListTile(
                         leading: Icon(
                           isDibaca ? Icons.mark_email_read : Icons.markunread,
-                          color: isDibaca ? Colors.green : Colors.grey.shade300,
+                          color: isDibaca ? Colors.green : Colors.grey.shade500,
                         ),
                         title: Text(
                           surat.title,

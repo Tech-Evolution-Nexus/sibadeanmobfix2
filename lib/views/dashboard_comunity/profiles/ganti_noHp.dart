@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../methods/api.dart';
-import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
+import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
+
+import '../../../methods/api.dart';
 
 class GantiNoHpPage extends StatefulWidget {
   const GantiNoHpPage({super.key});
@@ -13,6 +14,7 @@ class GantiNoHpPage extends StatefulWidget {
 
 class _GantiNoHpPageState extends State<GantiNoHpPage> {
   final noHpController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Tambahkan ini
 
   @override
   void dispose() {
@@ -28,7 +30,9 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
 
   Future<void> chgNoHp() async {
     FocusScope.of(context).unfocus(); // Tutup keyboard
-
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
     final userList = await DatabaseHelper().getUser();
 
     if (userList.isEmpty) {
@@ -38,17 +42,6 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
 
     final nik = userList.first.nik;
     final noHp = noHpController.text.trim();
-
-    if (nik.isEmpty || noHp.isEmpty) {
-      _showSnackBar('Nomor HP tidak boleh kosong.');
-      return;
-    } else if (!RegExp(r'^[0-9]+$').hasMatch(noHp)) {
-      _showSnackBar('Nomor HP hanya boleh berisi angka.');
-      return;
-    } else if (noHp.length < 12 || noHp.length > 13) {
-      _showSnackBar('Nomor HP harus terdiri dari 12 hingga 13 digit.');
-      return;
-    }
 
     try {
       final response = await API().chgNoHp(nik: nik, noHp: noHp);
@@ -73,40 +66,63 @@ class _GantiNoHpPageState extends State<GantiNoHpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ganti Nomor HP")),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Ganti nomor telepon",
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Masukkan nomor HP baru Anda"),
-            const SizedBox(height: 20),
-            TextField(
-              controller: noHpController,
-              maxLength: 13,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: "Nomor HP",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: chgNoHp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+        child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomTextField(
+                  controller: noHpController,
+                  maxLength: 13,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  labelText: "Nomor telepon",
+                  hintText: "Nomor telepon",
+                  validator: (noHp) {
+                    if (noHp == null || noHp.isEmpty) {
+                      return ('Nomor HP tidak boleh kosong.');
+                    } else if (!RegExp(r'^[0-9]+$').hasMatch(noHp)) {
+                      return ('Nomor HP hanya boleh berisi angka.');
+                    } else if (noHp.length < 12 || noHp.length > 13) {
+                      return ('Nomor HP harus terdiri dari 12 hingga 13 digit.');
+                    }
+                    return null;
+                  },
                 ),
-                child: const Text(
-                  "Ubah Nomor HP",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            )
-          ],
-        ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: chgNoHp,
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // sudut tombol agak bulat
+                        )),
+                    child: const Text(
+                      "Simpan",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                )
+              ],
+            )),
       ),
     );
   }

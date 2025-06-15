@@ -58,7 +58,8 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
           labelText: widget.labelText,
           hintText: widget.hintText,
           prefixIcon: widget.icon != null
-              ? Icon(widget.icon, color: widget.iconColor ?? const Color.fromRGBO(5, 3, 88, 1))
+              ? Icon(widget.icon,
+                  color: widget.iconColor ?? const Color.fromRGBO(5, 3, 88, 1))
               : null, // Tambahkan ikon di sini
           contentPadding: EdgeInsets.symmetric(
               horizontal: deviceWidth * 0.04, vertical: deviceWidth * 0.035),
@@ -72,7 +73,8 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color.fromRGBO(5, 3, 88, 1), width: 2),
+            borderSide:
+                const BorderSide(color: Color.fromRGBO(5, 3, 88, 1), width: 2),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 import '../../../methods/api.dart';
 import '../../dashboard_comunity/dashboard/dashboard_warga.dart';
 import 'package:sibadeanmob_v2_fix/helper/database.dart';
@@ -62,7 +63,18 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ganti Email")),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Ganti email",
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -71,15 +83,17 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                  "Harap masukkan alamat email baru untuk\nmemperbarui informasi Anda"),
-              const SizedBox(height: 20),
-              TextFormField(
+              // const Text(
+              //     "Harap masukkan alamat email baru untuk\nmemperbarui informasi Anda"),
+              // const SizedBox(height: 10),
+              CustomTextField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(),
-                ),
+                // decoration: const InputDecoration(
+                //   labelText: "Email",
+                //   border: OutlineInputBorder(),
+                // ),
+                labelText: "Email",
+                hintText: "Email",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Email tidak boleh kosong';
@@ -90,9 +104,10 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
+                height: 50,
                 child: ElevatedButton(
                   onPressed: () {
                     // Validasi dulu
@@ -101,10 +116,14 @@ class _GantiEmailPageState extends State<GantiEmailPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // sudut tombol agak bulat
+                      )),
                   child: const Text(
-                    "Ubah Email",
-                    style: TextStyle(color: Colors.white),
+                    "Simpan",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               )
