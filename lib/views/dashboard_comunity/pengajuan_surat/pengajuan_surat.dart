@@ -53,6 +53,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
   String? selectedGender;
   String? selectedAgama;
   Map<String, File> lampiranFiles = {};
+  Map<String, String> lampiranFileNames = {};
   // Image File
   File? _selectedFile;
   // Uint8List? _selectedFileBytes;
@@ -193,17 +194,19 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
       withData: true,
     );
 
-    if (result != null) {
+    if (result != null && result.files.single.path != null) {
       File file = File(result.files.single.path!);
+      String fileName = result.files.single.name;
 
       setState(() {
-        lampiranFiles[idLampiran] = file; // Add selected file to the map
+        lampiranFiles[idLampiran] = file;
+        lampiranFileNames[idLampiran] = fileName; // <- Tambahkan ini
       });
 
-      // Show snack bar to confirm the upload
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('File untuk lampiran ${idLampiran} telah dipilih')),
+          content: Text('File untuk lampiran $idLampiran telah dipilih'),
+        ),
       );
     }
   }
@@ -251,7 +254,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           return; //
         }
       }
-      
+
       var user = await Auth.user();
       FormData formData = FormData();
       formData = FormData.fromMap({
@@ -337,11 +340,6 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Text(
-                  //   "Isi Data Pengajuan:",
-                  //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  // ),
-                  // SizedBox(height: 10),
                   Form(
                     key: _formKey,
                     child: Expanded(
@@ -405,143 +403,107 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                   "Dokumen KTP",
                                   dataModelUser?.ktpgambar ?? '',
                                 ),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Card(
-                                    elevation: 0,
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 0, vertical: 12),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Upload File Pengantar RT (Opsional)",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
+                                GestureDetector(
+                                  onTap: _pickPengantarFile,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        height: 250,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            style: BorderStyle.solid,
+                                            width: 2,
                                           ),
-                                          const SizedBox(height: 16),
-
-                                          /// Box upload area with preview
-                                          GestureDetector(
-                                            onTap: _pickPengantarFile,
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 250,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.grey.shade400,
-                                                  style: BorderStyle.solid,
-                                                  width: 2,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: Colors.grey.shade50,
-                                                image: _selectedFile != null &&
-                                                        (_fileName
-                                                                    ?.toLowerCase()
-                                                                    .endsWith(
-                                                                        '.jpg') ==
-                                                                true ||
-                                                            _fileName
-                                                                    ?.toLowerCase()
-                                                                    .endsWith(
-                                                                        '.jpeg') ==
-                                                                true ||
-                                                            _fileName
-                                                                    ?.toLowerCase()
-                                                                    .endsWith(
-                                                                        '.png') ==
-                                                                true)
-                                                    ? DecorationImage(
-                                                        image: FileImage(
-                                                            _selectedFile!),
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : null,
-                                              ),
-                                              child: _selectedFile == null
-                                                  ? Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons
-                                                              .cloud_upload_outlined,
-                                                          size: 40,
-                                                          color:
-                                                              Colors.blueAccent,
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 8),
-                                                        Text(
-                                                          _fileName ??
-                                                              "Klik untuk memilih file",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors
-                                                                .grey.shade600,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withOpacity(0.3),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                      ),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        _fileName ?? '',
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          backgroundColor:
-                                                              Colors.black38,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 16),
-
-                                          /// Pesan berhasil
-                                          if (PengantarRtgambar != null)
-                                            Row(
-                                              children: const [
-                                                Icon(Icons.check_circle,
-                                                    color: Colors.green),
-                                                SizedBox(width: 8),
-                                                Text(
-                                                  "File berhasil dipilih!",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontWeight: FontWeight.bold,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          color: Colors.grey.shade50,
+                                          image: _selectedFile != null &&
+                                                  (_fileName
+                                                              ?.toLowerCase()
+                                                              .endsWith(
+                                                                  '.jpg') ==
+                                                          true ||
+                                                      _fileName
+                                                              ?.toLowerCase()
+                                                              .endsWith(
+                                                                  '.jpeg') ==
+                                                          true ||
+                                                      _fileName
+                                                              ?.toLowerCase()
+                                                              .endsWith(
+                                                                  '.png') ==
+                                                          true)
+                                              ? DecorationImage(
+                                                  image:
+                                                      FileImage(_selectedFile!),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : null,
+                                        ),
+                                        child: _selectedFile == null
+                                            ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.cloud_upload_outlined,
+                                                    size: 40,
+                                                    color: Colors.blueAccent,
                                                   ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    _fileName ??
+                                                        "Klik untuk memilih file",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
                                                 ),
-                                              ],
-                                            ),
-                                        ],
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  _fileName ?? '',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    backgroundColor:
+                                                        Colors.black38,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
                                       ),
-                                    ),
+
+                                      /// Tombol Hapus Preview
+                                      if (_selectedFile != null)
+                                        Positioned(
+                                          top: 8,
+                                          right: 8,
+                                          child: IconButton(
+                                            icon: const Icon(Icons.close,
+                                                color: Colors.red),
+                                            onPressed: () {
+                                              setState(() {
+                                                _selectedFile = null;
+                                                _fileName = null;
+                                                PengantarRtgambar = null;
+                                              });
+                                            },
+                                            tooltip: 'Hapus file',
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                                 SizedBox(height: 16),
@@ -619,28 +581,75 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                       }),
                                     ),
                                   SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: prevPage,
-                                        child: const Text("Kembali"),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: (dataModel
-                                                    ?.lampiransurat?.isEmpty ??
-                                                true)
-                                            ? _submitPengajuan
-                                            : nextPage,
-                                        child: Text(
-                                          (dataModel?.lampiransurat?.isEmpty ??
-                                                  true)
-                                              ? "Ajukan Surat"
-                                              : "Selanjutnya",
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            onPressed: (dataModel?.lampiransurat
+                                                        ?.isEmpty ??
+                                                    true)
+                                                ? _submitPengajuan
+                                                : nextPage,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 16),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              elevation: 6,
+                                              shadowColor: Colors.black45,
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              (dataModel?.lampiransurat
+                                                          ?.isEmpty ??
+                                                      true)
+                                                  ? "Ajukan Surat"
+                                                  : "Selanjutnya",
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 12),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            onPressed: prevPage,
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.grey,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 16),
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              elevation: 6,
+                                              shadowColor: Colors.black45,
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            child: const Text("Kembali"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -656,50 +665,201 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                   Column(
                                     children: (dataModel?.lampiransurat ?? [])
                                         .map((item) {
-                                      return Column(
-                                        children: [
-                                          Card(
-                                            margin: const EdgeInsets.symmetric(
-                                                vertical: 8),
-                                            child: ListTile(
-                                              title: Text(
-                                                  item.lampiran.namaLampiran ??
-                                                      ''),
-                                              subtitle:
-                                                  Text("Belum ada gambar"),
-                                              trailing: IconButton(
-                                                icon: const Icon(Icons.upload),
-                                                onPressed: () =>
-                                                    _pickLampiranFile(item
-                                                            .idLampiran
-                                                            ?.toString() ??
-                                                        ''),
+                                      final id =
+                                          item.idLampiran?.toString() ?? '';
+                                      final nama =
+                                          item.lampiran.namaLampiran ?? '';
+                                      final file = lampiranFiles[id];
+                                      final fileName = lampiranFileNames[id];
+
+                                      final isImage = file != null &&
+                                          (fileName
+                                                      ?.toLowerCase()
+                                                      .endsWith('.jpg') ==
+                                                  true ||
+                                              fileName
+                                                      ?.toLowerCase()
+                                                      .endsWith('.jpeg') ==
+                                                  true ||
+                                              fileName
+                                                      ?.toLowerCase()
+                                                      .endsWith('.png') ==
+                                                  true);
+
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(height: 12,),
+                                            Text(
+                                              nama,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black87,
+                                              ),
+                                              
+                                            ),
+                                            const SizedBox(height: 8),
+                                            GestureDetector(
+                                              onTap: () =>
+                                                  _pickLampiranFile(id),
+                                              child: Container(
+                                                height: 180,
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  border: Border.all(
+                                                    color: Colors.grey.shade300,
+                                                  ),
+                                                  color: Colors.grey.shade50,
+                                                  image: isImage
+                                                      ? DecorationImage(
+                                                          image:
+                                                              FileImage(file!),
+                                                          // fit: BoxFit.cover,
+                                                        )
+                                                      : null,
+                                                ),
+                                                child: isImage
+                                                    ? Stack(
+                                                        children: [
+                                                          Positioned(
+                                                            top: 8,
+                                                            right: 8,
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.6),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child: IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.close,
+                                                                    color: Colors
+                                                                        .white),
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    lampiranFiles
+                                                                        .remove(
+                                                                            id);
+                                                                    lampiranFileNames
+                                                                        .remove(
+                                                                            id);
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Center(
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                                Icons
+                                                                    .image_outlined,
+                                                                size: 40,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade500),
+                                                            const SizedBox(
+                                                                height: 8),
+                                                            Text(
+                                                              "Belum ada gambar\n(Klik untuk unggah)",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade600,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
                                               ),
                                             ),
-                                          ),
-                                          const Divider(height: 1),
-                                        ],
+                                          ],
+                                        ),
                                       );
                                     }).toList(),
                                   ),
                                 SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: prevPage,
-                                      child: const Text("Kembali"),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: _submitPengajuan,
-                                      child: const Text("Ajukan Surat"),
-                                    ),
-                                  ],
-                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: _submitPengajuan,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 24, vertical: 16),
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            elevation: 6,
+                                            shadowColor: Colors.black45,
+                                            textStyle: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          child: const Text("Ajukan Surat"),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: prevPage,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.grey,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 24, vertical: 16),
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            elevation: 6,
+                                            shadowColor: Colors.black45,
+                                            textStyle: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          child: const Text("Kembali"),
+                                        ),
+                                      ),
+                                      // Jarak antar tombol
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
+
                           const SizedBox(height: 16),
                         ],
                       ),
