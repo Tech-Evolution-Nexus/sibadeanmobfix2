@@ -251,6 +251,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
           return; //
         }
       }
+      
       var user = await Auth.user();
       FormData formData = FormData();
       formData = FormData.fromMap({
@@ -305,6 +306,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
         //   context.go('/beranda'); // atau sesuai dengan rute utama kamu
         // }
       } else {
+        print(response.data);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Gagal Melakukan Pengajuan")),
