@@ -16,7 +16,7 @@
 
 
     <application
-        android:label="sibadeanmob_v2_fix"
+        android:label="Sibadean"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
