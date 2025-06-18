@@ -382,9 +382,10 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                     "Masukkan Alasan Pengajuan",
                                                 controller: ketController,
                                                 keyboardType:
-                                                    TextInputType.text,
-                                                prefixIcon:
-                                                    Icons.card_membership,
+                                                    TextInputType.multiline,
+                                                // prefixIcon:
+                                                //     Icons.card_membership,
+                                                maxLines: 5,
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {
@@ -551,6 +552,7 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                             SingleChildScrollView(
                               child: Column(
                                 children: [
+                                  SizedBox(height: 16),
                                   if (isLoading ||
                                       (dataModel?.fields?.isEmpty ?? true))
                                     Center(child: CircularProgressIndicator())
@@ -567,7 +569,13 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                 fieldControllers.length > i
                                                     ? fieldControllers[i]
                                                     : TextEditingController(),
-                                            labelText: item.namaField ?? "data",
+                                            labelText:
+                                                (item.namaField ?? "data")
+                                                    .replaceFirstMapped(
+                                              RegExp(r'^\w'),
+                                              (match) =>
+                                                  match.group(0)!.toUpperCase(),
+                                            ),
                                             hintText:
                                                 "Masukkan ${item.namaField ?? 'data'}",
                                             keyboardType: TextInputType.text,
@@ -583,69 +591,75 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                   SizedBox(height: 16),
                                   SizedBox(
                                     width: double.infinity,
-                                    child: Column(
+                                    child: Row(
                                       children: [
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            onPressed: (dataModel?.lampiransurat
-                                                        ?.isEmpty ??
-                                                    true)
-                                                ? _submitPengajuan
-                                                : nextPage,
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
+                                        Expanded(
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              onPressed: prevPage,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.grey,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 16),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 6,
+                                                shadowColor: Colors.black45,
+                                                textStyle: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                              elevation: 6,
-                                              shadowColor: Colors.black45,
-                                              textStyle: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              (dataModel?.lampiransurat
-                                                          ?.isEmpty ??
-                                                      true)
-                                                  ? "Ajukan Surat"
-                                                  : "Selanjutnya",
+                                              child: const Text("Kembali"),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
-                                        SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            onPressed: prevPage,
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.grey,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              onPressed: (dataModel
+                                                          ?.lampiransurat
+                                                          ?.isEmpty ??
+                                                      true)
+                                                  ? _submitPengajuan
+                                                  : nextPage,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 16),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                elevation: 6,
+                                                shadowColor: Colors.black45,
+                                                textStyle: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                              elevation: 6,
-                                              shadowColor: Colors.black45,
-                                              textStyle: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                              child: Text(
+                                                (dataModel?.lampiransurat
+                                                            ?.isEmpty ??
+                                                        true)
+                                                    ? "Ajukan Surat"
+                                                    : "Selanjutnya",
                                               ),
                                             ),
-                                            child: const Text("Kembali"),
                                           ),
                                         ),
                                       ],
@@ -693,7 +707,9 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(height: 12,),
+                                            SizedBox(
+                                              height: 12,
+                                            ),
                                             Text(
                                               nama,
                                               style: const TextStyle(
@@ -701,7 +717,6 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                                 fontWeight: FontWeight.w600,
                                                 color: Colors.black87,
                                               ),
-                                              
                                             ),
                                             const SizedBox(height: 8),
                                             GestureDetector(
@@ -799,12 +814,40 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                     }).toList(),
                                   ),
                                 SizedBox(height: 16),
+                                // Spacer(),
                                 SizedBox(
                                   width: double.infinity,
-                                  child: Column(
+                                  child: Row(
                                     children: [
-                                      SizedBox(
-                                        width: double.infinity,
+                                      Expanded(
+                                        // width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: prevPage,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.grey.shade400,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 24, vertical: 16),
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            elevation: 6,
+                                            shadowColor: Colors.black45,
+                                            textStyle: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          child: const Text("Kembali"),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+
+                                      // Jarak antar tombol
+                                      Expanded(
+                                        // width: double.infinity,
                                         child: ElevatedButton(
                                           onPressed: _submitPengajuan,
                                           style: ElevatedButton.styleFrom(
@@ -828,31 +871,6 @@ class _PengajuanSuratPageState extends State<PengajuanSuratPage> {
                                           child: const Text("Ajukan Surat"),
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: prevPage,
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.grey,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 24, vertical: 16),
-                                            foregroundColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            elevation: 6,
-                                            shadowColor: Colors.black45,
-                                            textStyle: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          child: const Text("Kembali"),
-                                        ),
-                                      ),
-                                      // Jarak antar tombol
                                     ],
                                   ),
                                 )

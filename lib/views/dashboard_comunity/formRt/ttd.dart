@@ -98,7 +98,18 @@ class _TtdPageState extends State<TtdPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tanda Tangan")),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Tanda Tangan",
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -123,16 +134,14 @@ class _TtdPageState extends State<TtdPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Upload Gambar Tanda Tangan",
+                          "Upload  Tanda Tangan",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 16),
-
-                        /// Box upload area with preview
                         GestureDetector(
                           onTap: _pickPengantarFile,
                           child: Container(
@@ -227,6 +236,7 @@ class _TtdPageState extends State<TtdPage> {
               ),
               const SizedBox(height: 20),
               SizedBox(
+                height: 50,
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
@@ -236,9 +246,13 @@ class _TtdPageState extends State<TtdPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // sudut tombol agak bulat
+                      )),
                   child: const Text(
-                    "Simpan Tanda Tangan",
+                    "Simpan",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

@@ -43,6 +43,8 @@ class _LoginState extends State<Login> {
   void _markWelcome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('seenOnboarding', true);
+
+    print("bool " + prefs.getBool('seenOnboarding').toString());
   }
 
   void loginUser() async {
@@ -63,7 +65,6 @@ class _LoginState extends State<Login> {
       if (fcmToken != null) {
         final response =
             await API().loginUser(nik: nik, password: pass, token: fcmToken);
-        print(response!.data['data']);
         final data = response!.data['data'];
         final userData = data?['user'];
         final masyarakat = userData?['masyarakat'];
@@ -86,9 +87,11 @@ class _LoginState extends State<Login> {
             access_token: data['access_token'],
             // fcm_token: data['fcm_token'],
           );
-
+          setState(() {
+            isLoading = false;
+          });
           await DatabaseHelper().insertUser(user);
-          await FirebaseMessaging.instance.subscribeToTopic('all_users');
+          // await FirebaseMessaging.instance.subscribeToTopic('all_users');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(response!.data['message'] ?? 'Login berhasil')),

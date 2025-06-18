@@ -88,20 +88,20 @@ class _SplashState extends State<Splash> {
               width: 150,
               height: 150,
             ),
-            SizedBox(height: 20),
-            Text(
-              pengaturan?.appName ?? "",
-              style: TextStyle(
-                color: const Color.fromARGB(255, 255, 255, 255),
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 20),
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
+            // SizedBox(height: 20),
+            // Text(
+            //   pengaturan?.appName ?? "",
+            //   style: TextStyle(
+            //     color: const Color.fromARGB(255, 255, 255, 255),
+            //     fontFamily: 'Poppins',
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // SizedBox(height: 20),
+            // CircularProgressIndicator(
+            //   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            // ),
           ],
         ),
       ),

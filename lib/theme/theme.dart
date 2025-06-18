@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -59,6 +60,8 @@ ThemeData darkMode = ThemeData(
 
 ThemeData buildTheme(Color primary, Color secondary, {bool isDark = false}) {
   return ThemeData(
+    // fontFamily: GoogleFonts.poppinsTextTheme(),
+    textTheme: GoogleFonts.poppinsTextTheme(),
     useMaterial3: true,
     brightness: isDark ? Brightness.dark : Brightness.light,
     colorScheme: ColorScheme.fromSeed(
