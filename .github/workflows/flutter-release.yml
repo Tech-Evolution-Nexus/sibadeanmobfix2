@@ -19,6 +19,7 @@ jobs:
 
     - name: Check Flutter & Dart version
       run: |
+        which flutter
         flutter --version
         dart --version
 
