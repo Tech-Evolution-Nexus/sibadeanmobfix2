@@ -49,19 +49,37 @@ class _SplashState extends State<Splash> {
         } else if (role == 'rw') {
           view = "/dashboard_rw";
         } else {
-          view = "/welcome";
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          bool seen = prefs.getBool('seenOnboarding') ?? false;
+          if (!seen) {
+            // Pertama kali, arahkan ke welcome dan tandai sudah dilihat
+            await prefs.setBool('seenOnboarding', true);
+            view = "/welcome";
+          } else {
+            view = "/login";
+          }
         }
       } else {
         await DatabaseHelper().deleteUser();
-        view = "/welcome";
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        bool seen = prefs.getBool('seenOnboarding') ?? false;
+        if (!seen) {
+          // Pertama kali, arahkan ke welcome dan tandai sudah dilihat
+          await prefs.setBool('seenOnboarding', true);
+          view = "/welcome";
+        } else {
+          view = "/login";
+        }
       }
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool? seen = prefs.getBool('seenOnboarding') ?? false;
-      if (seen) {
-        view = "/login";
-      } else {
+      bool seen = prefs.getBool('seenOnboarding') ?? false;
+      if (!seen) {
+        // Pertama kali, arahkan ke welcome dan tandai sudah dilihat
+        await prefs.setBool('seenOnboarding', true);
         view = "/welcome";
+      } else {
+        view = "/login";
       }
     }
     print(view);

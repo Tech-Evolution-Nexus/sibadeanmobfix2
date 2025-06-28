@@ -34,8 +34,7 @@ class CustomTextField extends StatefulWidget {
       this.inputFormatters,
       this.onTap,
       this.maxLines = 1,
-      this.errorText = null
-      });
+      this.errorText = null});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -48,27 +47,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_scrollToField);
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(_scrollToField);
     _focusNode.dispose();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToField() {
-    if (_focusNode.hasFocus) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      });
-    }
   }
 
   @override

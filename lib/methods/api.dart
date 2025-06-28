@@ -10,7 +10,7 @@ class API {
       // Dio(BaseOptions(baseUrl: "http://192.168.100.205:8000/api/"));
       Dio(BaseOptions(baseUrl: "https://sibadean.kholzt.com/api/"));
   // final String baseUrl = "https://sibadean.kholzt.com";
-  final String baseUrl = "  http://192.168.100.205:8000";
+  final String baseUrl = "https://sibadean.kholzt.com";
 
   Future<String?> _getToken() async {
     final user = await Auth.user();

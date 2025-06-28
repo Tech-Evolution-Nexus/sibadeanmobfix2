@@ -39,7 +39,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
         setState(() {
           alertMessage =
-              "Link reset password telah dikirim ke email Anda. Silakan cek email Anda.";
+              "Link reset password telah dikirim ke email $email. Silakan cek email Anda.";
           emailErr = "";
           status = "send";
         });
@@ -70,10 +70,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(alertMessage);
+    double deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          // backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(
               Icons.chevron_left,
@@ -100,24 +101,36 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           children: [
                             Column(
                               children: [
-                                CircleAvatar(
-                                  minRadius: 120,
-                                  child: Icon(
-                                      status == "idle"
-                                          ? Icons.lock
-                                          : Icons.email,
-                                      size: 120),
-                                ),
+                                status == "idle"
+                                    ? Image.asset(
+                                        'assets/images/lupa-password.png',
+                                        height: deviceWidth * 0.6,
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Image.asset(
+                                        'assets/images/reset-password.png',
+                                        height: deviceWidth * 0.6,
+                                        fit: BoxFit.contain,
+                                      ),
                                 const SizedBox(height: 30),
                                 if (alertMessage != "") ...[
+                                  const Text(
+                                    "Lupa password",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
+                                        horizontal: 10.0),
                                     child: Text(
                                       alertMessage,
                                       style: const TextStyle(
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w600,
+                                        // fontWeight: FontWeight.w600,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
