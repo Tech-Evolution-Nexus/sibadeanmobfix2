@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:go_router/go_router.dart'; // asumsi kamu pakai go_router
 
@@ -25,7 +26,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     super.initState();
 
     final url =
-        'http://192.168.100.205:8000/reset-password/${widget.token}?email=${Uri.encodeComponent(widget.email)}&from=app';
+        '${API().baseUrl}/reset-password/${widget.token}?email=${Uri.encodeComponent(widget.email)}&from=app';
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

@@ -108,6 +108,18 @@ class _AktivasiState extends State<Aktivasi> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text("Aktivasi Akun",
+            style: TextStyle(color: Colors.black, fontSize: 18)),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -119,7 +131,7 @@ class _AktivasiState extends State<Aktivasi> {
               children: [
                 const SizedBox(height: 0),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 30.0),
+                  padding: const EdgeInsets.symmetric(vertical: 0.0),
                   child: Image.asset(
                     'assets/images/aktivasi.png',
                     height: deviceWidth * 0.5,
@@ -133,16 +145,19 @@ class _AktivasiState extends State<Aktivasi> {
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
-                  textAlign: TextAlign.start,
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Lengkapi input berikut untuk mengaktivkan akun anda",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(179, 5, 5, 5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "Lengkapi input berikut untuk mengaktifkan akun anda",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(179, 5, 5, 5),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.start,
                 ),
                 const SizedBox(height: 30.0),
                 CustomTextField(
@@ -194,7 +209,7 @@ class _AktivasiState extends State<Aktivasi> {
                 ),
                 const SizedBox(height: 20),
                 CustomButton(
-                  text: _isLoading ? 'Mengaktifasi...' : 'Aktifasi',
+                  text: _isLoading ? 'Proses...' : 'Aktivasi',
                   onPressed: _isLoading
                       ? null
                       : () {
