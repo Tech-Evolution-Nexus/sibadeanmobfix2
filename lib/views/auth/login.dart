@@ -62,6 +62,7 @@ class _LoginState extends State<Login> {
     }
     try {
       final fcmToken = await FirebaseMessaging.instance.getToken();
+      print(fcmToken);
       if (fcmToken != null) {
         final response =
             await API().loginUser(nik: nik, password: pass, token: fcmToken);
