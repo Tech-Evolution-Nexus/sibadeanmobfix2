@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sibadeanmob_v2_fix/methods/auth.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/pengajuan_surat/riwayat_pengajuan.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -19,11 +20,13 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   PengajuanSurat? pengajuanData;
   bool isLoading = true;
   bool canCancel = false;
+  MasyarakatModel? dataModel;
 
   @override
   void initState() {
     super.initState();
     fetchData();
+    getUserData();
   }
 
   Future<void> fetchData() async {
@@ -53,6 +56,17 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     } catch (e) {
       print(e);
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> getUserData() async {
+    final userList = await Auth.user();
+
+    var response = await API().profiledata(nik: userList['nik']);
+    if (response.statusCode == 200) {
+      setState(() {
+        dataModel = MasyarakatModel.fromJson(response.data['data']);
+      });
     }
   }
 
@@ -369,7 +383,6 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
 
   Widget _infoItem(String label, String value,
       {bool isBold = false, bool isPengantar = false}) {
-    print(pengajuanData?.pengantarRt);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Row(
@@ -510,6 +523,104 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ],
               );
             }).toList(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Lampiran KK",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: InteractiveViewer(
+                            child: Image.network(
+                              dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Colors.black26,
+                        width: .2,
+                      ),
+                    ),
+                    // clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            ),
+            if (dataModel?.ktpgambar != null &&
+                dataModel!.ktpgambar!.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Lampiran KTP",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: InteractiveViewer(
+                              child: Image.network(
+                                dataModel?.ktpgambar ?? "-",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Colors.black26,
+                          width: .2,
+                        ),
+                      ),
+                      // clipBehavior: Clip.antiAlias,
+                      child: Image.network(
+                        dataModel?.ktpgambar ?? "-",
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              )
           ],
         ),
       ),

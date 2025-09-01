@@ -48,7 +48,7 @@ class MasyarakatModel {
     required this.namaAyah,
     required this.namaIbu,
     required this.createdAt,
-    this.ktpgambar,
+    this.ktpgambar = null,
     required this.kartuKeluarga,
     required this.user,
   });
@@ -86,7 +86,7 @@ class MasyarakatModel {
       namaAyah: json['nama_ayah'] ?? '',
       namaIbu: json['nama_ibu'] ?? '',
       createdAt: formattedDate,
-      ktpgambar: json['ktp_gambar'] ?? '',
+      ktpgambar: json['ktp_gambar'] ?? null,
       kartuKeluarga: json['kartu_keluarga'] != null
           ? KartuKeluargaModel.fromJson(json['kartu_keluarga'])
           : null,

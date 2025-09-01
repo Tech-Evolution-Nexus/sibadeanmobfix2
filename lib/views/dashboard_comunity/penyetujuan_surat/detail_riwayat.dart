@@ -5,6 +5,7 @@ import 'package:sibadeanmob_v2_fix/models/PengajuanModel.dart';
 import 'package:sibadeanmob_v2_fix/views/dashboard_comunity/penyetujuan_surat/riwayat_surat_rt_rw.dart';
 import 'package:sibadeanmob_v2_fix/widgets/costum_texfield.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:sibadeanmob_v2_fix/models/MasyarakatModel.dart';
 
 import '/methods/api.dart';
 
@@ -20,12 +21,25 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
   PengajuanSurat? pengajuanData;
   bool isLoading = true;
   bool canEdit = false;
+  MasyarakatModel? dataModel;
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController keteranganController = TextEditingController();
   @override
   void initState() {
     super.initState();
     fetchData();
+  }
+
+  Future<void> getUserData() async {
+    final userList = await Auth.user();
+
+    var response = await API().profiledata(nik: userList['nik']);
+    if (response.statusCode == 200) {
+      setState(() {
+        dataModel = MasyarakatModel.fromJson(response.data['data']);
+      });
+    }
   }
 
   Future<void> fetchData() async {
@@ -436,6 +450,104 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ],
               );
             }).toList(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Lampiran KK",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: InteractiveViewer(
+                            child: Image.network(
+                              dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Colors.black26,
+                        width: .2,
+                      ),
+                    ),
+                    // clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            ),
+            if (dataModel?.ktpgambar != null &&
+                dataModel!.ktpgambar!.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Lampiran KTP",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: InteractiveViewer(
+                              child: Image.network(
+                                dataModel?.ktpgambar ?? "-",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Colors.black26,
+                          width: .2,
+                        ),
+                      ),
+                      // clipBehavior: Clip.antiAlias,
+                      child: Image.network(
+                        dataModel?.ktpgambar ?? "-",
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              )
           ],
         ),
       ),
