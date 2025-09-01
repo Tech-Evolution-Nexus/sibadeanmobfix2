@@ -128,7 +128,7 @@ class _DashboardContentState extends State<DashboardContent> {
         });
       }
     } catch (e) {
-      print("Error: $e");
+      // print("Error: $e");
       setState(() => isLoading = false);
     }
   }

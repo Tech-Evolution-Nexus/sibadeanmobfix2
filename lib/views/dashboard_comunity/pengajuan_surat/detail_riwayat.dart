@@ -478,7 +478,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lampiran.namaLampiran,
+                    lampiran.value,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   SizedBox(height: 8),
