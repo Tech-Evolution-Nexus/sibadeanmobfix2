@@ -468,7 +468,9 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                           onTap: () => Navigator.pop(context),
                           child: InteractiveViewer(
                             child: Image.network(
-                              dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                              pengajuanData
+                                      ?.masyarakat?.kartuKeluarga?.kkgambar ??
+                                  "-",
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -488,7 +490,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                     ),
                     // clipBehavior: Clip.antiAlias,
                     child: Image.network(
-                      dataModel?.kartuKeluarga?.kkgambar ?? "-",
+                      pengajuanData?.masyarakat?.kartuKeluarga?.kkgambar ?? "-",
                       height: 150,
                       width: double.infinity,
                       fit: BoxFit.contain,
@@ -498,8 +500,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 SizedBox(height: 20),
               ],
             ),
-            if (dataModel?.ktpgambar != null &&
-                dataModel!.ktpgambar!.isNotEmpty)
+            if (pengajuanData?.masyarakat?.ktpgambar != null &&
+                pengajuanData!.masyarakat!.ktpgambar!.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -518,7 +520,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                             onTap: () => Navigator.pop(context),
                             child: InteractiveViewer(
                               child: Image.network(
-                                dataModel?.ktpgambar ?? "-",
+                                pengajuanData?.masyarakat?.ktpgambar ?? "-",
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -538,7 +540,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                       ),
                       // clipBehavior: Clip.antiAlias,
                       child: Image.network(
-                        dataModel?.ktpgambar ?? "-",
+                        pengajuanData?.masyarakat?.ktpgambar ?? "-",
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.contain,

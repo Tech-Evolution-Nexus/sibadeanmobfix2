@@ -1,3 +1,5 @@
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
+
 class KartuKeluargaModel {
   final String noKk;
   final String alamat;
@@ -15,11 +17,13 @@ class KartuKeluargaModel {
 
   factory KartuKeluargaModel.fromJson(Map<String, dynamic> json) {
     return KartuKeluargaModel(
-      noKk: json['no_kk']??'',
-      alamat: json['alamat']??'',
-      rt: json['rt']??'',
-      rw: json['rw']??'',
-      kkgambar: json['kk_gambar']??'',
+      noKk: json['no_kk'] ?? '',
+      alamat: json['alamat'] ?? '',
+      rt: json['rt'] ?? '',
+      rw: json['rw'] ?? '',
+      kkgambar: json['kk_gambar'] != null
+          ? "${API().baseUrl}/c/private-image?path=${json['kk_gambar']}"
+          : '',
     );
   }
 

@@ -66,8 +66,9 @@ class _AktivasiState extends State<Aktivasi> {
               Navigator.pop(context);
             },
           );
-        } else {
+          print("VALIDATION");
           print(response);
+        } else {
           _showSnackBar(
             "Aktivasi gagal. Kode: ${response.statusCode}",
             isError: true,

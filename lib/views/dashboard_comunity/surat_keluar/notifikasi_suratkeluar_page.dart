@@ -23,7 +23,7 @@ class _NotifikasiSuratKeluarPageState extends State<NotifikasiSuratKeluarPage> {
 
   final String baseViewUrl =
       // 'https://sibadean.kholzt.com/view-pdf?path=surat-keluar';
-      'https://sibadean.kholzt.com/c/private-image';
+      'https://sibadean.com/c/private-image';
 
   @override
   void initState() {

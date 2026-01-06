@@ -119,8 +119,11 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
       //         content: Text('Surat disimpan di /storage/emulated/0/Download')),
       //   );
       // }
+      print("Terjadi kesalahan pada download di atas");
     } catch (e) {
       setState(() => isLoading = false);
+      print("Terjadi kesalahan pada download");
+      print(e);
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:sibadeanmob_v2_fix/methods/api.dart';
 import 'package:sibadeanmob_v2_fix/models/KartuKeluargaModel.dart';
 import 'package:sibadeanmob_v2_fix/models/userModel.dart';
 
@@ -86,7 +87,9 @@ class MasyarakatModel {
       namaAyah: json['nama_ayah'] ?? '',
       namaIbu: json['nama_ibu'] ?? '',
       createdAt: formattedDate,
-      ktpgambar: json['ktp_gambar'] ?? null,
+      ktpgambar: json['ktp_gambar'] != null
+          ? "${API().baseUrl}/c/private-image?path=${json['ktp_gambar']}"
+          : null,
       kartuKeluarga: json['kartu_keluarga'] != null
           ? KartuKeluargaModel.fromJson(json['kartu_keluarga'])
           : null,
