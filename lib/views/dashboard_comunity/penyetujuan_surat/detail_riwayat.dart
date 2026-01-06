@@ -380,7 +380,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
     );
   }
 
-  Widget _lampiran() {
+ Widget _lampiran() {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -405,7 +405,7 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lampiran.namaLampiran,
+                    lampiran.value,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   SizedBox(height: 8),
@@ -450,6 +450,8 @@ class _DetailRiwayatState extends State<DetailRiwayat> {
                 ],
               );
             }).toList(),
+            if (dataModel?.kartuKeluarga?.kkgambar != null &&
+                dataModel!.kartuKeluarga!.kkgambar!.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
